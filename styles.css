@@ -1,35 +1,34 @@
 /* ==========================================================================
-   AETHER // PERSONAL EXECUTION OPERATING SYSTEM DESIGN SYSTEM
-   Visual Identity: Calm, Intelligent, Futuristic Control Room
-   Design Philosophy: "The user defines what matters. The system assists execution."
+   LEVEL UP SYSTEM — DESIGN SYSTEM & THEME ENGINE
+   Full Tile & Template Color Adaptability
    ========================================================================== */
 
-/* --- 1. CSS CUSTOM PROPERTIES & DESIGN TOKENS --- */
+/* --- 1. CSS CUSTOM PROPERTIES & DEFAULT TOKENS --- */
 :root {
-  /* Layered Dark Control Room Surfaces */
+  /* Surfaces & Layered Controls */
   --surface-dark: #070a0f;
   --surface-space: #0b111c;
-  --surface-card: rgba(15, 23, 36, 0.85);
-  --surface-card-elevated: rgba(22, 33, 50, 0.9);
-  --surface-card-hover: rgba(28, 42, 64, 0.95);
-  --surface-input: #0a0f18;
+  --surface-card: rgba(14, 23, 38, 0.88);
+  --surface-card-elevated: rgba(18, 30, 48, 0.92);
+  --surface-card-hover: rgba(24, 38, 60, 0.95);
+  --surface-input: #09111e;
   
-  /* Luminous Subtle Borders */
+  /* Luminous Borders & Highlights */
   --border-subdued: rgba(255, 255, 255, 0.08);
-  --border-highlight: rgba(255, 255, 255, 0.15);
+  --border-highlight: rgba(56, 189, 248, 0.25);
   --border-luminous: var(--accent-cyan-border);
   
-  /* High-Contrast Calm Typography Colors */
+  /* Typography Stack */
   --text-primary: #f8fafc;
   --text-secondary: #cbd5e1;
   --text-muted: #64748b;
   --text-subtle: #475569;
   --text-inverted: #070a0f;
   
-  /* Primary Calm Accent (Default Cyan / Starlight) */
+  /* Primary Theme Accent & Glow (Default Cyan) */
   --accent-cyan: #38bdf8;
-  --accent-cyan-glow: rgba(56, 189, 248, 0.15);
-  --accent-cyan-border: rgba(56, 189, 248, 0.35);
+  --accent-cyan-glow: rgba(56, 189, 248, 0.18);
+  --accent-cyan-border: rgba(56, 189, 248, 0.38);
 
   --accent-blue: #818cf8;
   --accent-blue-glow: rgba(129, 140, 248, 0.15);
@@ -50,7 +49,7 @@
   /* Priorities */
   --p1-color: #f87171;
   --p2-color: #fbbf24;
-  --p3-color: #38bdf8;
+  --p3-color: var(--accent-cyan);
   --p4-color: #64748b;
 
   /* Typography Stack */
@@ -71,19 +70,139 @@
   --transition-standard: 250ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* --- 2. 12 ACCENT COLOR THEMES --- */
-body.theme-cyan { --accent-cyan: #38bdf8; --accent-cyan-glow: rgba(56, 189, 248, 0.15); --accent-cyan-border: rgba(56, 189, 248, 0.35); }
-body.theme-blue { --accent-cyan: #60a5fa; --accent-cyan-glow: rgba(96, 165, 250, 0.15); --accent-cyan-border: rgba(96, 165, 250, 0.35); }
-body.theme-emerald { --accent-cyan: #34d399; --accent-cyan-glow: rgba(52, 211, 153, 0.15); --accent-cyan-border: rgba(52, 211, 153, 0.35); }
-body.theme-amber { --accent-cyan: #fbbf24; --accent-cyan-glow: rgba(251, 191, 36, 0.15); --accent-cyan-border: rgba(251, 191, 36, 0.35); }
-body.theme-violet { --accent-cyan: #c084fc; --accent-cyan-glow: rgba(192, 132, 252, 0.15); --accent-cyan-border: rgba(192, 132, 252, 0.35); }
-body.theme-stealth { --accent-cyan: #f1f5f9; --accent-cyan-glow: rgba(241, 245, 249, 0.12); --accent-cyan-border: rgba(241, 245, 249, 0.35); }
-body.theme-crimson { --accent-cyan: #f87171; --accent-cyan-glow: rgba(248, 113, 113, 0.15); --accent-cyan-border: rgba(248, 113, 113, 0.35); }
-body.theme-sunset { --accent-cyan: #fb7185; --accent-cyan-glow: rgba(251, 113, 133, 0.15); --accent-cyan-border: rgba(251, 113, 133, 0.35); }
-body.theme-void { --accent-cyan: #818cf8; --accent-cyan-glow: rgba(129, 140, 248, 0.15); --accent-cyan-border: rgba(129, 140, 248, 0.35); }
-body.theme-olive { --accent-cyan: #a3e635; --accent-cyan-glow: rgba(163, 230, 53, 0.15); --accent-cyan-border: rgba(163, 230, 53, 0.35); }
-body.theme-amethyst { --accent-cyan: #f472b6; --accent-cyan-glow: rgba(244, 114, 182, 0.15); --accent-cyan-border: rgba(244, 114, 182, 0.35); }
-body.theme-cobalt { --accent-cyan: #22d3ee; --accent-cyan-glow: rgba(34, 211, 238, 0.15); --accent-cyan-border: rgba(34, 211, 238, 0.35); }
+/* --- 2. 12 FULL-TEMPLATE COLOR THEMES (ALL TILES ADOPT PREFERRED COLOR) --- */
+
+/* 1. Celestial Cyan (Default) */
+body.theme-cyan {
+  --accent-cyan: #38bdf8;
+  --accent-cyan-glow: rgba(56, 189, 248, 0.18);
+  --accent-cyan-border: rgba(56, 189, 248, 0.38);
+  --surface-card: rgba(14, 23, 38, 0.88);
+  --surface-card-elevated: rgba(18, 30, 48, 0.92);
+  --surface-input: #09111e;
+  --border-highlight: rgba(56, 189, 248, 0.28);
+}
+
+/* 2. Astral Blue */
+body.theme-blue {
+  --accent-cyan: #60a5fa;
+  --accent-cyan-glow: rgba(96, 165, 250, 0.18);
+  --accent-cyan-border: rgba(96, 165, 250, 0.38);
+  --surface-card: rgba(15, 22, 40, 0.88);
+  --surface-card-elevated: rgba(20, 30, 52, 0.92);
+  --surface-input: #091022;
+  --border-highlight: rgba(96, 165, 250, 0.28);
+}
+
+/* 3. Nebula Emerald */
+body.theme-emerald {
+  --accent-cyan: #34d399;
+  --accent-cyan-glow: rgba(52, 211, 153, 0.18);
+  --accent-cyan-border: rgba(52, 211, 153, 0.38);
+  --surface-card: rgba(12, 26, 22, 0.88);
+  --surface-card-elevated: rgba(16, 36, 30, 0.92);
+  --surface-input: #081612;
+  --border-highlight: rgba(52, 211, 153, 0.28);
+}
+
+/* 4. Solar Gold / Amber */
+body.theme-amber {
+  --accent-cyan: #fbbf24;
+  --accent-cyan-glow: rgba(251, 191, 36, 0.18);
+  --accent-cyan-border: rgba(251, 191, 36, 0.38);
+  --surface-card: rgba(26, 23, 14, 0.88);
+  --surface-card-elevated: rgba(36, 31, 18, 0.92);
+  --surface-input: #141209;
+  --border-highlight: rgba(251, 191, 36, 0.28);
+}
+
+/* 5. Starlight Violet */
+body.theme-violet {
+  --accent-cyan: #c084fc;
+  --accent-cyan-glow: rgba(192, 132, 252, 0.18);
+  --accent-cyan-border: rgba(192, 132, 252, 0.38);
+  --surface-card: rgba(23, 17, 36, 0.88);
+  --surface-card-elevated: rgba(31, 22, 48, 0.92);
+  --surface-input: #120b1f;
+  --border-highlight: rgba(192, 132, 252, 0.28);
+}
+
+/* 6. Void Stealth */
+body.theme-stealth {
+  --accent-cyan: #f1f5f9;
+  --accent-cyan-glow: rgba(241, 245, 249, 0.14);
+  --accent-cyan-border: rgba(241, 245, 249, 0.35);
+  --surface-card: rgba(20, 24, 33, 0.88);
+  --surface-card-elevated: rgba(28, 33, 44, 0.92);
+  --surface-input: #0f121a;
+  --border-highlight: rgba(241, 245, 249, 0.25);
+}
+
+/* 7. Crimson Flare */
+body.theme-crimson {
+  --accent-cyan: #f87171;
+  --accent-cyan-glow: rgba(248, 113, 113, 0.18);
+  --accent-cyan-border: rgba(248, 113, 113, 0.38);
+  --surface-card: rgba(28, 16, 18, 0.88);
+  --surface-card-elevated: rgba(38, 20, 24, 0.92);
+  --surface-input: #160a0d;
+  --border-highlight: rgba(248, 113, 113, 0.28);
+}
+
+/* 8. Neon Sunset */
+body.theme-sunset {
+  --accent-cyan: #fb7185;
+  --accent-cyan-glow: rgba(251, 113, 133, 0.18);
+  --accent-cyan-border: rgba(251, 113, 133, 0.38);
+  --surface-card: rgba(28, 15, 20, 0.88);
+  --surface-card-elevated: rgba(38, 20, 28, 0.92);
+  --surface-input: #160910;
+  --border-highlight: rgba(251, 113, 133, 0.28);
+}
+
+/* 9. Deep Void */
+body.theme-void {
+  --accent-cyan: #818cf8;
+  --accent-cyan-glow: rgba(129, 140, 248, 0.18);
+  --accent-cyan-border: rgba(129, 140, 248, 0.38);
+  --surface-card: rgba(18, 18, 36, 0.88);
+  --surface-card-elevated: rgba(24, 24, 48, 0.92);
+  --surface-input: #0d0d21;
+  --border-highlight: rgba(129, 140, 248, 0.28);
+}
+
+/* 10. Tactical Olive */
+body.theme-olive {
+  --accent-cyan: #a3e635;
+  --accent-cyan-glow: rgba(163, 230, 53, 0.18);
+  --accent-cyan-border: rgba(163, 230, 53, 0.38);
+  --surface-card: rgba(19, 26, 14, 0.88);
+  --surface-card-elevated: rgba(26, 36, 18, 0.92);
+  --surface-input: #0e1408;
+  --border-highlight: rgba(163, 230, 53, 0.28);
+}
+
+/* 11. Amethyst */
+body.theme-amethyst {
+  --accent-cyan: #f472b6;
+  --accent-cyan-glow: rgba(244, 114, 182, 0.18);
+  --accent-cyan-border: rgba(244, 114, 182, 0.38);
+  --surface-card: rgba(27, 16, 26, 0.88);
+  --surface-card-elevated: rgba(37, 20, 36, 0.92);
+  --surface-input: #150a14;
+  --border-highlight: rgba(244, 114, 182, 0.28);
+}
+
+/* 12. Cobalt Frost */
+body.theme-cobalt {
+  --accent-cyan: #22d3ee;
+  --accent-cyan-glow: rgba(34, 211, 238, 0.18);
+  --accent-cyan-border: rgba(34, 211, 238, 0.38);
+  --surface-card: rgba(12, 25, 34, 0.88);
+  --surface-card-elevated: rgba(16, 34, 46, 0.92);
+  --surface-input: #08131b;
+  --border-highlight: rgba(34, 211, 238, 0.28);
+}
 
 /* --- 3. RESET & BASE STYLES --- */
 *, *::before, *::after {
@@ -150,7 +269,7 @@ body.apex-body {
 }
 
 .text-accent-cyan { color: var(--accent-cyan) !important; }
-.text-accent-blue { color: var(--accent-blue) !important; }
+.text-accent-blue { color: var(--accent-cyan) !important; }
 .text-accent-warning { color: var(--accent-warning) !important; }
 .text-accent-success { color: var(--accent-success) !important; }
 .text-danger { color: var(--accent-danger) !important; }
@@ -175,7 +294,7 @@ body.apex-body {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
 }
 
-/* Background Grids & Glow */
+/* Background Grids & Ambient Preferred Color Glow */
 .background-grid {
   position: fixed;
   inset: 0;
@@ -194,11 +313,12 @@ body.apex-body {
   left: 50%;
   transform: translateX(-50%);
   width: 900px;
-  height: 500px;
+  height: 550px;
   background: radial-gradient(circle, var(--accent-cyan-glow) 0%, transparent 70%);
   pointer-events: none;
   z-index: 0;
-  opacity: 0.6;
+  opacity: 0.8;
+  transition: background var(--transition-standard);
 }
 
 /* App Container */
@@ -215,11 +335,12 @@ body.apex-body {
   background: var(--surface-card);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border-subdued);
+  border: 1px solid var(--border-highlight);
   border-radius: var(--radius-md);
   padding: 12px 18px;
   margin-bottom: 16px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  transition: all var(--transition-standard);
 }
 
 .header-main-row {
@@ -245,6 +366,7 @@ body.apex-body {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: border-color var(--transition-fast);
 }
 
 .brand-title {
@@ -303,13 +425,14 @@ body.apex-body {
 
 .header-completion-chip {
   background: var(--surface-card-elevated);
-  border: 1px solid var(--border-subdued);
+  border: 1px solid var(--border-highlight);
   border-radius: var(--radius-full);
   padding: 6px 14px;
   display: flex;
   align-items: center;
   gap: 6px;
   font-size: 0.8rem;
+  transition: all var(--transition-fast);
 }
 
 /* --- 5. BUTTONS & INPUT CONTROLS --- */
@@ -319,7 +442,7 @@ body.apex-body {
   font-weight: 600;
   padding: 8px 14px;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--border-subdued);
+  border: 1px solid var(--border-highlight);
   background: var(--surface-card-elevated);
   color: var(--text-primary);
   cursor: pointer;
@@ -332,7 +455,7 @@ body.apex-body {
 
 .btn-tactical:hover {
   background: var(--surface-card-hover);
-  border-color: var(--border-highlight);
+  border-color: var(--accent-cyan-border);
 }
 
 .btn-primary, .btn-cyan-action {
@@ -347,13 +470,13 @@ body.apex-body {
 }
 
 .btn-terminal-blue {
-  background: var(--accent-blue-glow);
-  border-color: var(--accent-blue-border);
-  color: var(--accent-blue);
+  background: var(--accent-cyan-glow);
+  border-color: var(--accent-cyan-border);
+  color: var(--accent-cyan);
 }
 
 .btn-terminal-blue:hover {
-  background: var(--accent-blue);
+  background: var(--accent-cyan);
   color: var(--surface-dark);
 }
 
@@ -402,15 +525,17 @@ body.apex-body {
   padding: 4px 8px;
   min-height: 26px;
   border-radius: var(--radius-xs);
-  border: 1px solid var(--border-subdued);
+  border: 1px solid var(--border-highlight);
   background: var(--surface-card-elevated);
   color: var(--text-secondary);
   cursor: pointer;
+  transition: all var(--transition-fast);
 }
 
 .btn-mini:hover {
   background: var(--surface-card-hover);
   color: var(--text-primary);
+  border-color: var(--accent-cyan);
 }
 
 .tactical-input, .tactical-select, .tactical-textarea {
@@ -419,10 +544,10 @@ body.apex-body {
   font-size: 0.88rem;
   padding: 10px 14px;
   background: var(--surface-input);
-  border: 1px solid var(--border-subdued);
+  border: 1px solid var(--border-highlight);
   border-radius: var(--radius-sm);
   color: var(--text-primary);
-  transition: border-color var(--transition-fast);
+  transition: border-color var(--transition-fast), background var(--transition-fast);
 }
 
 .tactical-input:focus, .tactical-select:focus, .tactical-textarea:focus {
@@ -439,11 +564,12 @@ body.apex-body {
   background: var(--surface-card);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border-subdued);
+  border: 1px solid var(--border-highlight);
   border-radius: var(--radius-md);
   padding: 6px;
   margin-bottom: 20px;
   overflow-x: auto;
+  transition: all var(--transition-standard);
 }
 
 .nav-tab-btn {
@@ -476,22 +602,24 @@ body.apex-body {
   background: var(--surface-card-elevated);
   border-color: var(--accent-cyan-border);
   color: var(--accent-cyan);
+  box-shadow: 0 0 16px var(--accent-cyan-glow);
 }
 
 .nav-tab-btn.active svg {
   stroke: var(--accent-cyan);
 }
 
-/* --- 7. HOME AREA & CARDS --- */
+/* --- 7. CONSOLE CARDS & FULL TILE TEMPLATE --- */
 .console-card {
   background: var(--surface-card);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border-subdued);
+  border: 1px solid var(--border-highlight);
   border-radius: var(--radius-md);
   padding: 20px;
   margin-bottom: 20px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  transition: background var(--transition-standard), border-color var(--transition-standard);
 }
 
 .card-header {
@@ -513,10 +641,15 @@ body.apex-body {
   height: 34px;
   border-radius: var(--radius-sm);
   background: var(--surface-card-elevated);
-  border: 1px solid var(--border-highlight);
+  border: 1px solid var(--accent-cyan-border);
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: border-color var(--transition-fast);
+}
+
+.title-icon svg {
+  stroke: var(--accent-cyan) !important;
 }
 
 .card-title {
@@ -552,7 +685,7 @@ body.apex-body {
 
 /* Home Question Banner */
 .home-question-banner {
-  background: linear-gradient(135deg, rgba(15, 23, 36, 0.95), rgba(22, 33, 50, 0.85));
+  background: var(--surface-card-elevated);
   border: 1px solid var(--accent-cyan-border);
   padding: 24px;
 }
@@ -590,9 +723,14 @@ body.apex-body {
 
 .metric-card {
   background: var(--surface-card-elevated);
-  border: 1px solid var(--border-subdued);
+  border: 1px solid var(--border-highlight);
   border-radius: var(--radius-sm);
   padding: 14px;
+  transition: all var(--transition-fast);
+}
+
+.metric-card:hover {
+  border-color: var(--accent-cyan-border);
 }
 
 .stat-label {
@@ -629,7 +767,8 @@ body.apex-body {
   height: 100%;
   background: var(--accent-cyan);
   border-radius: var(--radius-full);
-  transition: width var(--transition-standard);
+  transition: width var(--transition-standard), background var(--transition-standard);
+  box-shadow: 0 0 8px var(--accent-cyan-glow);
 }
 
 .today-priority-banner {
@@ -637,6 +776,7 @@ body.apex-body {
   border: 1px solid var(--accent-cyan-border);
   border-radius: var(--radius-md);
   padding: 18px;
+  transition: all var(--transition-standard);
 }
 
 .priority-banner-header {
@@ -681,6 +821,7 @@ body.apex-body {
   display: flex;
   align-items: center;
   gap: 8px;
+  transition: all var(--transition-fast);
 }
 
 /* --- 8. MISSIONS VIEW & CONTROLS --- */
@@ -709,7 +850,7 @@ body.apex-body {
   font-weight: 600;
   padding: 6px 12px;
   border-radius: var(--radius-full);
-  border: 1px solid var(--border-subdued);
+  border: 1px solid var(--border-highlight);
   background: var(--surface-card-elevated);
   color: var(--text-muted);
   cursor: pointer;
@@ -732,14 +873,14 @@ body.apex-body {
 
 .task-card-item {
   background: var(--surface-card-elevated);
-  border: 1px solid var(--border-subdued);
+  border: 1px solid var(--border-highlight);
   border-radius: var(--radius-sm);
   padding: 14px 16px;
-  transition: border-color var(--transition-fast);
+  transition: border-color var(--transition-fast), background var(--transition-fast);
 }
 
 .task-card-item:hover {
-  border-color: var(--border-highlight);
+  border-color: var(--accent-cyan-border);
 }
 
 .task-card-item.completed {
@@ -808,7 +949,7 @@ body.apex-body {
 
 .priority-P1 { background: rgba(248, 113, 113, 0.15); color: var(--p1-color); border: 1px solid rgba(248, 113, 113, 0.3); }
 .priority-P2 { background: rgba(251, 191, 36, 0.15); color: var(--p2-color); border: 1px solid rgba(251, 191, 36, 0.3); }
-.priority-P3 { background: rgba(56, 189, 248, 0.15); color: var(--p3-color); border: 1px solid rgba(56, 189, 248, 0.3); }
+.priority-P3 { background: var(--accent-cyan-glow); color: var(--accent-cyan); border: 1px solid var(--accent-cyan-border); }
 .priority-P4 { background: rgba(100, 116, 139, 0.15); color: var(--p4-color); border: 1px solid rgba(100, 116, 139, 0.3); }
 
 .category-tag {
@@ -818,7 +959,7 @@ body.apex-body {
   background: var(--surface-input);
   padding: 2px 6px;
   border-radius: var(--radius-xs);
-  border: 1px solid var(--border-subdued);
+  border: 1px solid var(--border-highlight);
 }
 
 .deadline-badge {
@@ -855,6 +996,7 @@ body.apex-body {
   border-radius: var(--radius-sm);
   padding: 14px;
   text-align: left;
+  transition: all var(--transition-standard);
 }
 
 .btn-duration-chip {
@@ -863,10 +1005,11 @@ body.apex-body {
   font-weight: 700;
   padding: 6px 12px;
   border-radius: var(--radius-xs);
-  border: 1px solid var(--border-subdued);
+  border: 1px solid var(--border-highlight);
   background: var(--surface-input);
   color: var(--text-muted);
   cursor: pointer;
+  transition: all var(--transition-fast);
 }
 
 .btn-duration-chip.active {
@@ -878,9 +1021,10 @@ body.apex-body {
 .timer-display-card {
   width: 100%;
   background: var(--surface-input);
-  border: 1px solid var(--border-subdued);
+  border: 1px solid var(--accent-cyan-border);
   border-radius: var(--radius-md);
   padding: 32px 20px;
+  transition: all var(--transition-standard);
 }
 
 .timer-large-digits {
@@ -901,7 +1045,7 @@ body.apex-body {
 
 .resumption-memory-card {
   width: 100%;
-  background: rgba(251, 191, 36, 0.08);
+  background: var(--surface-card-elevated);
   border: 1px solid var(--accent-warning-border);
   border-radius: var(--radius-sm);
   padding: 14px;
@@ -933,15 +1077,16 @@ body.apex-body {
   max-width: 24px;
   background: var(--accent-cyan);
   border-radius: var(--radius-xs) var(--radius-xs) 0 0;
-  transition: height var(--transition-standard);
+  transition: height var(--transition-standard), background var(--transition-standard);
   min-height: 4px;
+  box-shadow: 0 0 6px var(--accent-cyan-glow);
 }
 
 .empty-data-card {
   padding: 24px;
   text-align: center;
   background: var(--surface-card-elevated);
-  border: 1px dashed var(--border-subdued);
+  border: 1px dashed var(--border-highlight);
   border-radius: var(--radius-sm);
 }
 
@@ -969,6 +1114,7 @@ body.apex-body {
   border-radius: var(--radius-md);
   padding: 24px;
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
+  transition: background var(--transition-standard), border-color var(--transition-standard);
 }
 
 .modal-header {
@@ -1007,12 +1153,14 @@ body.apex-body {
   align-items: center;
   gap: 8px;
   font-size: 0.78rem;
+  transition: all var(--transition-fast);
 }
 
 .theme-preset-card.active {
   border-color: var(--accent-cyan);
   color: var(--text-primary);
   background: var(--surface-card-elevated);
+  box-shadow: 0 0 10px var(--accent-cyan-glow);
 }
 
 .theme-swatch {
@@ -1051,6 +1199,7 @@ body.apex-body {
   cursor: pointer;
   align-items: center;
   justify-content: center;
+  transition: background var(--transition-fast);
 }
 
 .mobile-bottom-nav {
@@ -1063,10 +1212,11 @@ body.apex-body {
   background: var(--surface-card);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border-top: 1px solid var(--border-subdued);
+  border-top: 1px solid var(--border-highlight);
   padding: 6px 12px calc(env(safe-area-inset-bottom, 8px) + 6px) 12px;
   justify-content: space-around;
   align-items: center;
+  transition: background var(--transition-standard);
 }
 
 .mobile-bottom-nav-item {
