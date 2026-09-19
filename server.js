@@ -120,26 +120,36 @@ const server = http.createServer((req, res) => {
         responsePayload = {
           success: true,
           suggestedSubtasks: [
-            { title: `Define scope & specs for ${taskTitle}`, effort: "30m" },
-            { title: `Execute core implementation block`, effort: "60m" },
-            { title: `Verify output & edge cases`, effort: "30m" }
+            { title: `Define specifications and initial scope for ${taskTitle}`, effort: "15m" },
+            { title: `Execute primary implementation phase for ${taskTitle}`, effort: "45m" },
+            { title: `Validate outcome & check edge cases`, effort: "20m" }
           ],
           suggestedPriority: "P2",
-          estimatedTotalTime: "2 hours"
+          estimatedTotalTime: "1.5 hours"
         };
-      } else if (action === 'parse_thought') {
+      } else if (action === 'suggest_next_action') {
         responsePayload = {
           success: true,
-          title: prompt ? prompt.split('\n')[0].slice(0, 60) : 'Action Item',
-          description: prompt ? prompt.slice(0, 140) : '',
-          suggestedCategory: "TECHNICAL",
-          suggestedPriority: "P2",
-          isActionable: true
+          nextAction: prompt ? `Focus on immediate first step: ${prompt}` : `Open scope documentation for ${taskTitle}`
+        };
+      } else if (action === 'summarize_review') {
+        responsePayload = {
+          success: true,
+          summary: "Execution momentum observed. Progress was sustained through key focus blocks with clear recovery upon interruption."
+        };
+      } else if (action === 'recalibrate') {
+        responsePayload = {
+          success: true,
+          recommendations: [
+            "Reduce active scope to a single 15-minute action item.",
+            "Take a 5-minute break and clear your physical environment.",
+            "Decompress thoughts in the Thought Log to unload cognitive friction."
+          ]
         };
       } else {
         responsePayload = {
           success: true,
-          message: "SYSTEM AI Engine active."
+          message: "AETHER AI Assistance Engine Active."
         };
       }
 

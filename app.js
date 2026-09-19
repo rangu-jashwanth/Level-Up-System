@@ -1,19 +1,19 @@
 /**
- * SYSTEM // SELF-MASTERY OS — CORE CLIENT RUNTIME (app.js)
- * Architecture: Modular ES6+ with Event-Driven Design & Local-First Persistence.
- * Zero hardcoded tasks, routines, or personal goals. The user commands the system.
+ * AETHER // PERSONAL EXECUTION OPERATING SYSTEM (app.js)
+ * Architecture: Modular ES6+ Local-First Execution Engine
+ * Philosophy: "The user defines what matters. The system assists execution."
  */
 
 (() => {
   'use strict';
 
   /* ==========================================================================
-     1. SOUND SYNTHESIS ENGINE (WEB AUDIO API)
+     1. SOUND SYNTHESIS ENGINE (Calm AudioContext Chimes)
      ========================================================================== */
   class SoundEngine {
     constructor() {
       this.ctx = null;
-      this.enabled = localStorage.getItem('apex_sound_enabled') === 'true';
+      this.enabled = localStorage.getItem('aether_sound_enabled') !== 'false';
     }
 
     init() {
@@ -28,15 +28,15 @@
 
     toggle() {
       this.enabled = !this.enabled;
-      localStorage.setItem('apex_sound_enabled', this.enabled.toString());
+      localStorage.setItem('aether_sound_enabled', this.enabled.toString());
       if (this.enabled) {
         this.init();
-        this.playBeep(720, 0.06, 'sine', 0.08);
+        this.playTone(520, 0.08, 'sine', 0.05);
       }
       return this.enabled;
     }
 
-    playBeep(freq = 600, duration = 0.05, type = 'sine', gainVal = 0.06) {
+    playTone(freq = 520, duration = 0.08, type = 'sine', gainVal = 0.05) {
       if (!this.enabled) return;
       try {
         this.init();
@@ -59,20 +59,21 @@
 
     playSuccessChime() {
       if (!this.enabled) return;
-      this.playBeep(523.25, 0.1, 'sine', 0.08); // C5
-      setTimeout(() => this.playBeep(659.25, 0.1, 'sine', 0.08), 90); // E5
-      setTimeout(() => this.playBeep(783.99, 0.2, 'sine', 0.1), 180); // G5
+      this.playTone(440, 0.1, 'sine', 0.06);
+      setTimeout(() => this.playTone(554.37, 0.1, 'sine', 0.06), 90);
+      setTimeout(() => this.playTone(659.25, 0.18, 'sine', 0.08), 180);
     }
   }
 
   const sound = new SoundEngine();
 
   /* ==========================================================================
-     2. APP STATE MANAGEMENT & LOCAL STORAGE
+     2. APP STATE ENGINE & LOCAL-FIRST PERSISTENCE
      ========================================================================== */
   class AppState {
     constructor() {
       this.todayStr = this.getTodayDateString();
+      this.migrateLegacyData();
       this.initStorage();
     }
 
@@ -84,99 +85,99 @@
       return `${y}-${m}-${d}`;
     }
 
+    migrateLegacyData() {
+      if (!localStorage.getItem('aether_missions') && localStorage.getItem('apex_tasks')) {
+        localStorage.setItem('aether_missions', localStorage.getItem('apex_tasks'));
+      }
+      if (!localStorage.getItem('aether_completed_missions') && localStorage.getItem('apex_achievements')) {
+        localStorage.setItem('aether_completed_missions', localStorage.getItem('apex_achievements'));
+      }
+      if (!localStorage.getItem('aether_focus_sessions') && localStorage.getItem('apex_focus_history')) {
+        localStorage.setItem('aether_focus_sessions', localStorage.getItem('apex_focus_history'));
+      }
+      if (!localStorage.getItem('aether_vision') && localStorage.getItem('apex_mission')) {
+        localStorage.setItem('aether_vision', localStorage.getItem('apex_mission'));
+      }
+    }
+
     initStorage() {
-      if (!localStorage.getItem('apex_tasks')) {
-        localStorage.setItem('apex_tasks', JSON.stringify([]));
-      }
-      if (!localStorage.getItem('apex_fitness_activities')) {
-        localStorage.setItem('apex_fitness_activities', JSON.stringify([]));
-      }
-      if (!localStorage.getItem('apex_distractions')) {
-        localStorage.setItem('apex_distractions', JSON.stringify([]));
-      }
-      if (!localStorage.getItem('apex_xp')) {
-        localStorage.setItem('apex_xp', '0');
-      }
-      if (!localStorage.getItem('apex_achievements')) {
-        localStorage.setItem('apex_achievements', JSON.stringify([]));
-      }
-      if (!localStorage.getItem('apex_focus_history')) {
-        localStorage.setItem('apex_focus_history', JSON.stringify([]));
-      }
-      if (!localStorage.getItem('apex_reflections')) {
-        localStorage.setItem('apex_reflections', JSON.stringify([]));
-      }
-      if (!localStorage.getItem('apex_mission')) {
-        localStorage.setItem('apex_mission', JSON.stringify({ building: '', why: '', values: '', direction: '' }));
+      if (!localStorage.getItem('aether_missions')) localStorage.setItem('aether_missions', JSON.stringify([]));
+      if (!localStorage.getItem('aether_completed_missions')) localStorage.setItem('aether_completed_missions', JSON.stringify([]));
+      if (!localStorage.getItem('aether_focus_sessions')) localStorage.setItem('aether_focus_sessions', JSON.stringify([]));
+      if (!localStorage.getItem('aether_decompression')) localStorage.setItem('aether_decompression', JSON.stringify([]));
+      if (!localStorage.getItem('aether_daily_reviews')) localStorage.setItem('aether_daily_reviews', JSON.stringify([]));
+      if (!localStorage.getItem('aether_vision')) {
+        localStorage.setItem('aether_vision', JSON.stringify({
+          building: '', why: '', values: '', direction: ''
+        }));
       }
     }
 
     // --- Missions CRUD ---
-    getTasks() {
+    getMissions() {
       try {
-        return JSON.parse(localStorage.getItem('apex_tasks')) || [];
+        return JSON.parse(localStorage.getItem('aether_missions')) || [];
       } catch (e) { return []; }
     }
 
-    saveTasks(tasks) {
-      localStorage.setItem('apex_tasks', JSON.stringify(tasks));
-      window.dispatchEvent(new CustomEvent('apex:tasks-updated'));
+    saveMissions(missions) {
+      localStorage.setItem('aether_missions', JSON.stringify(missions));
+      window.dispatchEvent(new CustomEvent('aether:missions-updated'));
     }
 
-    addTask(taskData) {
-      const tasks = this.getTasks();
-      const newTask = {
+    addMission(missionData) {
+      const list = this.getMissions();
+      const newMission = {
         id: 'msn_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
-        title: taskData.title.trim(),
-        description: (taskData.description || '').trim(),
-        category: taskData.category || 'TECHNICAL',
-        priority: taskData.priority || 'P2',
-        deadline: taskData.deadline || '', // Optional! User manually decides
-        startDate: taskData.startDate || '',
-        estimatedEffort: (taskData.estimatedEffort || '').trim(),
+        title: missionData.title.trim(),
+        description: (missionData.description || '').trim(),
+        category: missionData.category || 'TECHNICAL',
+        priority: missionData.priority || 'P2',
+        deadline: missionData.deadline || '',
+        startDate: missionData.startDate || '',
+        estimatedEffort: (missionData.estimatedEffort || '').trim(),
         status: 'TODO',
-        subtasks: taskData.subtasks || [],
-        notes: (taskData.notes || '').trim(),
+        subtasks: missionData.subtasks || [],
+        notes: (missionData.notes || '').trim(),
         createdAt: Date.now()
       };
-      tasks.unshift(newTask);
-      this.saveTasks(tasks);
-      return newTask;
+      list.unshift(newMission);
+      this.saveMissions(list);
+      return newMission;
     }
 
-    updateTask(id, updatedFields) {
-      const tasks = this.getTasks();
-      const index = tasks.findIndex(t => t.id === id);
+    updateMission(id, updatedFields) {
+      const list = this.getMissions();
+      const index = list.findIndex(m => m.id === id);
       if (index !== -1) {
-        tasks[index] = { ...tasks[index], ...updatedFields };
-        this.saveTasks(tasks);
-        return tasks[index];
+        list[index] = { ...list[index], ...updatedFields };
+        this.saveMissions(list);
+        return list[index];
       }
       return null;
     }
 
-    deleteTask(id) {
-      let tasks = this.getTasks();
-      tasks = tasks.filter(t => t.id !== id);
-      this.saveTasks(tasks);
+    deleteMission(id) {
+      let list = this.getMissions();
+      list = list.filter(m => m.id !== id);
+      this.saveMissions(list);
     }
 
-    toggleTaskCompletion(id) {
-      const tasks = this.getTasks();
-      const task = tasks.find(t => t.id === id);
-      if (task) {
-        const isNowCompleted = task.status !== 'COMPLETED';
-        task.status = isNowCompleted ? 'COMPLETED' : 'TODO';
+    toggleMissionCompletion(id) {
+      const list = this.getMissions();
+      const mission = list.find(m => m.id === id);
+      if (mission) {
+        const isNowCompleted = mission.status !== 'COMPLETED';
+        mission.status = isNowCompleted ? 'COMPLETED' : 'TODO';
         
-        if (isNowCompleted && task.subtasks) {
-          task.subtasks.forEach(st => st.completed = true);
+        if (isNowCompleted && mission.subtasks) {
+          mission.subtasks.forEach(s => s.completed = true);
         }
 
-        this.saveTasks(tasks);
+        this.saveMissions(list);
 
         if (isNowCompleted) {
-          this.awardXPForTask(task);
-          this.logAchievement(task);
+          this.logCompletedMission(mission);
           sound.playSuccessChime();
         }
         return isNowCompleted;
@@ -184,165 +185,186 @@
       return false;
     }
 
-    toggleSubtaskCompletion(taskId, subtaskId) {
-      const tasks = this.getTasks();
-      const task = tasks.find(t => t.id === taskId);
-      if (task && task.subtasks) {
-        const sub = task.subtasks.find(s => s.id === subtaskId);
-        if (sub) {
-          sub.completed = !sub.completed;
-          
-          const allDone = task.subtasks.every(s => s.completed);
+    toggleQuestStep(missionId, questId) {
+      const list = this.getMissions();
+      const mission = list.find(m => m.id === missionId);
+      if (mission && mission.subtasks) {
+        const quest = mission.subtasks.find(s => s.id === questId);
+        if (quest) {
+          quest.completed = !quest.completed;
+          const allDone = mission.subtasks.every(s => s.completed);
           if (allDone) {
-            task.status = 'COMPLETED';
-            this.awardXPForTask(task);
-            this.logAchievement(task);
+            mission.status = 'COMPLETED';
+            this.logCompletedMission(mission);
             sound.playSuccessChime();
-          } else if (task.status === 'COMPLETED') {
-            task.status = 'IN_PROGRESS';
+          } else if (mission.status === 'COMPLETED') {
+            mission.status = 'IN_PROGRESS';
           }
-          this.saveTasks(tasks);
-          return sub.completed;
+          this.saveMissions(list);
+          return quest.completed;
         }
       }
       return false;
     }
 
-    addSubtask(taskId, subtaskTitle) {
-      const tasks = this.getTasks();
-      const task = tasks.find(t => t.id === taskId);
-      if (task) {
-        if (!task.subtasks) task.subtasks = [];
-        const newSub = {
+    addQuestStep(missionId, title) {
+      const list = this.getMissions();
+      const mission = list.find(m => m.id === missionId);
+      if (mission) {
+        if (!mission.subtasks) mission.subtasks = [];
+        const newQuest = {
           id: 'qst_' + Date.now() + '_' + Math.floor(Math.random() * 100),
-          title: subtaskTitle.trim(),
+          title: title.trim(),
           completed: false
         };
-        task.subtasks.push(newSub);
-        this.saveTasks(tasks);
-        return newSub;
+        mission.subtasks.push(newQuest);
+        this.saveMissions(list);
+        return newQuest;
       }
       return null;
     }
 
-    // --- XP & Progression ---
-    getXP() {
-      return parseInt(localStorage.getItem('apex_xp') || '0', 10);
-    }
-
-    awardXPForTask(task) {
-      let earnedXP = 20;
-      if (task.priority === 'P1') earnedXP = 50;
-      else if (task.priority === 'P2') earnedXP = 35;
-      else if (task.priority === 'P3') earnedXP = 20;
-      else if (task.priority === 'P4') earnedXP = 10;
-
-      if (task.subtasks && task.subtasks.length > 0) {
-        earnedXP += task.subtasks.length * 5;
+    // Helper: Identify Next Action for a Mission or System
+    getNextAction(mission) {
+      if (!mission) return 'Declare your first mission objective';
+      if (mission.subtasks && mission.subtasks.length > 0) {
+        const nextSub = mission.subtasks.find(s => !s.completed);
+        if (nextSub) return nextSub.title;
       }
-
-      const currentXP = this.getXP();
-      const newXP = currentXP + earnedXP;
-      localStorage.setItem('apex_xp', newXP.toString());
-      window.dispatchEvent(new CustomEvent('apex:xp-updated', { detail: { earnedXP, newXP } }));
+      return mission.title;
     }
 
-    getRankInfo() {
-      const xp = this.getXP();
-      if (xp >= 2000) return { title: 'MASTER', level: 6, reqXP: 2000, nextXP: 5000, symbol: 'MS' };
-      if (xp >= 1200) return { title: 'COMMAND', level: 5, reqXP: 1200, nextXP: 2000, symbol: 'CM' };
-      if (xp >= 700) return { title: 'ELITE', level: 4, reqXP: 700, nextXP: 1200, symbol: 'EL' };
-      if (xp >= 350) return { title: 'SPECIALIST', level: 3, reqXP: 350, nextXP: 700, symbol: 'SP' };
-      if (xp >= 100) return { title: 'OPERATIVE', level: 2, reqXP: 100, nextXP: 350, symbol: 'OP' };
-      return { title: 'INITIATE', level: 1, reqXP: 0, nextXP: 100, symbol: 'IN' };
-    }
-
-    getAchievements() {
+    // --- Focus Sessions & Interruption Tracking ---
+    getFocusSessions() {
       try {
-        return JSON.parse(localStorage.getItem('apex_achievements')) || [];
+        return JSON.parse(localStorage.getItem('aether_focus_sessions')) || [];
       } catch (e) { return []; }
     }
 
-    logAchievement(task) {
-      const achievements = this.getAchievements();
+    logFocusSession(sessionData) {
+      const list = this.getFocusSessions();
       const entry = {
-        id: 'ach_' + Date.now(),
-        taskTitle: task.title,
-        category: task.category,
-        completedAt: new Date().toLocaleDateString(),
-        priority: task.priority
+        id: 'fcs_' + Date.now(),
+        missionId: sessionData.missionId || '',
+        missionTitle: sessionData.missionTitle || 'General Focus',
+        durationMinutes: sessionData.durationMinutes || 25,
+        interrupted: sessionData.interrupted || false,
+        interruptionReason: sessionData.interruptionReason || '',
+        resumed: sessionData.resumed || false,
+        timestamp: Date.now(),
+        dateStr: this.todayStr
       };
-      achievements.unshift(entry);
-      localStorage.setItem('apex_achievements', JSON.stringify(achievements));
-      window.dispatchEvent(new CustomEvent('apex:achievements-updated'));
+      list.unshift(entry);
+      localStorage.setItem('aether_focus_sessions', JSON.stringify(list));
+      window.dispatchEvent(new CustomEvent('aether:focus-updated'));
     }
 
-    // --- Recalibration / Physical Activities ---
-    getFitnessActivities() {
+    saveResumptionMemory(memoryObj) {
+      localStorage.setItem('aether_resumption_memory', JSON.stringify({
+        ...memoryObj,
+        timestamp: Date.now()
+      }));
+      window.dispatchEvent(new CustomEvent('aether:resumption-updated'));
+    }
+
+    getResumptionMemory() {
       try {
-        return JSON.parse(localStorage.getItem('apex_fitness_activities')) || [];
+        return JSON.parse(localStorage.getItem('aether_resumption_memory'));
+      } catch (e) { return null; }
+    }
+
+    clearResumptionMemory() {
+      localStorage.removeItem('aether_resumption_memory');
+      window.dispatchEvent(new CustomEvent('aether:resumption-updated'));
+    }
+
+    // --- Decompression & Thought Logs ---
+    getDecompressionEntries() {
+      try {
+        return JSON.parse(localStorage.getItem('aether_decompression')) || [];
       } catch (e) { return []; }
     }
 
-    saveFitnessActivities(activities) {
-      localStorage.setItem('apex_fitness_activities', JSON.stringify(activities));
-      window.dispatchEvent(new CustomEvent('apex:fitness-updated'));
-    }
-
-    addFitnessActivity(name, category, duration, target) {
-      const list = this.getFitnessActivities();
-      const newAct = {
-        id: 'fit_' + Date.now(),
-        name: name.trim(),
-        category: category || 'PHYSICAL',
-        duration: duration || '30m',
-        target: target || '1 session',
-        completedToday: false,
-        createdAt: Date.now()
-      };
-      list.push(newAct);
-      this.saveFitnessActivities(list);
-    }
-
-    toggleFitnessActivity(id) {
-      const list = this.getFitnessActivities();
-      const act = list.find(a => a.id === id);
-      if (act) {
-        act.completedToday = !act.completedToday;
-        this.saveFitnessActivities(list);
-        if (act.completedToday) sound.playSuccessChime();
-      }
-    }
-
-    // --- Internal Status Logs ---
-    getDistractions() {
-      try {
-        return JSON.parse(localStorage.getItem('apex_distractions')) || [];
-      } catch (e) { return []; }
-    }
-
-    logDistraction(text) {
-      const list = this.getDistractions();
+    logThought(text, mood = 'neutral') {
+      const list = this.getDecompressionEntries();
       list.unshift({
-        id: 'dis_' + Date.now(),
+        id: 'thg_' + Date.now(),
         text: text.trim(),
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        mood: mood,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        dateStr: this.todayStr
       });
-      localStorage.setItem('apex_distractions', JSON.stringify(list));
-      window.dispatchEvent(new CustomEvent('apex:attention-updated'));
+      localStorage.setItem('aether_decompression', JSON.stringify(list));
+      window.dispatchEvent(new CustomEvent('aether:decompression-updated'));
+    }
+
+    // --- Completed Missions Log ---
+    getCompletedMissions() {
+      try {
+        return JSON.parse(localStorage.getItem('aether_completed_missions')) || [];
+      } catch (e) { return []; }
+    }
+
+    logCompletedMission(mission) {
+      const list = this.getCompletedMissions();
+      list.unshift({
+        id: 'cmp_' + Date.now(),
+        missionTitle: mission.title,
+        category: mission.category,
+        priority: mission.priority,
+        completedAt: new Date().toLocaleDateString()
+      });
+      localStorage.setItem('aether_completed_missions', JSON.stringify(list));
+      window.dispatchEvent(new CustomEvent('aether:completed-updated'));
+    }
+
+    // --- Export / Import JSON Data ---
+    exportWorkspaceJSON() {
+      const data = {
+        missions: this.getMissions(),
+        completedMissions: this.getCompletedMissions(),
+        focusSessions: this.getFocusSessions(),
+        decompression: this.getDecompressionEntries(),
+        dailyReviews: JSON.parse(localStorage.getItem('aether_daily_reviews') || '[]'),
+        vision: JSON.parse(localStorage.getItem('aether_vision') || '{}'),
+        exportedAt: new Date().toISOString()
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `aether-os-backup-${this.todayStr}.json`;
+      a.click();
+    }
+
+    importWorkspaceJSON(jsonText) {
+      try {
+        const data = JSON.parse(jsonText);
+        if (data.missions) localStorage.setItem('aether_missions', JSON.stringify(data.missions));
+        if (data.completedMissions) localStorage.setItem('aether_completed_missions', JSON.stringify(data.completedMissions));
+        if (data.focusSessions) localStorage.setItem('aether_focus_sessions', JSON.stringify(data.focusSessions));
+        if (data.decompression) localStorage.setItem('aether_decompression', JSON.stringify(data.decompression));
+        if (data.dailyReviews) localStorage.setItem('aether_daily_reviews', JSON.stringify(data.dailyReviews));
+        if (data.vision) localStorage.setItem('aether_vision', JSON.stringify(data.vision));
+        
+        window.dispatchEvent(new CustomEvent('aether:missions-updated'));
+        window.dispatchEvent(new CustomEvent('aether:focus-updated'));
+        alert('Workspace backup successfully restored!');
+      } catch (e) {
+        alert('Error importing JSON backup: Invalid format.');
+      }
     }
   }
 
   const state = new AppState();
 
   /* ==========================================================================
-     3. TELEMETRY CLOCK & HEADER
+     3. HEADER TELEMETRY & CLOCK
      ========================================================================== */
   function initHeaderTelemetry() {
     const dateEl = document.getElementById('header-date');
     const timeEl = document.getElementById('header-session-time');
-    const rankTitleEl = document.getElementById('header-rank-name');
-    const xpValEl = document.getElementById('header-xp-val');
+    const focusValEl = document.getElementById('header-xp-val');
 
     const updateClock = () => {
       const now = new Date();
@@ -362,43 +384,35 @@
     updateClock();
     setInterval(updateClock, 1000);
 
-    const updateRankHeader = () => {
-      const info = state.getRankInfo();
-      const xp = state.getXP();
-      if (rankTitleEl) rankTitleEl.textContent = info.title;
-      if (xpValEl) xpValEl.textContent = `${xp} XP`;
+    const updateHeaderMetrics = () => {
+      const sessions = state.getFocusSessions().filter(s => s.dateStr === state.todayStr);
+      const totalMins = sessions.reduce((acc, s) => acc + (s.durationMinutes || 0), 0);
+      if (focusValEl) focusValEl.textContent = `${totalMins} MIN`;
     };
 
-    updateRankHeader();
-    window.addEventListener('apex:xp-updated', updateRankHeader);
+    updateHeaderMetrics();
+    window.addEventListener('aether:focus-updated', updateHeaderMetrics);
   }
 
   /* ==========================================================================
-     4. NAVIGATION ENGINE & MOBILE NAVIGATION SYSTEM
+     4. NAVIGATION ENGINE (5 MAIN AREAS)
      ========================================================================== */
   function initNavigation() {
     const navTabBtns = document.querySelectorAll('.nav-tab-btn');
     const mobileBottomBtns = document.querySelectorAll('.mobile-bottom-nav-item');
     const viewContainers = document.querySelectorAll('.app-view-container');
-    const modeCoreBtn = document.getElementById('btn-mode-core');
-    const modeFitnessBtn = document.getElementById('btn-mode-fitness');
     const modeDisplayTitle = document.getElementById('mode-display-title');
 
-    // Mobile More Sheet Elements
+    // Mobile Sheet
     const modalMobileMore = document.getElementById('modal-mobile-more');
     const btnCloseMobileMore = document.getElementById('btn-close-mobile-more');
     const btnCloseMoreSheet = document.getElementById('btn-close-more-sheet');
     const mobileMoreItems = document.querySelectorAll('.mobile-more-item[data-view]');
-    const btnMobileOpenPreferences = document.getElementById('btn-mobile-open-preferences');
-    const btnMobileOpenAI = document.getElementById('btn-mobile-open-ai');
-    const btnMobileInstallPWA = document.getElementById('btn-mobile-install-pwa');
-
-    const secondaryViews = ['fitness', 'attention', 'decompression', 'mission'];
 
     const switchView = (targetView) => {
       if (targetView === 'more') {
         if (modalMobileMore) modalMobileMore.classList.remove('hidden');
-        sound.playBeep(700, 0.04, 'sine', 0.05);
+        sound.playTone(600, 0.04);
         return;
       }
 
@@ -412,45 +426,23 @@
         }
       });
 
-      // Highlight Desktop Tabs
-      navTabBtns.forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.view === targetView);
-      });
+      navTabBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.view === targetView));
+      mobileBottomBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.view === targetView));
 
-      // Highlight Mobile Bottom Navigation Tabs
-      mobileBottomBtns.forEach(btn => {
-        if (btn.dataset.view === 'more') {
-          btn.classList.toggle('active', secondaryViews.includes(targetView));
-        } else {
-          btn.classList.toggle('active', btn.dataset.view === targetView);
-        }
-      });
-
-      // Update Mode Title Display
       if (modeDisplayTitle) {
-        if (targetView === 'fitness') modeDisplayTitle.textContent = 'RECALIBRATION PACING';
-        else if (targetView === 'attention') modeDisplayTitle.textContent = 'STATUS REPORT';
-        else if (targetView === 'decompression') modeDisplayTitle.textContent = 'RECALIBRATION';
-        else if (targetView === 'mission') modeDisplayTitle.textContent = 'CORE DIRECTIVES';
-        else modeDisplayTitle.textContent = 'SYSTEM // INTERFACE';
+        if (targetView === 'tasks') modeDisplayTitle.textContent = 'MISSION ENGINE';
+        else if (targetView === 'focus') modeDisplayTitle.textContent = 'FOCUS COCKPIT';
+        else if (targetView === 'achievements') modeDisplayTitle.textContent = 'INSIGHTS & ANALYTICS';
+        else if (targetView === 'mission') modeDisplayTitle.textContent = 'SYSTEM & RECOVERY';
+        else modeDisplayTitle.textContent = 'CONTROL ROOM';
       }
 
-      sound.playBeep(640, 0.04, 'sine', 0.05);
+      sound.playTone(550, 0.04);
     };
 
-    navTabBtns.forEach(btn => {
-      btn.addEventListener('click', () => switchView(btn.dataset.view));
-    });
-
-    mobileBottomBtns.forEach(btn => {
-      btn.addEventListener('click', () => switchView(btn.dataset.view));
-    });
-
-    mobileMoreItems.forEach(item => {
-      item.addEventListener('click', () => {
-        switchView(item.dataset.view);
-      });
-    });
+    navTabBtns.forEach(btn => btn.addEventListener('click', () => switchView(btn.dataset.view)));
+    mobileBottomBtns.forEach(btn => btn.addEventListener('click', () => switchView(btn.dataset.view)));
+    mobileMoreItems.forEach(item => item.addEventListener('click', () => switchView(item.dataset.view)));
 
     const closeMoreModal = () => {
       if (modalMobileMore) modalMobileMore.classList.add('hidden');
@@ -459,65 +451,42 @@
     if (btnCloseMobileMore) btnCloseMobileMore.addEventListener('click', closeMoreModal);
     if (btnCloseMoreSheet) btnCloseMoreSheet.addEventListener('click', closeMoreModal);
 
-    if (btnMobileOpenPreferences) {
-      btnMobileOpenPreferences.addEventListener('click', () => {
-        closeMoreModal();
-        const prefModal = document.getElementById('modal-creative-control');
-        if (prefModal) prefModal.classList.remove('hidden');
+    // Audio toggle
+    const soundToggle = document.getElementById('btn-sound-toggle');
+    const soundIconOn = document.getElementById('sound-icon-on');
+    const soundIconOff = document.getElementById('sound-icon-off');
+
+    if (soundToggle) {
+      soundToggle.addEventListener('click', () => {
+        const enabled = sound.toggle();
+        if (soundIconOn && soundIconOff) {
+          soundIconOn.classList.toggle('hidden', !enabled);
+          soundIconOff.classList.toggle('hidden', enabled);
+        }
       });
     }
 
-    if (btnMobileOpenAI) {
-      btnMobileOpenAI.addEventListener('click', () => {
-        closeMoreModal();
-        const aiModal = document.getElementById('modal-ai-assistant');
-        if (aiModal) aiModal.classList.remove('hidden');
-      });
-    }
+    // Backup Export / Import Button Listeners
+    const btnExport = document.getElementById('btn-export-data');
+    const inputImport = document.getElementById('input-import-data');
 
-    if (modeCoreBtn && modeFitnessBtn) {
-      modeCoreBtn.addEventListener('click', () => {
-        modeCoreBtn.classList.add('active');
-        modeFitnessBtn.classList.remove('active');
-        if (modeDisplayTitle) modeDisplayTitle.textContent = 'SYSTEM // INTERFACE';
-        switchView('dashboard');
-        sound.playBeep(700, 0.04, 'sine', 0.06);
-      });
-
-      modeFitnessBtn.addEventListener('click', () => {
-        modeFitnessBtn.classList.add('active');
-        modeCoreBtn.classList.remove('active');
-        if (modeDisplayTitle) modeDisplayTitle.textContent = 'RECALIBRATION PACING';
-        switchView('fitness');
-        sound.playBeep(750, 0.04, 'sine', 0.06);
-      });
-    }
-
-    // PWA Install Prompt Event Listener
-    let deferredPrompt = null;
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      if (btnMobileInstallPWA) btnMobileInstallPWA.classList.remove('hidden');
-    });
-
-    if (btnMobileInstallPWA) {
-      btnMobileInstallPWA.addEventListener('click', async () => {
-        if (deferredPrompt) {
-          deferredPrompt.prompt();
-          const { outcome } = await deferredPrompt.userChoice;
-          console.log(`[SYSTEM PWA] User install choice: ${outcome}`);
-          deferredPrompt = null;
-          btnMobileInstallPWA.classList.add('hidden');
+    if (btnExport) btnExport.addEventListener('click', () => state.exportWorkspaceJSON());
+    if (inputImport) {
+      inputImport.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (evt) => state.importWorkspaceJSON(evt.target.result);
+          reader.readAsText(file);
         }
       });
     }
   }
 
   /* ==========================================================================
-     5. MISSION SYSTEM & HIERARCHICAL QUEST STEPS CONTROLLER
+     5. MISSION ENGINE CONTROLLER
      ========================================================================== */
-  function initTaskSystem() {
+  function initMissionEngine() {
     const listEl = document.getElementById('task-system-list');
     const filterPills = document.querySelectorAll('#task-filter-pills .filter-pill');
     const searchInput = document.getElementById('task-search-input');
@@ -525,7 +494,7 @@
     const btnOpenCreate = document.getElementById('btn-open-create-task');
     const btnMobileFabCreate = document.getElementById('btn-mobile-fab-create');
 
-    // Modal Elements
+    // Modal
     const modalTask = document.getElementById('modal-task-editor');
     const formTask = document.getElementById('form-task-editor');
     const editIdInput = document.getElementById('task-edit-id');
@@ -543,243 +512,199 @@
 
     let currentFilter = 'ALL';
     let tempSubtasks = [];
-    const expandedTaskIds = new Set();
 
     const calculateDeadlineStatus = (deadlineStr) => {
-      if (!deadlineStr) return { label: 'NO TIME CONSTRAINT', class: 'deadline-none' };
+      if (!deadlineStr) return { label: 'NO DEADLINE', class: 'deadline-none' };
       const today = new Date(state.todayStr);
       const target = new Date(deadlineStr);
       const diffDays = Math.ceil((target - today) / (1000 * 60 * 60 * 24));
 
-      if (diffDays < 0) return { label: 'TIME CONSTRAINT OVERDUE', class: 'deadline-overdue' };
+      if (diffDays < 0) return { label: 'OVERDUE', class: 'deadline-overdue' };
       if (diffDays === 0) return { label: 'DUE TODAY', class: 'deadline-today' };
       if (diffDays <= 7) return { label: `DUE IN ${diffDays}D`, class: 'deadline-soon' };
-      return { label: `TIME CONSTRAINT: ${deadlineStr}`, class: 'deadline-upcoming' };
+      return { label: `DUE: ${deadlineStr}`, class: 'deadline-none' };
     };
 
-    const renderTasks = () => {
-      const tasks = state.getTasks();
+    const renderMissions = () => {
+      const missions = state.getMissions();
       if (!listEl) return;
 
-      let filtered = tasks;
+      let filtered = missions;
 
-      // Filter category
       if (categorySelect && categorySelect.value !== 'ALL') {
-        filtered = filtered.filter(t => t.category === categorySelect.value);
+        filtered = filtered.filter(m => m.category === categorySelect.value);
       }
 
-      // Filter search query
       if (searchInput && searchInput.value.trim()) {
         const query = searchInput.value.toLowerCase().trim();
-        filtered = filtered.filter(t => 
-          t.title.toLowerCase().includes(query) || 
-          (t.description && t.description.toLowerCase().includes(query))
+        filtered = filtered.filter(m => 
+          m.title.toLowerCase().includes(query) || 
+          (m.description && m.description.toLowerCase().includes(query))
         );
       }
 
-      // Filter pills
       if (currentFilter === 'TODAY') {
-        filtered = filtered.filter(t => t.deadline === state.todayStr);
+        filtered = filtered.filter(m => m.deadline === state.todayStr);
       } else if (currentFilter === 'DUE_SOON') {
-        filtered = filtered.filter(t => {
-          const status = calculateDeadlineStatus(t.deadline);
+        filtered = filtered.filter(m => {
+          const status = calculateDeadlineStatus(m.deadline);
           return status.class === 'deadline-soon' || status.class === 'deadline-today';
         });
       } else if (currentFilter === 'OVERDUE') {
-        filtered = filtered.filter(t => calculateDeadlineStatus(t.deadline).class === 'deadline-overdue');
+        filtered = filtered.filter(m => calculateDeadlineStatus(m.deadline).class === 'deadline-overdue');
       } else if (currentFilter === 'HIGH_PRIORITY') {
-        filtered = filtered.filter(t => t.priority === 'P1' || t.priority === 'P2');
+        filtered = filtered.filter(m => m.priority === 'P1' || m.priority === 'P2');
       } else if (currentFilter === 'IN_PROGRESS') {
-        filtered = filtered.filter(t => t.status !== 'COMPLETED');
+        filtered = filtered.filter(m => m.status !== 'COMPLETED');
       } else if (currentFilter === 'COMPLETED') {
-        filtered = filtered.filter(t => t.status === 'COMPLETED');
+        filtered = filtered.filter(m => m.status === 'COMPLETED');
       } else if (currentFilter === 'NO_DEADLINE') {
-        filtered = filtered.filter(t => !t.deadline);
+        filtered = filtered.filter(m => !m.deadline);
       }
 
       if (filtered.length === 0) {
         listEl.innerHTML = `
-          <li class="console-card" style="padding: 24px; text-align: center;">
-            <p class="mono-meta" style="font-size: 0.85rem;">No missions declared in this view. Click <strong>+ CREATE MISSION</strong> above to set your objective.</p>
+          <li class="empty-data-card">
+            <p class="mono-meta">No missions found in this view. Click <strong>+ CREATE MISSION</strong> to declare an objective.</p>
           </li>
         `;
         return;
       }
 
       listEl.innerHTML = '';
-      filtered.forEach(task => {
-        const isCompleted = task.status === 'COMPLETED';
-        const isExpanded = expandedTaskIds.has(task.id);
-        const deadlineInfo = calculateDeadlineStatus(task.deadline);
-        const subtaskTotal = task.subtasks ? task.subtasks.length : 0;
-        const subtaskDone = task.subtasks ? task.subtasks.filter(s => s.completed).length : 0;
-        const progressPercent = subtaskTotal > 0 ? Math.round((subtaskDone / subtaskTotal) * 100) : (isCompleted ? 100 : 0);
+      filtered.forEach(mission => {
+        const isCompleted = mission.status === 'COMPLETED';
+        const deadlineInfo = calculateDeadlineStatus(mission.deadline);
+        const nextAction = state.getNextAction(mission);
+        const subTotal = mission.subtasks ? mission.subtasks.length : 0;
+        const subDone = mission.subtasks ? mission.subtasks.filter(s => s.completed).length : 0;
+        const progressPercent = subTotal > 0 ? Math.round((subDone / subTotal) * 100) : (isCompleted ? 100 : 0);
 
         const li = document.createElement('li');
         li.className = `task-card-item ${isCompleted ? 'completed' : ''}`;
         li.innerHTML = `
           <div class="task-header-row">
             <label class="custom-checkbox-label">
-              <input type="checkbox" class="checkbox-input task-complete-chk" data-id="${task.id}" ${isCompleted ? 'checked' : ''}>
+              <input type="checkbox" class="checkbox-input task-complete-chk" data-id="${mission.id}" ${isCompleted ? 'checked' : ''}>
               <span class="checkbox-visual">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke-width="3.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
               </span>
             </label>
 
             <div class="task-main-info">
               <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
-                <span class="task-title-text">${task.title}</span>
+                <span class="task-title-text">${mission.title}</span>
                 <div style="display: flex; gap: 6px; align-items: center;">
-                  <button class="btn-expand-task" data-id="${task.id}">
-                    <span>${isExpanded ? 'LESS ▲' : 'DETAILS ▾'}</span>
-                  </button>
-                  <button class="btn-mini btn-edit-task" data-id="${task.id}">EDIT</button>
-                  <button class="btn-mini btn-text-danger btn-delete-task" data-id="${task.id}">DELETE</button>
+                  <button class="btn-mini btn-edit-task" data-id="${mission.id}">EDIT</button>
+                  <button class="btn-mini btn-text-danger btn-delete-task" data-id="${mission.id}">DELETE</button>
                 </div>
               </div>
 
-              <div class="task-tags-row" style="margin-top: 6px;">
-                <span class="priority-badge priority-${task.priority}">${task.priority}</span>
-                <span class="category-tag">${task.category}</span>
-                <span class="deadline-badge ${deadlineInfo.class}">${deadlineInfo.label}</span>
-                ${task.estimatedEffort ? `<span class="mono-meta">Effort: ${task.estimatedEffort}</span>` : ''}
+              <div class="next-action-pill" style="margin-top: 8px;">
+                <span class="mono-label text-accent-cyan">NEXT ACTION:</span>
+                <span style="font-size: 0.85rem; font-weight: 600;">${nextAction}</span>
               </div>
 
-              ${subtaskTotal > 0 ? `
-                <div class="progress-bar-rail" style="margin-top: 8px;">
+              <div class="task-tags-row" style="margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+                <span class="priority-badge priority-${mission.priority}">${mission.priority}</span>
+                <span class="category-tag">${mission.category}</span>
+                <span class="deadline-badge ${deadlineInfo.class}">${deadlineInfo.label}</span>
+                ${mission.estimatedEffort ? `<span class="mono-meta">Effort: ${mission.estimatedEffort}</span>` : ''}
+              </div>
+
+              ${subTotal > 0 ? `
+                <div class="progress-bar-rail" style="margin-top: 10px;">
                   <div class="progress-bar-fill" style="width: ${progressPercent}%;"></div>
                 </div>
-                <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">
-                  <span>Quest Steps: ${subtaskDone} / ${subtaskTotal} cleared (${progressPercent}%)</span>
-                </div>
-              ` : ''}
-
-              <!-- EXPANDABLE DETAILS & QUEST STEPS -->
-              ${isExpanded ? `
-                <div class="task-card-details">
-                  ${task.description ? `<p class="task-desc-text">${task.description}</p>` : ''}
-                  ${subtaskTotal > 0 ? `
-                    <div class="subtasks-wrapper">
-                      ${task.subtasks.map(st => `
-                        <div class="subtask-item ${st.completed ? 'completed' : ''}">
-                          <div class="subtask-left">
-                            <label class="custom-checkbox-label">
-                              <input type="checkbox" class="checkbox-input subtask-chk" data-task-id="${task.id}" data-sub-id="${st.id}" ${st.completed ? 'checked' : ''}>
-                              <span class="checkbox-visual" style="width: 18px; height: 18px;">
-                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke-width="3.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                              </span>
-                            </label>
-                            <span>${st.title}</span>
-                          </div>
-                        </div>
-                      `).join('')}
+                <div class="subtasks-wrapper" style="margin-top: 8px; display: flex; flex-direction: column; gap: 4px;">
+                  ${mission.subtasks.map(st => `
+                    <div style="display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: ${st.completed ? 'var(--text-muted)' : 'var(--text-secondary)'};">
+                      <input type="checkbox" class="subtask-chk" data-mission-id="${mission.id}" data-sub-id="${st.id}" ${st.completed ? 'checked' : ''}>
+                      <span style="${st.completed ? 'text-decoration: line-through;' : ''}">${st.title}</span>
                     </div>
-                  ` : ''}
+                  `).join('')}
                 </div>
               ` : ''}
             </div>
           </div>
         `;
-
         listEl.appendChild(li);
       });
     };
 
-
-    // Filter switching
     filterPills.forEach(pill => {
       pill.addEventListener('click', () => {
         filterPills.forEach(p => p.classList.remove('active'));
         pill.classList.add('active');
         currentFilter = pill.dataset.filter;
-        renderTasks();
+        renderMissions();
       });
     });
 
-    if (searchInput) searchInput.addEventListener('input', renderTasks);
-    if (categorySelect) categorySelect.addEventListener('change', renderTasks);
+    if (searchInput) searchInput.addEventListener('input', renderMissions);
+    if (categorySelect) categorySelect.addEventListener('change', renderMissions);
 
-    // List Event Delegation
     if (listEl) {
       listEl.addEventListener('click', (e) => {
-        // Expand/Collapse Details
-        const expandBtn = e.target.closest('.btn-expand-task');
-        if (expandBtn) {
-          const id = expandBtn.dataset.id;
-          if (expandedTaskIds.has(id)) {
-            expandedTaskIds.delete(id);
-          } else {
-            expandedTaskIds.add(id);
-          }
-          renderTasks();
-          return;
-        }
-
-        // Complete Task
         const taskChk = e.target.closest('.task-complete-chk');
         if (taskChk) {
-          state.toggleTaskCompletion(taskChk.dataset.id);
-          renderTasks();
+          state.toggleMissionCompletion(taskChk.dataset.id);
+          renderMissions();
           return;
         }
 
-        // Complete Subtask
         const subChk = e.target.closest('.subtask-chk');
         if (subChk) {
-          state.toggleSubtaskCompletion(subChk.dataset.taskId, subChk.dataset.subId);
-          renderTasks();
+          state.toggleQuestStep(subChk.dataset.missionId, subChk.dataset.subId);
+          renderMissions();
           return;
         }
 
-        // Edit Task
         const editBtn = e.target.closest('.btn-edit-task');
         if (editBtn) {
-          const task = state.getTasks().find(t => t.id === editBtn.dataset.id);
-          if (task && modalTask) {
-            editIdInput.value = task.id;
-            titleInput.value = task.title;
-            catInput.value = task.category;
-            priorityInput.value = task.priority;
-            deadlineInput.value = task.deadline || '';
-            effortInput.value = task.estimatedEffort || '';
-            descInput.value = task.description || '';
-            tempSubtasks = [...(task.subtasks || [])];
+          const mission = state.getMissions().find(m => m.id === editBtn.dataset.id);
+          if (mission && modalTask) {
+            editIdInput.value = mission.id;
+            titleInput.value = mission.title;
+            catInput.value = mission.category;
+            priorityInput.value = mission.priority;
+            deadlineInput.value = mission.deadline || '';
+            effortInput.value = mission.estimatedEffort || '';
+            descInput.value = mission.description || '';
+            tempSubtasks = [...(mission.subtasks || [])];
             renderModalSubtasks();
             modalTask.classList.remove('hidden');
           }
           return;
         }
 
-        // Delete Task
         const delBtn = e.target.closest('.btn-delete-task');
         if (delBtn) {
-          if (confirm('System Confirmation: Delete this mission record?')) {
-            state.deleteTask(delBtn.dataset.id);
-            renderTasks();
+          if (confirm('Delete this mission record?')) {
+            state.deleteMission(delBtn.dataset.id);
+            renderMissions();
           }
         }
       });
     }
 
-    // Mobile FAB Create Mission Click Listener
-    if (btnMobileFabCreate) {
-      btnMobileFabCreate.addEventListener('click', () => {
-        editIdInput.value = '';
-        formTask.reset();
-        tempSubtasks = [];
-        renderModalSubtasks();
-        modalTask.classList.remove('hidden');
-        titleInput.focus();
-      });
-    }
+    const openCreateModal = () => {
+      editIdInput.value = '';
+      formTask.reset();
+      tempSubtasks = [];
+      renderModalSubtasks();
+      modalTask.classList.remove('hidden');
+      titleInput.focus();
+    };
 
+    if (btnOpenCreate) btnOpenCreate.addEventListener('click', openCreateModal);
+    if (btnMobileFabCreate) btnMobileFabCreate.addEventListener('click', openCreateModal);
 
-    // Modal Subtasks Render & Add
     const renderModalSubtasks = () => {
       if (!modalSubtasksList) return;
       modalSubtasksList.innerHTML = tempSubtasks.map((s, idx) => `
-        <div style="display: flex; align-items: center; justify-content: space-between; background: var(--surface-input); padding: 6px 10px; border-radius: var(--radius-xs); border: 1px solid var(--border-subtle);">
-          <span style="font-size: 0.8rem;">${s.title}</span>
+        <div style="display: flex; align-items: center; justify-content: space-between; background: var(--surface-input); padding: 6px 10px; border-radius: var(--radius-xs); border: 1px solid var(--border-subdued);">
+          <span style="font-size: 0.82rem;">${s.title}</span>
           <button type="button" class="btn-mini btn-text-danger btn-remove-subtask-temp" data-idx="${idx}">✕</button>
         </div>
       `).join('');
@@ -789,7 +714,7 @@
       btnModalAddSubtask.addEventListener('click', () => {
         const text = modalNewSubtaskInput.value.trim();
         if (text) {
-          tempSubtasks.push({ id: 'st_' + Date.now(), title: text, completed: false });
+          tempSubtasks.push({ id: 'qst_' + Date.now(), title: text, completed: false });
           modalNewSubtaskInput.value = '';
           renderModalSubtasks();
         }
@@ -807,42 +732,26 @@
       });
     }
 
-    // Open Create Modal
-    if (btnOpenCreate) {
-      btnOpenCreate.addEventListener('click', () => {
-        editIdInput.value = '';
-        formTask.reset();
-        tempSubtasks = [];
-        renderModalSubtasks();
-        modalTask.classList.remove('hidden');
-        titleInput.focus();
-      });
-    }
-
-    // Modal Form Submit
     if (formTask) {
       formTask.addEventListener('submit', (e) => {
         e.preventDefault();
         const id = editIdInput.value;
-        const taskData = {
+        const data = {
           title: titleInput.value,
           category: catInput.value,
           priority: priorityInput.value,
-          deadline: deadlineInput.value || '', // Keep empty if user didn't set one!
+          deadline: deadlineInput.value || '',
           estimatedEffort: effortInput.value,
           description: descInput.value,
           subtasks: tempSubtasks
         };
 
-        if (id) {
-          state.updateTask(id, taskData);
-        } else {
-          state.addTask(taskData);
-        }
+        if (id) state.updateMission(id, data);
+        else state.addMission(data);
 
         modalTask.classList.add('hidden');
-        sound.playBeep(750, 0.05, 'sine', 0.07);
-        renderTasks();
+        sound.playTone(620, 0.05);
+        renderMissions();
       });
     }
 
@@ -850,459 +759,687 @@
     if (btnCloseModal) btnCloseModal.addEventListener('click', closeModal);
     if (btnCancelModal) btnCancelModal.addEventListener('click', closeModal);
 
-    renderTasks();
-    window.addEventListener('apex:tasks-updated', renderTasks);
+    renderMissions();
+    window.addEventListener('aether:missions-updated', renderMissions);
   }
 
   /* ==========================================================================
-     6. DASHBOARD SURFACING & ACCOMPLISHMENT ARCHIVE
-     ========================================================================= */
-  function initDashboardSurfacing() {
+     6. FOCUS COCKPIT & INTERRUPTION STATE RECOVERY
+     ========================================================================== */
+  function initFocusSystem() {
+    const objInput = document.getElementById('focus-objective-input');
+    const nextActionTitle = document.getElementById('focus-next-action-title');
+    const timerDigits = document.getElementById('focus-timer-digits');
+    const timerBar = document.getElementById('focus-timer-bar');
+    const activeLabel = document.getElementById('focus-active-objective-label');
+    const durationChips = document.querySelectorAll('#duration-chips-container .btn-duration-chip');
+    
+    // Buttons
+    const btnStart = document.getElementById('btn-focus-start');
+    const btnPause = document.getElementById('btn-focus-pause');
+    const btnResume = document.getElementById('btn-focus-resume');
+    const btnInterrupt = document.getElementById('btn-focus-interrupt');
+    const btnComplete = document.getElementById('btn-focus-complete');
+    const btnCancel = document.getElementById('btn-focus-cancel');
+
+    // Interruption Modal
+    const modalInterrupt = document.getElementById('modal-focus-interruption');
+    const inputReason = document.getElementById('input-interruption-reason');
+    const btnSaveInterrupt = document.getElementById('btn-save-interruption');
+    const btnCloseInterrupt = document.getElementById('btn-close-interruption-modal');
+
+    // Resumption Memory Card
+    const resumptionBox = document.getElementById('focus-resumption-memory-box');
+    const resumptionContextText = document.getElementById('resumption-context-text');
+    const btnResumptionRejoin = document.getElementById('btn-resumption-rejoin');
+    const btnResumptionClear = document.getElementById('btn-resumption-clear');
+
+    let totalMins = 25;
+    let secondsLeft = 25 * 60;
+    let timerInterval = null;
+    let isRunning = false;
+    let activeMissionRef = null;
+
+    const formatTimer = (secs) => {
+      const m = String(Math.floor(secs / 60)).padStart(2, '0');
+      const s = String(secs % 60).padStart(2, '0');
+      return `${m}:${s}`;
+    };
+
+    const updateFocusDisplay = () => {
+      if (timerDigits) timerDigits.textContent = formatTimer(secondsLeft);
+      if (timerBar) {
+        const percent = (secondsLeft / (totalMins * 60)) * 100;
+        timerBar.style.width = `${percent}%`;
+      }
+      const headerTimer = document.getElementById('header-focus-timer');
+      if (headerTimer) headerTimer.textContent = formatTimer(secondsLeft);
+    };
+
+    const setDuration = (mins) => {
+      totalMins = mins;
+      secondsLeft = mins * 60;
+      updateFocusDisplay();
+    };
+
+    durationChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        if (isRunning) return;
+        durationChips.forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        setDuration(parseInt(chip.dataset.mins, 10));
+      });
+    });
+
+    const startTimer = () => {
+      if (isRunning) return;
+      isRunning = true;
+      const headerFocusPill = document.getElementById('header-focus-pill');
+      if (headerFocusPill) headerFocusPill.classList.remove('hidden');
+
+      btnStart.classList.add('hidden');
+      btnPause.classList.remove('hidden');
+      btnInterrupt.classList.remove('hidden');
+      btnComplete.classList.remove('hidden');
+      btnCancel.classList.remove('hidden');
+
+      timerInterval = setInterval(() => {
+        if (secondsLeft > 0) {
+          secondsLeft--;
+          updateFocusDisplay();
+        } else {
+          completeFocusSession(true);
+        }
+      }, 1000);
+    };
+
+    const pauseTimer = () => {
+      isRunning = false;
+      clearInterval(timerInterval);
+      btnPause.classList.add('hidden');
+      btnResume.classList.remove('hidden');
+    };
+
+    const resumeTimer = () => {
+      startTimer();
+      btnResume.classList.add('hidden');
+    };
+
+    const completeFocusSession = (naturally = true) => {
+      isRunning = false;
+      clearInterval(timerInterval);
+      const title = objInput ? objInput.value : 'Focus Session';
+      
+      state.logFocusSession({
+        missionTitle: title,
+        durationMinutes: totalMins,
+        completedNaturally: naturally,
+        interrupted: !naturally
+      });
+
+      if (naturally) sound.playSuccessChime();
+
+      resetTimerUI();
+    };
+
+    const resetTimerUI = () => {
+      isRunning = false;
+      clearInterval(timerInterval);
+      const headerFocusPill = document.getElementById('header-focus-pill');
+      if (headerFocusPill) headerFocusPill.classList.add('hidden');
+
+      btnStart.classList.remove('hidden');
+      btnPause.classList.add('hidden');
+      btnResume.classList.add('hidden');
+      btnInterrupt.classList.add('hidden');
+      btnComplete.classList.add('hidden');
+      btnCancel.classList.add('hidden');
+
+      setDuration(totalMins);
+    };
+
+    if (btnStart) btnStart.addEventListener('click', startTimer);
+    if (btnPause) btnPause.addEventListener('click', pauseTimer);
+    if (btnResume) btnResume.addEventListener('click', resumeTimer);
+    if (btnComplete) btnComplete.addEventListener('click', () => completeFocusSession(true));
+    if (btnCancel) btnCancel.addEventListener('click', resetTimerUI);
+
+    // Interruption logic & State memory
+    if (btnInterrupt) {
+      btnInterrupt.addEventListener('click', () => {
+        pauseTimer();
+        if (modalInterrupt) modalInterrupt.classList.remove('hidden');
+      });
+    }
+
+    if (btnSaveInterrupt) {
+      btnSaveInterrupt.addEventListener('click', () => {
+        const reason = inputReason.value.trim();
+        const missionTitle = objInput.value.trim() || 'Focus Mission';
+        
+        state.saveResumptionMemory({
+          missionTitle: missionTitle,
+          nextAction: nextActionTitle ? nextActionTitle.textContent : '',
+          reason: reason || 'Context switch',
+          secondsLeft: secondsLeft,
+          totalMins: totalMins
+        });
+
+        state.logFocusSession({
+          missionTitle: missionTitle,
+          durationMinutes: Math.round((totalMins * 60 - secondsLeft) / 60),
+          interrupted: true,
+          interruptionReason: reason
+        });
+
+        modalInterrupt.classList.add('hidden');
+        inputReason.value = '';
+        resetTimerUI();
+        renderResumptionMemory();
+      });
+    }
+
+    if (btnCloseInterrupt) {
+      btnCloseInterrupt.addEventListener('click', () => modalInterrupt.classList.add('hidden'));
+    }
+
+    const renderResumptionMemory = () => {
+      const memory = state.getResumptionMemory();
+      if (memory && resumptionBox && resumptionContextText) {
+        resumptionBox.classList.remove('hidden');
+        resumptionContextText.textContent = `Interrupted on "${memory.missionTitle}" • Note: "${memory.reason}" • Target Next: "${memory.nextAction}"`;
+      } else if (resumptionBox) {
+        resumptionBox.classList.add('hidden');
+      }
+    };
+
+    if (btnResumptionRejoin) {
+      btnResumptionRejoin.addEventListener('click', () => {
+        const memory = state.getResumptionMemory();
+        if (memory) {
+          if (objInput) objInput.value = memory.missionTitle;
+          setDuration(memory.totalMins || 25);
+          secondsLeft = memory.secondsLeft || 25 * 60;
+          updateFocusDisplay();
+          state.clearResumptionMemory();
+          renderResumptionMemory();
+          startTimer();
+        }
+      });
+    }
+
+    if (btnResumptionClear) {
+      btnResumptionClear.addEventListener('click', () => {
+        state.clearResumptionMemory();
+        renderResumptionMemory();
+      });
+    }
+
+    // Sync Active Mission next action display
+    const updateFocusCockpitData = () => {
+      const missions = state.getMissions().filter(m => m.status !== 'COMPLETED');
+      const topMission = missions.find(m => m.priority === 'P1') || missions[0];
+
+      if (topMission) {
+        activeMissionRef = topMission;
+        if (objInput && !objInput.value) objInput.value = topMission.title;
+        const nextAct = state.getNextAction(topMission);
+        if (nextActionTitle) nextActionTitle.textContent = nextAct;
+        if (activeLabel) activeLabel.textContent = `Active Target: ${topMission.title}`;
+      } else {
+        if (nextActionTitle) nextActionTitle.textContent = 'No active mission declared.';
+        if (activeLabel) activeLabel.textContent = 'Mission execution pending target lock';
+      }
+    };
+
+    updateFocusCockpitData();
+    renderResumptionMemory();
+    window.addEventListener('aether:missions-updated', updateFocusCockpitData);
+  }
+
+  /* ==========================================================================
+     7. HOME VIEW CONTROLLER
+     ========================================================================== */
+  function initHomeView() {
     const dueSoonList = document.getElementById('dash-due-soon-list');
     const recentAchList = document.getElementById('dash-recent-achievements-list');
     const priorityTitle = document.getElementById('priority-title');
     const priorityDesc = document.getElementById('priority-desc');
+    const priorityNextAction = document.getElementById('priority-next-action-text');
     const priorityCat = document.getElementById('priority-category-badge');
     const smartEngagerText = document.getElementById('smart-engager-text');
+    const btnStartPriorityFocus = document.getElementById('btn-start-priority-focus');
+    const todayRatio = document.getElementById('today-ratio');
+    const todayPercent = document.getElementById('today-percent');
+    const todayProgressBar = document.getElementById('today-progress-bar');
+    const dashFocusMin = document.getElementById('dash-focus-min');
+    const questsClearedCount = document.getElementById('dash-quests-cleared-count');
 
-    const renderDashboard = () => {
-      const tasks = state.getTasks();
-      const activeTasks = tasks.filter(t => t.status !== 'COMPLETED');
+    const renderHome = () => {
+      const missions = state.getMissions();
+      const activeMissions = missions.filter(m => m.status !== 'COMPLETED');
+      const completedMissions = missions.filter(m => m.status === 'COMPLETED');
+      
+      const totalMissions = missions.length;
+      const clearedCount = completedMissions.length;
+      const percent = totalMissions > 0 ? Math.round((clearedCount / totalMissions) * 100) : 0;
 
-      // Recommended priority mission for Priority Transmission
-      const topTask = activeTasks.find(t => t.priority === 'P1') || activeTasks[0];
-      if (topTask) {
-        if (priorityTitle) priorityTitle.textContent = topTask.title;
-        if (priorityDesc) priorityDesc.textContent = topTask.description || `Priority ${topTask.priority} • ${topTask.deadline ? 'Time Constraint: ' + topTask.deadline : 'No Time Constraint'}`;
+      if (todayRatio) todayRatio.textContent = `${clearedCount} / ${totalMissions}`;
+      if (todayPercent) todayPercent.textContent = `${percent}%`;
+      if (todayProgressBar) todayProgressBar.style.width = `${percent}%`;
+
+      // Focus Time
+      const todaySessions = state.getFocusSessions().filter(s => s.dateStr === state.todayStr);
+      const focusMins = todaySessions.reduce((acc, s) => acc + (s.durationMinutes || 0), 0);
+      if (dashFocusMin) dashFocusMin.textContent = `${focusMins} MIN`;
+
+      // Quests Cleared Count
+      let totalQuestsCleared = 0;
+      missions.forEach(m => {
+        if (m.subtasks) totalQuestsCleared += m.subtasks.filter(s => s.completed).length;
+      });
+      if (questsClearedCount) questsClearedCount.textContent = `${totalQuestsCleared} STEPS`;
+
+      // Priority Mission
+      const topMission = activeMissions.find(m => m.priority === 'P1') || activeMissions[0];
+      if (topMission) {
+        if (priorityTitle) priorityTitle.textContent = topMission.title;
+        if (priorityDesc) priorityDesc.textContent = topMission.description || `Priority ${topMission.priority} • ${topMission.category}`;
+        if (priorityNextAction) priorityNextAction.textContent = state.getNextAction(topMission);
         if (priorityCat) {
-          priorityCat.textContent = `${topTask.priority} — ${topTask.category}`;
-          priorityCat.className = `priority-badge priority-${topTask.priority}`;
+          priorityCat.textContent = `${topMission.priority} — ${topMission.category}`;
+          priorityCat.className = `priority-badge priority-${topMission.priority}`;
         }
       } else {
         if (priorityTitle) priorityTitle.textContent = 'All missions cleared';
-        if (priorityDesc) priorityDesc.textContent = 'Create your next mission objective in Missions.';
+        if (priorityDesc) priorityDesc.textContent = 'Declare your next mission in Missions to unlock execution focus.';
+        if (priorityNextAction) priorityNextAction.textContent = 'Create your next mission objective';
       }
 
-      // System Analysis (Respectful & Autonomous)
+      // Assistant text
       if (smartEngagerText) {
-        if (topTask) {
-          smartEngagerText.textContent = `System analysis: "${topTask.title}" (${topTask.priority}) has the highest current urgency. You may begin, reschedule, or choose another mission.`;
+        if (topMission) {
+          smartEngagerText.textContent = `Assistant Suggestion: Mission "${topMission.title}" (${topMission.priority}) is your highest current priority. Next Action: "${state.getNextAction(topMission)}".`;
         } else {
-          smartEngagerText.textContent = 'System analysis: All user missions cleared. Observant system awaiting commander directives.';
+          smartEngagerText.textContent = 'Assistant Suggestion: No active missions pending. All goals cleared.';
         }
       }
 
-      // Urgent & Due soon list
+      // Urgency Queue
       if (dueSoonList) {
-        const dueSoon = activeTasks.slice(0, 4);
+        const dueSoon = activeMissions.slice(0, 4);
         if (dueSoon.length === 0) {
           dueSoonList.innerHTML = '<li class="mono-meta">No active time constraints pending.</li>';
         } else {
-          dueSoonList.innerHTML = dueSoon.map(t => `
+          dueSoonList.innerHTML = dueSoon.map(m => `
             <li class="task-card-item">
               <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span class="task-title-text" style="font-size: 0.88rem;">${t.title}</span>
-                <span class="priority-badge priority-${t.priority}">${t.priority}</span>
+                <span class="task-title-text" style="font-size: 0.88rem;">${m.title}</span>
+                <span class="priority-badge priority-${m.priority}">${m.priority}</span>
               </div>
-              <span class="mono-meta">${t.deadline ? 'Time Constraint: ' + t.deadline : 'No Time Constraint'} • ${t.category}</span>
+              <span class="mono-meta">${m.deadline ? 'Deadline: ' + m.deadline : 'No Deadline'} • ${m.category}</span>
             </li>
           `).join('');
         }
       }
 
-      // Accomplishment Archive
+      // Completed Archive preview
       if (recentAchList) {
-        const achievements = state.getAchievements().slice(0, 4);
-        if (achievements.length === 0) {
-          recentAchList.innerHTML = '<li class="mono-meta">Cleared missions record accomplishment telemetry here.</li>';
+        const completed = state.getCompletedMissions().slice(0, 4);
+        if (completed.length === 0) {
+          recentAchList.innerHTML = '<li class="mono-meta">Completed missions will record execution history here.</li>';
         } else {
-          recentAchList.innerHTML = achievements.map(a => `
-            <li class="achievement-card">
-              <div class="achievement-icon">✦</div>
+          recentAchList.innerHTML = completed.map(c => `
+            <li style="background: var(--surface-card-elevated); padding: 8px 12px; border-radius: var(--radius-xs); border: 1px solid var(--border-subdued); display: flex; justify-content: space-between; align-items: center;">
               <div>
-                <strong style="font-size: 0.85rem; color: var(--text-primary);">${a.taskTitle}</strong>
-                <div class="mono-meta">Cleared on ${a.completedAt} • ${a.category}</div>
+                <strong style="font-size: 0.85rem; color: var(--text-primary);">${c.missionTitle}</strong>
+                <div class="mono-meta">Cleared on ${c.completedAt} • ${c.category}</div>
               </div>
+              <span class="mono-label text-accent-success">✓</span>
             </li>
           `).join('');
         }
       }
     };
 
-    renderDashboard();
-    window.addEventListener('apex:tasks-updated', renderDashboard);
-    window.addEventListener('apex:achievements-updated', renderDashboard);
+    if (btnStartPriorityFocus) {
+      btnStartPriorityFocus.addEventListener('click', () => {
+        const focusTab = document.querySelector('.nav-tab-btn[data-view="focus"]');
+        if (focusTab) focusTab.click();
+      });
+    }
+
+    renderHome();
+    window.addEventListener('aether:missions-updated', renderHome);
+    window.addEventListener('aether:completed-updated', renderHome);
+    window.addEventListener('aether:focus-updated', renderHome);
   }
 
   /* ==========================================================================
-     7. RECALIBRATION PACING CONTROLLER
-     ========================================================================= */
-  function initFitnessMode() {
-    const gridEl = document.getElementById('fitness-activities-grid');
-    const btnOpenAdd = document.getElementById('btn-open-create-fitness');
+     8. INSIGHTS & REAL OBSERVED DATA CONTROLLER
+     ========================================================================== */
+  function initInsightsView() {
+    const totalFocusEl = document.getElementById('insights-total-focus');
+    const compRateEl = document.getElementById('insights-completion-rate');
+    const interruptCountEl = document.getElementById('insights-interrupt-count');
+    const resumptionRateEl = document.getElementById('insights-resumption-rate');
+    const trendBarsEl = document.getElementById('insights-trend-bars');
+    const archiveGrid = document.getElementById('achievements-history-grid');
 
-    const renderFitness = () => {
-      const activities = state.getFitnessActivities();
-      if (!gridEl) return;
+    const renderInsights = () => {
+      const sessions = state.getFocusSessions();
+      const missions = state.getMissions();
+      const completed = state.getCompletedMissions();
 
-      if (activities.length === 0) {
-        gridEl.innerHTML = `
-          <div class="console-card" style="grid-column: span 3; padding: 24px; text-align: center;">
-            <p class="mono-meta" style="font-size: 0.85rem;">No recalibration routines declared yet. Click <strong>+ ADD ROUTINE</strong> to declare physical pacing.</p>
-          </div>
-        `;
-        return;
+      const totalMins = sessions.reduce((acc, s) => acc + (s.durationMinutes || 0), 0);
+      if (totalFocusEl) totalFocusEl.textContent = `${totalMins} MIN`;
+
+      const totalMissions = missions.length;
+      const clearedMissions = completed.length;
+      const compRate = totalMissions > 0 ? Math.round((clearedMissions / totalMissions) * 100) : 0;
+      if (compRateEl) compRateEl.textContent = `${compRate}%`;
+
+      const interrupted = sessions.filter(s => s.interrupted);
+      if (interruptCountEl) interruptCountEl.textContent = interrupted.length.toString();
+
+      const resumed = interrupted.filter(s => s.resumed);
+      const resumptionRate = interrupted.length > 0 ? Math.round((resumed.length / interrupted.length) * 100) : 0;
+      if (resumptionRateEl) resumptionRateEl.textContent = `${resumptionRate}%`;
+
+      // 14-Day Trend Bars
+      if (trendBarsEl) {
+        const last14Days = [];
+        for (let i = 13; i >= 0; i--) {
+          const d = new Date();
+          d.setDate(d.getDate() - i);
+          const y = d.getFullYear();
+          const m = String(d.getMonth() + 1).padStart(2, '0');
+          const day = String(d.getDate()).padStart(2, '0');
+          last14Days.push(`${y}-${m}-${day}`);
+        }
+
+        const maxMins = 120;
+        trendBarsEl.innerHTML = last14Days.map(dateStr => {
+          const dayMins = sessions.filter(s => s.dateStr === dateStr).reduce((acc, s) => acc + (s.durationMinutes || 0), 0);
+          const heightPercent = Math.min(Math.round((dayMins / maxMins) * 100), 100);
+          return `
+            <div class="trend-bar-column" title="${dateStr}: ${dayMins} mins">
+              <div class="trend-bar-fill" style="height: ${heightPercent}%;"></div>
+              <span class="mono-meta" style="font-size: 0.65rem;">${dateStr.slice(8)}</span>
+            </div>
+          `;
+        }).join('');
       }
 
-      gridEl.innerHTML = activities.map(act => `
-        <div class="fitness-card">
-          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-            <div>
-              <span class="category-tag">${act.category}</span>
-              <h3 style="font-size: 0.95rem; font-weight: 700; margin-top: 4px;">${act.name}</h3>
+      // History Archive Grid
+      if (archiveGrid) {
+        if (completed.length === 0) {
+          archiveGrid.innerHTML = `
+            <div class="empty-data-card" style="grid-column: 1 / -1;">
+              <h3 class="mono-label text-accent-cyan" style="font-size: 0.9rem;">NO DATA YET</h3>
+              <p class="mono-meta" style="margin-top: 4px;">Completed missions will be recorded here with real execution telemetry.</p>
             </div>
-            <button class="btn-tactical ${act.completedToday ? 'btn-success' : 'btn-cyan-action'} btn-toggle-fitness" data-id="${act.id}">
-              ${act.completedToday ? 'CLEARED' : 'MARK CLEARED'}
-            </button>
-          </div>
-          <div class="mono-meta">Target: ${act.target} • Duration: ${act.duration}</div>
-        </div>
-      `).join('');
+          `;
+        } else {
+          archiveGrid.innerHTML = completed.map(c => `
+            <div style="background: var(--surface-card-elevated); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-subdued);">
+              <div style="display: flex; justify-content: space-between;">
+                <span class="priority-badge priority-${c.priority}">${c.priority}</span>
+                <span class="category-tag">${c.category}</span>
+              </div>
+              <h4 style="font-size: 0.9rem; font-weight: 700; margin-top: 6px;">${c.missionTitle}</h4>
+              <span class="mono-meta">Cleared on ${c.completedAt}</span>
+            </div>
+          `).join('');
+        }
+      }
     };
 
-    if (gridEl) {
-      gridEl.addEventListener('click', (e) => {
-        const btn = e.target.closest('.btn-toggle-fitness');
-        if (btn) {
-          state.toggleFitnessActivity(btn.dataset.id);
-          renderFitness();
-        }
-      });
-    }
-
-    if (btnOpenAdd) {
-      btnOpenAdd.addEventListener('click', () => {
-        const name = prompt('Declare recalibration routine (e.g., Physical Session, 5km Run, Mobility):');
-        if (name) {
-          state.addFitnessActivity(name, 'PHYSICAL', '30m', '1 session');
-          renderFitness();
-        }
-      });
-    }
-
-    renderFitness();
-    window.addEventListener('apex:fitness-updated', renderFitness);
+    renderInsights();
+    window.addEventListener('aether:focus-updated', renderInsights);
+    window.addEventListener('aether:completed-updated', renderInsights);
   }
 
   /* ==========================================================================
-     8. INTERNAL STATUS REPORT LOG
-     ========================================================================= */
-  function initAttentionControl() {
-    const formLog = document.getElementById('form-log-distraction');
-    const inputTitle = document.getElementById('input-distraction-title');
-    const listEl = document.getElementById('distraction-log-list');
+     9. SYSTEM AREA (Vision, Daily Review, Thought Log & Circuit Breaker)
+     ========================================================================== */
+  function initSystemArea() {
+    const subnavBtns = document.querySelectorAll('.system-subnav-btn');
+    const subviews = document.querySelectorAll('.system-subview');
 
-    const renderDistractions = () => {
-      const distractions = state.getDistractions();
-      if (!listEl) return;
+    subnavBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        subnavBtns.forEach(b => b.classList.remove('active', 'btn-cyan-action'));
+        subnavBtns.forEach(b => b.classList.add('btn-terminal-blue'));
+        btn.classList.remove('btn-terminal-blue');
+        btn.classList.add('active', 'btn-cyan-action');
 
-      if (distractions.length === 0) {
-        listEl.innerHTML = '<li class="mono-meta">No attention leaks recorded in this cycle.</li>';
+        const target = btn.dataset.subview;
+        subviews.forEach(sv => {
+          sv.classList.toggle('hidden', sv.id !== `subview-${target}`);
+        });
+      });
+    });
+
+    // Vision Layer
+    const visionBuilding = document.getElementById('mission-building');
+    const visionWhy = document.getElementById('mission-why');
+    const visionValues = document.getElementById('mission-values');
+    const visionDirection = document.getElementById('mission-direction');
+    const btnSaveVision = document.getElementById('btn-save-mission');
+
+    try {
+      const visionData = JSON.parse(localStorage.getItem('aether_vision') || '{}');
+      if (visionBuilding) visionBuilding.value = visionData.building || '';
+      if (visionWhy) visionWhy.value = visionData.why || '';
+      if (visionValues) visionValues.value = visionData.values || '';
+      if (visionDirection) visionDirection.value = visionData.direction || '';
+    } catch (e) {}
+
+    if (btnSaveVision) {
+      btnSaveVision.addEventListener('click', () => {
+        const data = {
+          building: visionBuilding.value,
+          why: visionWhy.value,
+          values: visionValues.value,
+          direction: visionDirection.value
+        };
+        localStorage.setItem('aether_vision', JSON.stringify(data));
+        sound.playTone(600, 0.05);
+        alert('Vision Directives saved.');
+      });
+    }
+
+    // Daily Review
+    const revMattered = document.getElementById('review-what-mattered');
+    const revHappened = document.getElementById('review-what-happened');
+    const revTomorrow = document.getElementById('review-tomorrow-changes');
+    const btnSaveReview = document.getElementById('btn-save-daily-review');
+
+    if (btnSaveReview) {
+      btnSaveReview.addEventListener('click', () => {
+        const reviews = JSON.parse(localStorage.getItem('aether_daily_reviews') || '[]');
+        reviews.unshift({
+          id: 'rev_' + Date.now(),
+          dateStr: state.todayStr,
+          whatMattered: revMattered.value,
+          whatHappened: revHappened.value,
+          tomorrowChanges: revTomorrow.value
+        });
+        localStorage.setItem('aether_daily_reviews', JSON.stringify(reviews));
+        sound.playSuccessChime();
+        alert('Daily Review saved for today.');
+      });
+    }
+
+    // Thought Log / Decompression
+    const decompInput = document.getElementById('decompression-input');
+    const decompMoodSelect = document.getElementById('decompression-mood-select');
+    const btnLogThought = document.getElementById('btn-save-decompression-thought');
+    const btnTurnIntoTask = document.getElementById('btn-turn-into-task');
+    const btnClearDecomp = document.getElementById('btn-clear-decompression');
+    const decompList = document.getElementById('decompression-log-list');
+
+    const renderDecompression = () => {
+      const entries = state.getDecompressionEntries();
+      if (!decompList) return;
+
+      if (entries.length === 0) {
+        decompList.innerHTML = '<li class="mono-meta">Thought log buffer is clear.</li>';
         return;
       }
 
-      listEl.innerHTML = distractions.slice(0, 6).map(d => `
-        <li class="attention-item">
-          <span>${d.text}</span>
-          <span class="mono-meta">${d.timestamp}</span>
+      decompList.innerHTML = entries.slice(0, 6).map(e => `
+        <li style="background: var(--surface-card-elevated); padding: 8px 12px; border-radius: var(--radius-xs); border: 1px solid var(--border-subdued); margin-bottom: 6px; display: flex; justify-content: space-between;">
+          <span>${e.text}</span>
+          <span class="mono-meta">[${(e.mood || 'neutral').toUpperCase()}] ${e.timestamp}</span>
         </li>
       `).join('');
     };
 
-    if (formLog) {
-      formLog.addEventListener('submit', (e) => {
-        e.preventDefault();
-        if (inputTitle.value.trim()) {
-          state.logDistraction(inputTitle.value.trim());
-          inputTitle.value = '';
-          sound.playBeep(620, 0.04, 'sine', 0.05);
-          renderDistractions();
+    if (btnLogThought) {
+      btnLogThought.addEventListener('click', () => {
+        if (decompInput && decompInput.value.trim()) {
+          state.logThought(decompInput.value.trim(), decompMoodSelect ? decompMoodSelect.value : 'neutral');
+          decompInput.value = '';
+          renderDecompression();
         }
       });
     }
 
-    renderDistractions();
+    if (btnTurnIntoTask) {
+      btnTurnIntoTask.addEventListener('click', () => {
+        if (decompInput && decompInput.value.trim()) {
+          state.addMission({ title: decompInput.value.trim(), category: 'COGNITIVE', priority: 'P2' });
+          decompInput.value = '';
+          alert('Thought converted into Mission!');
+          renderDecompression();
+        }
+      });
+    }
+
+    if (btnClearDecomp) {
+      btnClearDecomp.addEventListener('click', () => {
+        localStorage.setItem('aether_decompression', JSON.stringify([]));
+        renderDecompression();
+      });
+    }
+
+    renderDecompression();
+
+    // Circuit Breaker Modal Trigger
+    const cbModal = document.getElementById('modal-circuit-breaker');
+    const btnOpenCB = document.getElementById('btn-open-circuit-breaker');
+    const btnCloseCB = document.getElementById('btn-close-circuit-breaker');
+    const btnCloseCBX = document.getElementById('btn-close-circuit-breaker-x');
+
+    if (btnOpenCB) btnOpenCB.addEventListener('click', () => cbModal.classList.remove('hidden'));
+    const closeCB = () => cbModal.classList.add('hidden');
+    if (btnCloseCB) btnCloseCB.addEventListener('click', closeCB);
+    if (btnCloseCBX) btnCloseCBX.addEventListener('click', closeCB);
+
+    const circuitOptions = document.querySelectorAll('.btn-circuit-option');
+    circuitOptions.forEach(opt => {
+      opt.addEventListener('click', () => {
+        const action = opt.dataset.action;
+        if (action === 'micro_task') {
+          const taskTitle = prompt('Enter a single 5-minute micro-action:');
+          if (taskTitle) state.addMission({ title: taskTitle, category: 'TECHNICAL', priority: 'P1', estimatedEffort: '5m' });
+        } else if (action === 'decompress') {
+          const sysNav = document.querySelector('.nav-tab-btn[data-view="mission"]');
+          if (sysNav) sysNav.click();
+        }
+        closeCB();
+      });
+    });
   }
 
   /* ==========================================================================
-     9. AI ASSISTANT & QUEST STEP DECOMPOSITION
-     ========================================================================= */
-  function initAIAssistant() {
-    const modal = document.getElementById('modal-ai-assistant');
-    const btnOpen = document.getElementById('btn-open-ai-assistant');
-    const btnClose = document.getElementById('btn-close-ai');
-    const btnCloseX = document.getElementById('btn-close-ai-modal');
+     10. PREFERENCES, THEMES & SUPABASE SYNC
+     ========================================================================== */
+  function initPreferencesAndSync() {
+    const modalCC = document.getElementById('modal-creative-control');
+    const btnOpenCC = document.getElementById('btn-open-creative-control');
+    const btnCloseCC = document.getElementById('btn-close-cc');
+    const btnCloseCCX = document.getElementById('btn-close-cc-modal');
+    const themeCards = document.querySelectorAll('#theme-presets-row .theme-preset-card');
+
+    const applyTheme = (name) => {
+      document.body.className = `apex-body theme-${name || 'cyan'}`;
+      localStorage.setItem('aether_theme', name || 'cyan');
+      themeCards.forEach(c => c.classList.toggle('active', c.dataset.theme === name));
+    };
+
+    applyTheme(localStorage.getItem('aether_theme') || 'cyan');
+
+    themeCards.forEach(card => {
+      card.addEventListener('click', () => applyTheme(card.dataset.theme));
+    });
+
+    if (btnOpenCC) btnOpenCC.addEventListener('click', () => modalCC.classList.remove('hidden'));
+    const closeCC = () => modalCC.classList.add('hidden');
+    if (btnCloseCC) btnCloseCC.addEventListener('click', closeCC);
+    if (btnCloseCCX) btnCloseCCX.addEventListener('click', closeCC);
+
+    // AI Assistant Modal
+    const modalAI = document.getElementById('modal-ai-assistant');
+    const btnOpenAI = document.getElementById('btn-open-ai-assistant');
+    const btnMobileOpenAI = document.getElementById('btn-mobile-open-ai');
+    const btnCloseAI = document.getElementById('btn-close-ai');
+    const btnCloseAIX = document.getElementById('btn-close-ai-modal');
     const btnDecompose = document.getElementById('btn-ai-decompose-selected');
     const outputText = document.getElementById('ai-output-text');
 
-    if (btnOpen) btnOpen.addEventListener('click', () => modal.classList.remove('hidden'));
-    const close = () => modal.classList.add('hidden');
-    if (btnClose) btnClose.addEventListener('click', close);
-    if (btnCloseX) btnCloseX.addEventListener('click', close);
+    const openAI = () => modalAI.classList.remove('hidden');
+    const closeAI = () => modalAI.classList.add('hidden');
+
+    if (btnOpenAI) btnOpenAI.addEventListener('click', openAI);
+    if (btnMobileOpenAI) btnMobileOpenAI.addEventListener('click', () => {
+      const mobileSheet = document.getElementById('modal-mobile-more');
+      if (mobileSheet) mobileSheet.classList.add('hidden');
+      openAI();
+    });
+    if (btnCloseAI) btnCloseAI.addEventListener('click', closeAI);
+    if (btnCloseAIX) btnCloseAIX.addEventListener('click', closeAI);
 
     if (btnDecompose) {
       btnDecompose.addEventListener('click', async () => {
-        const topTask = state.getTasks().find(t => t.status !== 'COMPLETED');
-        if (!topTask) {
-          if (outputText) outputText.textContent = 'System analysis: No active mission available to break into quest steps.';
+        const topMission = state.getMissions().find(m => m.status !== 'COMPLETED');
+        if (!topMission) {
+          if (outputText) outputText.textContent = 'Assistant: No active mission available to decompose.';
           return;
         }
 
-        if (outputText) outputText.textContent = `Decomposing mission "${topTask.title}" into quest steps...`;
+        if (outputText) outputText.textContent = `Decomposing "${topMission.title}" into quest steps...`;
 
         try {
           const res = await fetch('/api/ai/assist', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'decompose', taskTitle: topTask.title })
+            body: JSON.stringify({ action: 'decompose', taskTitle: topMission.title })
           });
           const data = await res.json();
           if (data && data.success && data.suggestedSubtasks) {
-            data.suggestedSubtasks.forEach(st => state.addSubtask(topTask.id, st.title));
-            if (outputText) outputText.textContent = `System Record Updated: Decomposed "${topTask.title}" into ${data.suggestedSubtasks.length} quest steps!`;
+            data.suggestedSubtasks.forEach(s => state.addQuestStep(topMission.id, s.title));
+            if (outputText) outputText.textContent = `Decomposed "${topMission.title}" into ${data.suggestedSubtasks.length} executable quest steps!`;
             sound.playSuccessChime();
           } else {
-            if (outputText) outputText.textContent = `AI assistance is not connected yet. You may add quest steps manually in Mission Editor.`;
+            if (outputText) outputText.textContent = `Manual decomposition available in Mission Editor.`;
           }
         } catch (e) {
-          if (outputText) outputText.textContent = `AI assistance is not connected yet. You may add quest steps manually in Mission Editor.`;
+          if (outputText) outputText.textContent = `Manual decomposition available in Mission Editor.`;
         }
       });
     }
-  }
 
-  /* ==========================================================================
-     10. THEME SWITCHER (12 ACTIVE CELESTIAL ACCENT PALETTES)
-     ========================================================================= */
-  function initThemeSwitcher() {
-    const modal = document.getElementById('modal-creative-control');
-    const btnOpen = document.getElementById('btn-open-creative-control');
-    const btnClose = document.getElementById('btn-close-cc');
-    const btnCloseX = document.getElementById('btn-close-cc-modal');
-    const themeCards = document.querySelectorAll('#theme-presets-row .theme-preset-card');
-
-    const applyTheme = (themeName) => {
-      document.body.className = `apex-body theme-${themeName || 'cyan'}`;
-      localStorage.setItem('apex_theme', themeName || 'cyan');
-      themeCards.forEach(card => card.classList.toggle('active', card.dataset.theme === themeName));
-    };
-
-    applyTheme(localStorage.getItem('apex_theme') || 'cyan');
-
-    themeCards.forEach(card => {
-      card.addEventListener('click', () => {
-        applyTheme(card.dataset.theme);
-        sound.playBeep(720, 0.04, 'sine', 0.06);
-      });
-    });
-
-    if (btnOpen) btnOpen.addEventListener('click', () => modal.classList.remove('hidden'));
-    const close = () => modal.classList.add('hidden');
-    if (btnClose) btnClose.addEventListener('click', close);
-    if (btnCloseX) btnCloseX.addEventListener('click', close);
-  }
-
-  /* ==========================================================================
-     11. SUPABASE CLOUD SYNC & AUTHENTICATION MANAGER
-     ========================================================================== */
-  function initSyncEngine() {
-    const syncIndicator = document.getElementById('sync-status-indicator');
-    const headerSyncPill = document.getElementById('header-sync-pill');
-    const offlineBanner = document.getElementById('offline-banner');
-
-    // Preference Modal Inputs
-    const urlInput = document.getElementById('input-supabase-url');
-    const keyInput = document.getElementById('input-supabase-key');
-    const btnSaveConfig = document.getElementById('btn-save-supabase-config');
-    const prefUserStatus = document.getElementById('pref-sync-user-status');
-
-    // Auth Modal
+    // Supabase Auth Modal & Setup
     const modalAuth = document.getElementById('modal-auth-sync');
     const btnOpenAuth = document.getElementById('btn-open-auth-modal');
     const btnCloseAuth = document.getElementById('btn-close-auth-modal');
-    const formAuth = document.getElementById('form-auth');
-    const emailInput = document.getElementById('auth-email-input');
-    const passInput = document.getElementById('auth-password-input');
-    const btnAuthSignup = document.getElementById('btn-auth-signup');
+    const headerSyncPill = document.getElementById('header-sync-pill');
 
-    // Migration Consent Elements
-    const migrationConsentBox = document.getElementById('auth-migration-consent');
-    const btnConsentImport = document.getElementById('btn-consent-import');
-    const btnConsentSkip = document.getElementById('btn-consent-skip');
-    const btnConsentExport = document.getElementById('btn-consent-export');
-
-    let supabaseClient = null;
-    let currentUser = null;
-
-    // Load saved Supabase Credentials
-    const savedUrl = localStorage.getItem('apex_supabase_url') || '';
-    const savedKey = localStorage.getItem('apex_supabase_key') || '';
-    if (urlInput) urlInput.value = savedUrl;
-    if (keyInput) keyInput.value = savedKey;
-
-    const updateSyncBadge = (statusText, statusClass = 'text-accent-cyan') => {
-      if (syncIndicator) {
-        syncIndicator.textContent = statusText;
-        syncIndicator.className = `mono-label ${statusClass}`;
-      }
-    };
-
-    const updateOnlineState = () => {
-      if (!navigator.onLine) {
-        if (offlineBanner) offlineBanner.classList.remove('hidden');
-        updateSyncBadge('OFFLINE // CACHED ⚡', 'text-accent-warning');
-      } else {
-        if (offlineBanner) offlineBanner.classList.add('hidden');
-        if (currentUser) {
-          updateSyncBadge('SYNCED ✦', 'text-accent-cyan');
-        } else {
-          updateSyncBadge('LOCAL STORAGE ✦', 'text-accent-cyan');
-        }
-      }
-    };
-
-    window.addEventListener('online', updateOnlineState);
-    window.addEventListener('offline', updateOnlineState);
-    updateOnlineState();
-
-    const setupSupabase = () => {
-      const url = localStorage.getItem('apex_supabase_url') || '';
-      const key = localStorage.getItem('apex_supabase_key') || '';
-
-      if (url && key && typeof window.supabase !== 'undefined') {
-        try {
-          supabaseClient = window.supabase.createClient(url, key);
-          console.log('[SYSTEM SYNC] Supabase client initialized');
-          checkAuthSession();
-        } catch (err) {
-          console.warn('[SYSTEM SYNC] Invalid Supabase client config:', err);
-        }
-      }
-    };
-
-    const checkAuthSession = async () => {
-      if (!supabaseClient) return;
-      try {
-        const { data: { session } } = await supabaseClient.auth.getSession();
-        if (session && session.user) {
-          currentUser = session.user;
-          onUserSignedIn(session.user);
-        }
-      } catch (err) {}
-    };
-
-    const onUserSignedIn = (user) => {
-      currentUser = user;
-      if (prefUserStatus) prefUserStatus.textContent = `Account: ${user.email}`;
-      updateSyncBadge('SYNCED ✦', 'text-accent-cyan');
-
-      const migrationDecision = localStorage.getItem('apex_migration_decision');
-      const hasLocalData = state.getTasks().length > 0 || state.getXP() > 0;
-
-      if (hasLocalData && !migrationDecision && migrationConsentBox) {
-        migrationConsentBox.classList.remove('hidden');
-        if (modalAuth) modalAuth.classList.remove('hidden');
-      } else {
-        if (migrationConsentBox) migrationConsentBox.classList.add('hidden');
-        pullCloudData();
-      }
-    };
-
-    const pullCloudData = async () => {
-      if (!supabaseClient || !currentUser) return;
-      updateSyncBadge('SYNCING... ↻', 'text-accent-blue');
-      try {
-        const { data: cloudMissions } = await supabaseClient
-          .from('missions')
-          .select('*')
-          .eq('user_id', currentUser.id);
-
-        if (cloudMissions && cloudMissions.length > 0) {
-          const formattedMissions = cloudMissions.map(m => ({
-            id: m.id,
-            title: m.title,
-            description: m.description,
-            category: m.category,
-            priority: m.priority,
-            deadline: m.deadline,
-            startDate: m.start_date,
-            estimatedEffort: m.estimated_effort,
-            status: m.status,
-            notes: m.notes,
-            subtasks: m.subtasks || [],
-            createdAt: m.created_at
-          }));
-          state.saveTasks(formattedMissions);
-        }
-
-        updateSyncBadge('SYNCED ✦', 'text-accent-cyan');
-      } catch (err) {
-        console.warn('[SYSTEM SYNC] Pull failed:', err);
-        updateSyncBadge('SYNC ERROR ⚠️', 'text-danger');
-      }
-    };
-
-    const pushCloudData = async () => {
-      if (!supabaseClient || !currentUser || !navigator.onLine) return;
-      updateSyncBadge('SYNCING... ↻', 'text-accent-blue');
-      try {
-        const localMissions = state.getTasks();
-        const rows = localMissions.map(m => ({
-          id: m.id,
-          user_id: currentUser.id,
-          title: m.title,
-          description: m.description,
-          category: m.category,
-          priority: m.priority,
-          deadline: m.deadline,
-          start_date: m.startDate || '',
-          estimated_effort: m.estimatedEffort || '',
-          status: m.status,
-          notes: m.notes || '',
-          subtasks: m.subtasks || [],
-          created_at: m.createdAt || Date.now()
-        }));
-
-        if (rows.length > 0) {
-          await supabaseClient.from('missions').upsert(rows);
-        }
-
-        updateSyncBadge('SYNCED ✦', 'text-accent-cyan');
-      } catch (err) {
-        console.warn('[SYSTEM SYNC] Push failed:', err);
-        updateSyncBadge('SYNC ERROR ⚠️', 'text-danger');
-      }
-    };
-
-    // Auto Push on task updates
-    window.addEventListener('apex:tasks-updated', () => pushCloudData());
-
-    // Save Supabase Config Button
-    if (btnSaveConfig) {
-      btnSaveConfig.addEventListener('click', () => {
-        const url = urlInput.value.trim();
-        const key = keyInput.value.trim();
-        localStorage.setItem('apex_supabase_url', url);
-        localStorage.setItem('apex_supabase_key', key);
-        setupSupabase();
-        alert('Supabase credentials saved. Sync engine initialized.');
-      });
-    }
-
-    // Modal Auth Triggers
     if (btnOpenAuth) btnOpenAuth.addEventListener('click', () => {
-      const prefModal = document.getElementById('modal-creative-control');
-      if (prefModal) prefModal.classList.add('hidden');
+      if (modalCC) modalCC.classList.add('hidden');
       if (modalAuth) modalAuth.classList.remove('hidden');
     });
 
@@ -1313,116 +1450,32 @@
     if (btnCloseAuth) btnCloseAuth.addEventListener('click', () => {
       if (modalAuth) modalAuth.classList.add('hidden');
     });
-
-    // Form Auth Submit (Sign In)
-    if (formAuth) {
-      formAuth.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = emailInput.value.trim();
-        const password = passInput.value.trim();
-
-        if (!supabaseClient) {
-          alert('Please configure your Supabase URL & Anon Key in Preferences first.');
-          return;
-        }
-
-        try {
-          const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-          if (error) throw error;
-          if (data.user) {
-            onUserSignedIn(data.user);
-            sound.playSuccessChime();
-          }
-        } catch (err) {
-          alert(`Sign In Error: ${err.message}`);
-        }
-      });
-    }
-
-    // Sign Up Button
-    if (btnAuthSignup) {
-      btnAuthSignup.addEventListener('click', async () => {
-        const email = emailInput.value.trim();
-        const password = passInput.value.trim();
-
-        if (!email || !password) {
-          alert('Please enter an email and password to sign up.');
-          return;
-        }
-
-        if (!supabaseClient) {
-          alert('Please configure your Supabase URL & Anon Key in Preferences first.');
-          return;
-        }
-
-        try {
-          const { data, error } = await supabaseClient.auth.signUp({ email, password });
-          if (error) throw error;
-          alert('Account created! Please check your email for confirmation or sign in.');
-        } catch (err) {
-          alert(`Sign Up Error: ${err.message}`);
-        }
-      });
-    }
-
-    // Migration Consent Actions
-    if (btnConsentImport) {
-      btnConsentImport.addEventListener('click', async () => {
-        localStorage.setItem('apex_migration_decision', 'imported');
-        if (migrationConsentBox) migrationConsentBox.classList.add('hidden');
-        await pushCloudData();
-        if (modalAuth) modalAuth.classList.add('hidden');
-        alert('Device APEX data successfully imported to your cloud account!');
-      });
-    }
-
-    if (btnConsentSkip) {
-      btnConsentSkip.addEventListener('click', () => {
-        localStorage.setItem('apex_migration_decision', 'skipped');
-        if (migrationConsentBox) migrationConsentBox.classList.add('hidden');
-        if (modalAuth) modalAuth.classList.add('hidden');
-        pullCloudData();
-      });
-    }
-
-    if (btnConsentExport) {
-      btnConsentExport.addEventListener('click', () => {
-        const exportBtn = document.getElementById('btn-export-data');
-        if (exportBtn) exportBtn.click();
-      });
-    }
-
-    setupSupabase();
   }
 
   /* ==========================================================================
-     12. BOOTSTRAP & SYSTEM RECORD NOTIFICATIONS
-     ========================================================================= */
+     11. BOOTSTRAP INITIALIZATION
+     ========================================================================== */
   document.addEventListener('DOMContentLoaded', () => {
     initHeaderTelemetry();
     initNavigation();
-    initTaskSystem();
-    initDashboardSurfacing();
-    initFitnessMode();
-    initAttentionControl();
-    initAIAssistant();
-    initThemeSwitcher();
-    initSyncEngine();
+    initMissionEngine();
+    initFocusSystem();
+    initHomeView();
+    initInsightsView();
+    initSystemArea();
+    initPreferencesAndSync();
 
-    // Register PWA Service Worker
+    // PWA Service Worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./sw.js')
-        .then((reg) => console.log('[SYSTEM PWA] Service Worker registered scope:', reg.scope))
-        .catch((err) => console.log('[SYSTEM PWA] Service Worker registration failed:', err));
+        .then((reg) => console.log('[AETHER PWA] Service worker active scope:', reg.scope))
+        .catch((err) => console.log('[AETHER PWA] Service worker registration failed:', err));
     }
 
     console.log(
-      '%c SYSTEM // SELF-MASTERY OS %c SYSTEM INTERFACE ONLINE ',
-      'background: #06090e; color: #38bdf8; font-weight: bold; border: 1px solid #1e293b; padding: 4px;',
-      'background: #0d1421; color: #34d399; font-weight: bold; padding: 4px;'
+      '%c AETHER // PERSONAL EXECUTION OS %c CONTROL ROOM ONLINE ',
+      'background: #070a0f; color: #38bdf8; font-weight: bold; padding: 4px;',
+      'background: #0b111c; color: #34d399; font-weight: bold; padding: 4px;'
     );
   });
 })();
-
-
-

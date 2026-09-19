@@ -1,4 +1,4 @@
-const CACHE_NAME = 'system-os-v1';
+const CACHE_NAME = 'aether-os-v2';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -11,7 +11,7 @@ const ASSETS_TO_CACHE = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[SYSTEM PWA] Pre-caching core interface assets...');
+      console.log('[AETHER PWA] Pre-caching core interface assets...');
       return cache.addAll(ASSETS_TO_CACHE);
     }).then(() => self.skipWaiting())
   );
