@@ -1505,13 +1505,13 @@
       navigator.serviceWorker.register('./sw.js')
         .then((reg) => {
           reg.update();
-          console.log('[AETHER PWA] Service worker active scope:', reg.scope);
+          console.log('[LEVEL UP PWA] Service worker active scope:', reg.scope);
         })
-        .catch((err) => console.log('[AETHER PWA] Service worker registration failed:', err));
+        .catch((err) => console.log('[LEVEL UP PWA] Service worker registration failed:', err));
     }
 
     console.log(
-      '%c AETHER // PERSONAL EXECUTION OS %c CONTROL ROOM ONLINE ',
+      '%c LEVEL UP SYSTEM %c CONTROL ROOM ONLINE ',
       'background: #070a0f; color: #38bdf8; font-weight: bold; padding: 4px;',
       'background: #0b111c; color: #34d399; font-weight: bold; padding: 4px;'
     );

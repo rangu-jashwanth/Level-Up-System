@@ -1,4 +1,4 @@
-const CACHE_NAME = 'aether-os-v4';
+const CACHE_NAME = 'level-up-system-v1';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -11,7 +11,7 @@ const ASSETS_TO_CACHE = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[AETHER PWA] Pre-caching core interface assets...');
+      console.log('[LEVEL UP PWA] Pre-caching core interface assets...');
       return cache.addAll(ASSETS_TO_CACHE);
     }).then(() => self.skipWaiting())
   );
@@ -24,7 +24,7 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         cacheNames.map((cache) => {
           if (cache !== CACHE_NAME) {
-            console.log('[AETHER PWA] Purging legacy cache:', cache);
+            console.log('[LEVEL UP PWA] Purging legacy cache:', cache);
             return caches.delete(cache);
           }
         })

@@ -1,8 +1,8 @@
 {
-  "name": "AETHER // Personal Execution OS",
-  "short_name": "AETHER",
-  "description": "A calm, intelligent, futuristic control room engineered to turn personal intentions into consistent action.",
-  "id": "aether-execution-os",
+  "name": "Level Up System",
+  "short_name": "Level Up",
+  "description": "Level Up System — Personal Execution Operating System engineered to turn intentions into consistent action.",
+  "id": "level-up-system",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
@@ -11,7 +11,7 @@
   "theme_color": "#070a0f",
   "icons": [
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' fill='%23070a0f'><rect width='512' height='512' rx='128' fill='%23070a0f'/><circle cx='256' cy='256' r='180' stroke='%2338bdf8' stroke-width='16' fill='none'/><polygon points='256 110 370 330 142 330' fill='%2338bdf8' fill-opacity='0.15' stroke='%2338bdf8' stroke-width='12' stroke-linejoin='round'/><circle cx='256' cy='256' r='28' fill='%23f8fafc'/></svg>",
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' fill='%23070a0f'><rect width='512' height='512' rx='128' fill='%23070a0f'/><path d='M256 60L100 216H180V412H332V216H412L256 60Z' fill='%2338bdf8' fill-opacity='0.25' stroke='%2338bdf8' stroke-width='20' stroke-linejoin='round'/><path d='M256 140L150 246H210V362H302V246H362L256 140Z' fill='%23f8fafc'/></svg>",
       "sizes": "192x192 512x512",
       "type": "image/svg+xml",
       "purpose": "any maskable"
