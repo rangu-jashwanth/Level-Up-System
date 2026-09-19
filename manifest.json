@@ -1,0 +1,20 @@
+{
+  "name": "SYSTEM // Self-Mastery OS",
+  "short_name": "SYSTEM",
+  "description": "An elite personal operating system engineered for mission execution, awareness, recalibration, and technical performance.",
+  "id": "system-self-mastery-os",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#06090e",
+  "theme_color": "#06090e",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' fill='%2306090e'><rect width='512' height='512' fill='%2306090e'/><polygon points='256 40 472 420 40 420' stroke='%2339c5bb' stroke-width='24' stroke-linejoin='round'/><polygon points='256 140 380 370 132 370' fill='%2339c5bb' fill-opacity='0.2' stroke='%2358a6ff' stroke-width='16'/><circle cx='256' cy='290' r='36' fill='%23f0f6fc'/></svg>",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "name": "system-self-mastery-os",
+  "version": "1.0.0",
+  "description": "SYSTEM // Self-Mastery OS - Elite personal operating system",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["self-mastery", "stoic", "productivity", "console"],
+  "author": "",
+  "license": "MIT"
+}
