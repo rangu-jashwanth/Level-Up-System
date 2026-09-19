@@ -1503,7 +1503,10 @@
 
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./sw.js')
-        .then((reg) => console.log('[AETHER PWA] Service worker active scope:', reg.scope))
+        .then((reg) => {
+          reg.update();
+          console.log('[AETHER PWA] Service worker active scope:', reg.scope);
+        })
         .catch((err) => console.log('[AETHER PWA] Service worker registration failed:', err));
     }
 
