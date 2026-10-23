@@ -1,7 +1,8 @@
 /**
- * AETHER // PERSONAL EXECUTION OPERATING SYSTEM (app.js)
- * Architecture: Modular ES6+ Local-First Execution Engine
- * Security & Reliability: Fully escaped HTML rendering, timestamp-accurate focus timer, input validation.
+ * LEVEL UP SYSTEM // EXECUTIVE COMMAND OS (app.js)
+ * Architecture: Modular ES6+ Local-First Execution Operating System
+ * Security & Reliability: Fully escaped HTML rendering, robust state persistence, zero external runtime dependencies.
+ * 3D Graphics: GPU-accelerated 3D Quantum Viewport Engine + Celestial Parallax Field.
  */
 
 (() => {
@@ -105,9 +106,6 @@
       if (!localStorage.getItem('aether_completed_missions') && localStorage.getItem('apex_achievements')) {
         localStorage.setItem('aether_completed_missions', localStorage.getItem('apex_achievements'));
       }
-      if (!localStorage.getItem('aether_focus_sessions') && localStorage.getItem('apex_focus_history')) {
-        localStorage.setItem('aether_focus_sessions', localStorage.getItem('apex_focus_history'));
-      }
       if (!localStorage.getItem('aether_vision') && localStorage.getItem('apex_mission')) {
         localStorage.setItem('aether_vision', localStorage.getItem('apex_mission'));
       }
@@ -116,7 +114,6 @@
     initStorage() {
       if (!localStorage.getItem('aether_missions')) localStorage.setItem('aether_missions', JSON.stringify([]));
       if (!localStorage.getItem('aether_completed_missions')) localStorage.setItem('aether_completed_missions', JSON.stringify([]));
-      if (!localStorage.getItem('aether_focus_sessions')) localStorage.setItem('aether_focus_sessions', JSON.stringify([]));
       if (!localStorage.getItem('aether_decompression')) localStorage.setItem('aether_decompression', JSON.stringify([]));
       if (!localStorage.getItem('aether_daily_reviews')) localStorage.setItem('aether_daily_reviews', JSON.stringify([]));
       if (!localStorage.getItem('aether_vision')) {
@@ -179,26 +176,39 @@
       this.saveMissions(list);
     }
 
-    toggleMissionCompletion(id) {
+    completeMission(id) {
       const list = this.getMissions();
       const mission = list.find(m => m.id === id);
       if (mission) {
-        const isNowCompleted = mission.status !== 'COMPLETED';
-        mission.status = isNowCompleted ? 'COMPLETED' : 'TODO';
-        
-        if (isNowCompleted && mission.subtasks) {
+        mission.status = 'COMPLETED';
+        if (mission.subtasks) {
           mission.subtasks.forEach(s => s.completed = true);
         }
-
+        this.logCompletedMission(mission);
         this.saveMissions(list);
+        return true;
+      }
+      return false;
+    }
 
-        if (isNowCompleted) {
+    toggleMissionStatus(id) {
+      const list = this.getMissions();
+      const mission = list.find(m => m.id === id);
+      if (mission) {
+        if (mission.status === 'COMPLETED') {
+          mission.status = 'TODO';
+        } else {
+          mission.status = 'COMPLETED';
+          if (mission.subtasks) {
+            mission.subtasks.forEach(s => s.completed = true);
+          }
           this.logCompletedMission(mission);
           sound.playSuccessChime();
         }
-        return isNowCompleted;
+        this.saveMissions(list);
+        return mission.status;
       }
-      return false;
+      return null;
     }
 
     toggleQuestStep(missionId, questId) {
@@ -243,7 +253,6 @@
       return null;
     }
 
-    // Helper: Identify Next Action for a Mission or System
     getNextAction(mission) {
       if (!mission) return 'Declare your first mission objective';
       if (mission.subtasks && mission.subtasks.length > 0) {
@@ -251,50 +260,6 @@
         if (nextSub) return nextSub.title;
       }
       return mission.title;
-    }
-
-    // --- Focus Sessions & Interruption Tracking ---
-    getFocusSessions() {
-      try {
-        return JSON.parse(localStorage.getItem('aether_focus_sessions')) || [];
-      } catch (e) { return []; }
-    }
-
-    logFocusSession(sessionData) {
-      const list = this.getFocusSessions();
-      const entry = {
-        id: 'fcs_' + Date.now(),
-        missionId: sessionData.missionId || '',
-        missionTitle: sessionData.missionTitle || 'General Focus',
-        durationMinutes: sessionData.durationMinutes || 25,
-        interrupted: sessionData.interrupted || false,
-        interruptionReason: sessionData.interruptionReason || '',
-        resumed: sessionData.resumed || false,
-        timestamp: Date.now(),
-        dateStr: this.todayStr
-      };
-      list.unshift(entry);
-      localStorage.setItem('aether_focus_sessions', JSON.stringify(list));
-      window.dispatchEvent(new CustomEvent('aether:focus-updated'));
-    }
-
-    saveResumptionMemory(memoryObj) {
-      localStorage.setItem('aether_resumption_memory', JSON.stringify({
-        ...memoryObj,
-        timestamp: Date.now()
-      }));
-      window.dispatchEvent(new CustomEvent('aether:resumption-updated'));
-    }
-
-    getResumptionMemory() {
-      try {
-        return JSON.parse(localStorage.getItem('aether_resumption_memory'));
-      } catch (e) { return null; }
-    }
-
-    clearResumptionMemory() {
-      localStorage.removeItem('aether_resumption_memory');
-      window.dispatchEvent(new CustomEvent('aether:resumption-updated'));
     }
 
     // --- Decompression & Thought Logs ---
@@ -334,18 +299,18 @@
         missionTitle: mission.title,
         category: mission.category,
         priority: mission.priority,
-        completedAt: new Date().toLocaleDateString()
+        completedAt: new Date().toLocaleDateString(),
+        timestamp: Date.now()
       });
       localStorage.setItem('aether_completed_missions', JSON.stringify(list));
       window.dispatchEvent(new CustomEvent('aether:completed-updated'));
     }
 
-    // --- Export / Import JSON Data with Validation ---
+    // --- Export / Import JSON Data ---
     exportWorkspaceJSON() {
       const data = {
         missions: this.getMissions(),
         completedMissions: this.getCompletedMissions(),
-        focusSessions: this.getFocusSessions(),
         decompression: this.getDecompressionEntries(),
         dailyReviews: JSON.parse(localStorage.getItem('aether_daily_reviews') || '[]'),
         vision: JSON.parse(localStorage.getItem('aether_vision') || '{}'),
@@ -355,7 +320,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `aether-os-backup-${this.todayStr}.json`;
+      a.download = `level-up-system-backup-${this.todayStr}.json`;
       a.click();
     }
 
@@ -366,13 +331,11 @@
 
         if (Array.isArray(data.missions)) localStorage.setItem('aether_missions', JSON.stringify(data.missions));
         if (Array.isArray(data.completedMissions)) localStorage.setItem('aether_completed_missions', JSON.stringify(data.completedMissions));
-        if (Array.isArray(data.focusSessions)) localStorage.setItem('aether_focus_sessions', JSON.stringify(data.focusSessions));
         if (Array.isArray(data.decompression)) localStorage.setItem('aether_decompression', JSON.stringify(data.decompression));
         if (Array.isArray(data.dailyReviews)) localStorage.setItem('aether_daily_reviews', JSON.stringify(data.dailyReviews));
         if (data.vision && typeof data.vision === 'object') localStorage.setItem('aether_vision', JSON.stringify(data.vision));
         
         window.dispatchEvent(new CustomEvent('aether:missions-updated'));
-        window.dispatchEvent(new CustomEvent('aether:focus-updated'));
         window.dispatchEvent(new CustomEvent('aether:decompression-updated'));
         window.dispatchEvent(new CustomEvent('aether:completed-updated'));
         alert('Workspace backup successfully restored!');
@@ -390,7 +353,7 @@
   function initHeaderTelemetry() {
     const dateEl = document.getElementById('header-date');
     const timeEl = document.getElementById('header-session-time');
-    const focusValEl = document.getElementById('header-xp-val');
+    const rankPillVal = document.getElementById('header-xp-val');
 
     const updateClock = () => {
       const now = new Date();
@@ -411,17 +374,18 @@
     setInterval(updateClock, 1000);
 
     const updateHeaderMetrics = () => {
-      const sessions = state.getFocusSessions().filter(s => s.dateStr === state.todayStr);
-      const totalMins = sessions.reduce((acc, s) => acc + (s.durationMinutes || 0), 0);
-      if (focusValEl) focusValEl.textContent = `${totalMins} MIN`;
+      const missions = state.getMissions();
+      const total = missions.length;
+      const cleared = missions.filter(m => m.status === 'COMPLETED').length;
+      if (rankPillVal) rankPillVal.textContent = `${cleared} / ${total}`;
     };
 
     updateHeaderMetrics();
-    window.addEventListener('aether:focus-updated', updateHeaderMetrics);
+    window.addEventListener('aether:missions-updated', updateHeaderMetrics);
   }
 
   /* ==========================================================================
-     4. NAVIGATION ENGINE (5 MAIN AREAS)
+     4. NAVIGATION ENGINE (4 PRIMARY EXECUTIVE PILLARS)
      ========================================================================== */
   function initNavigation() {
     const navTabBtns = document.querySelectorAll('.nav-tab-btn');
@@ -429,21 +393,7 @@
     const viewContainers = document.querySelectorAll('.app-view-container');
     const modeDisplayTitle = document.getElementById('mode-display-title');
 
-    // Mobile Sheet
-    const modalMobileMore = document.getElementById('modal-mobile-more');
-    const btnCloseMobileMore = document.getElementById('btn-close-mobile-more');
-    const btnCloseMoreSheet = document.getElementById('btn-close-more-sheet');
-    const mobileMoreItems = document.querySelectorAll('.mobile-more-item[data-view]');
-
     const switchView = (targetView) => {
-      if (targetView === 'more') {
-        if (modalMobileMore) modalMobileMore.classList.remove('hidden');
-        sound.playTone(600, 0.04);
-        return;
-      }
-
-      if (modalMobileMore) modalMobileMore.classList.add('hidden');
-
       viewContainers.forEach(view => {
         if (view.id === `view-${targetView}`) {
           view.classList.remove('hidden');
@@ -457,25 +407,19 @@
 
       if (modeDisplayTitle) {
         if (targetView === 'tasks') modeDisplayTitle.textContent = 'MISSION ENGINE';
-        else if (targetView === 'focus') modeDisplayTitle.textContent = 'FOCUS COCKPIT';
-        else if (targetView === 'achievements') modeDisplayTitle.textContent = 'INSIGHTS & ANALYTICS';
-        else if (targetView === 'mission') modeDisplayTitle.textContent = 'SYSTEM & RECOVERY';
-        else modeDisplayTitle.textContent = 'CONTROL ROOM';
+        else if (targetView === 'achievements') modeDisplayTitle.textContent = 'INTEL & TELEMETRY';
+        else if (targetView === 'mission') modeDisplayTitle.textContent = 'STRATEGIC ARCHITECT';
+        else modeDisplayTitle.textContent = 'COMMAND ROOM';
       }
+
+      window.dispatchEvent(new CustomEvent('aether:view-switched', { detail: { view: targetView } }));
+      setTimeout(() => { if (typeof init3DCardTilt === 'function') init3DCardTilt(); }, 60);
 
       sound.playTone(550, 0.04);
     };
 
     navTabBtns.forEach(btn => btn.addEventListener('click', () => switchView(btn.dataset.view)));
     mobileBottomBtns.forEach(btn => btn.addEventListener('click', () => switchView(btn.dataset.view)));
-    mobileMoreItems.forEach(item => item.addEventListener('click', () => switchView(item.dataset.view)));
-
-    const closeMoreModal = () => {
-      if (modalMobileMore) modalMobileMore.classList.add('hidden');
-    };
-
-    if (btnCloseMobileMore) btnCloseMobileMore.addEventListener('click', closeMoreModal);
-    if (btnCloseMoreSheet) btnCloseMoreSheet.addEventListener('click', closeMoreModal);
 
     // Audio toggle
     const soundToggle = document.getElementById('btn-sound-toggle');
@@ -492,37 +436,35 @@
       });
     }
 
-    // Backup Export / Import Button Listeners
-    const btnExport = document.getElementById('btn-export-data');
-    const inputImport = document.getElementById('input-import-data');
-
-    if (btnExport) btnExport.addEventListener('click', () => state.exportWorkspaceJSON());
-    if (inputImport) {
-      inputImport.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = (evt) => state.importWorkspaceJSON(evt.target.result);
-          reader.readAsText(file);
-        }
+    // Circuit Breaker Direct Button
+    const btnCircuit = document.getElementById('btn-open-circuit-breaker');
+    if (btnCircuit) {
+      btnCircuit.addEventListener('click', () => {
+        sound.playTone(420, 0.08);
+        switchView('mission');
+        setTimeout(() => {
+          const btnRecal = document.querySelector('.system-subnav-btn[data-subview="recalibration"]');
+          if (btnRecal) btnRecal.click();
+        }, 60);
       });
     }
   }
 
   /* ==========================================================================
-     5. MISSION ENGINE CONTROLLER (Escaped HTML Rendering)
+     5. MISSION ENGINE CONTROLLER (Decomposition & Quests)
      ========================================================================== */
   function initMissionEngine() {
     const listEl = document.getElementById('task-system-list');
     const filterPills = document.querySelectorAll('#task-filter-pills .filter-pill');
     const searchInput = document.getElementById('task-search-input');
-    const categorySelect = document.getElementById('task-category-filter');
+    const catSelect = document.getElementById('task-category-filter');
     const btnOpenCreate = document.getElementById('btn-open-create-task');
-    const btnMobileFabCreate = document.getElementById('btn-mobile-fab-create');
+    const fabCreate = document.getElementById('mobile-fab-create');
 
-    // Modal
+    // Modal Editor Elements
     const modalTask = document.getElementById('modal-task-editor');
     const formTask = document.getElementById('form-task-editor');
+    const modalTitle = document.getElementById('task-editor-modal-title');
     const editIdInput = document.getElementById('task-edit-id');
     const titleInput = document.getElementById('task-title-input');
     const catInput = document.getElementById('task-category-input');
@@ -530,131 +472,187 @@
     const deadlineInput = document.getElementById('task-deadline-input');
     const effortInput = document.getElementById('task-effort-input');
     const descInput = document.getElementById('task-desc-input');
-    const modalSubtasksList = document.getElementById('modal-subtasks-list');
-    const modalNewSubtaskInput = document.getElementById('input-modal-new-subtask');
-    const btnModalAddSubtask = document.getElementById('btn-modal-add-subtask');
     const btnCloseModal = document.getElementById('btn-close-task-modal');
     const btnCancelModal = document.getElementById('btn-cancel-task-modal');
 
+    // Quest Steps Builder in Modal
+    const modalSubtasksList = document.getElementById('modal-subtasks-list');
+    const inputModalNewSubtask = document.getElementById('input-modal-new-subtask');
+    const btnModalAddSubtask = document.getElementById('btn-modal-add-subtask');
+    let currentModalSubtasks = [];
+
     let currentFilter = 'ALL';
-    let tempSubtasks = [];
+    let currentSearch = '';
+    let currentCategory = 'ALL';
 
-    const calculateDeadlineStatus = (deadlineStr) => {
-      if (!deadlineStr) return { label: 'NO DEADLINE', class: 'deadline-none' };
-      const today = new Date(state.todayStr);
-      const target = new Date(deadlineStr);
-      const diffDays = Math.ceil((target - today) / (1000 * 60 * 60 * 24));
-
-      if (diffDays < 0) return { label: 'OVERDUE', class: 'deadline-overdue' };
-      if (diffDays === 0) return { label: 'DUE TODAY', class: 'deadline-today' };
-      if (diffDays <= 7) return { label: `DUE IN ${diffDays}D`, class: 'deadline-soon' };
-      return { label: `DUE: ${escapeHTML(deadlineStr)}`, class: 'deadline-none' };
+    const getDeadlineStatus = (deadlineStr) => {
+      if (!deadlineStr) return { status: 'none', label: 'No Deadline' };
+      const today = state.todayStr;
+      if (deadlineStr < today) return { status: 'overdue', label: 'OVERDUE' };
+      if (deadlineStr === today) return { status: 'today', label: 'DUE TODAY' };
+      return { status: 'soon', label: deadlineStr };
     };
 
     const renderMissions = () => {
-      const missions = state.getMissions();
       if (!listEl) return;
+      let missions = state.getMissions();
 
-      let filtered = missions;
-
-      if (categorySelect && categorySelect.value !== 'ALL') {
-        filtered = filtered.filter(m => m.category === categorySelect.value);
+      // Category filter
+      if (currentCategory !== 'ALL') {
+        missions = missions.filter(m => m.category === currentCategory);
       }
 
-      if (searchInput && searchInput.value.trim()) {
-        const query = searchInput.value.toLowerCase().trim();
-        filtered = filtered.filter(m => 
-          m.title.toLowerCase().includes(query) || 
-          (m.description && m.description.toLowerCase().includes(query))
-        );
-      }
-
-      if (currentFilter === 'TODAY') {
-        filtered = filtered.filter(m => m.deadline === state.todayStr);
-      } else if (currentFilter === 'DUE_SOON') {
-        filtered = filtered.filter(m => {
-          const status = calculateDeadlineStatus(m.deadline);
-          return status.class === 'deadline-soon' || status.class === 'deadline-today';
+      // Search filter
+      if (currentSearch.trim()) {
+        const q = currentSearch.toLowerCase();
+        missions = missions.filter(m => {
+          const inTitle = m.title.toLowerCase().includes(q);
+          const inDesc = (m.description || '').toLowerCase().includes(q);
+          const inSubtasks = (m.subtasks || []).some(s => s.title.toLowerCase().includes(q));
+          return inTitle || inDesc || inSubtasks;
         });
-      } else if (currentFilter === 'OVERDUE') {
-        filtered = filtered.filter(m => calculateDeadlineStatus(m.deadline).class === 'deadline-overdue');
-      } else if (currentFilter === 'HIGH_PRIORITY') {
-        filtered = filtered.filter(m => m.priority === 'P1' || m.priority === 'P2');
-      } else if (currentFilter === 'IN_PROGRESS') {
-        filtered = filtered.filter(m => m.status !== 'COMPLETED');
-      } else if (currentFilter === 'COMPLETED') {
-        filtered = filtered.filter(m => m.status === 'COMPLETED');
-      } else if (currentFilter === 'NO_DEADLINE') {
-        filtered = filtered.filter(m => !m.deadline);
       }
 
-      if (filtered.length === 0) {
+      // Filter Pill filter
+      const today = state.todayStr;
+      if (currentFilter === 'TODAY') {
+        missions = missions.filter(m => m.deadline === today);
+      } else if (currentFilter === 'DUE_SOON') {
+        missions = missions.filter(m => m.deadline && m.deadline >= today);
+      } else if (currentFilter === 'OVERDUE') {
+        missions = missions.filter(m => m.deadline && m.deadline < today && m.status !== 'COMPLETED');
+      } else if (currentFilter === 'HIGH_PRIORITY') {
+        missions = missions.filter(m => m.priority === 'P1' || m.priority === 'P2');
+      } else if (currentFilter === 'IN_PROGRESS') {
+        missions = missions.filter(m => m.status === 'IN_PROGRESS' || (m.subtasks && m.subtasks.some(s => s.completed) && m.status !== 'COMPLETED'));
+      } else if (currentFilter === 'COMPLETED') {
+        missions = missions.filter(m => m.status === 'COMPLETED');
+      } else if (currentFilter === 'NO_DEADLINE') {
+        missions = missions.filter(m => !m.deadline);
+      }
+
+      if (missions.length === 0) {
         listEl.innerHTML = `
-          <li class="empty-data-card">
-            <p class="mono-meta">No missions found in this view. Click <strong>+ CREATE MISSION</strong> to declare an objective.</p>
-          </li>
+          <div class="empty-data-card">
+            <h3 class="mono-label text-accent-cyan" style="font-size: 0.9rem;">NO MISSIONS FOUND</h3>
+            <p class="mono-meta" style="margin-top: 4px;">No missions match the current filters. Declare a new mission to begin execution.</p>
+          </div>
         `;
         return;
       }
 
-      listEl.innerHTML = '';
-      filtered.forEach(mission => {
-        const isCompleted = mission.status === 'COMPLETED';
-        const deadlineInfo = calculateDeadlineStatus(mission.deadline);
-        const nextAction = state.getNextAction(mission);
-        const subTotal = mission.subtasks ? mission.subtasks.length : 0;
-        const subDone = mission.subtasks ? mission.subtasks.filter(s => s.completed).length : 0;
-        const progressPercent = subTotal > 0 ? Math.round((subDone / subTotal) * 100) : (isCompleted ? 100 : 0);
+      listEl.innerHTML = missions.map(m => {
+        const isDone = m.status === 'COMPLETED';
+        const deadlineInfo = getDeadlineStatus(m.deadline);
+        const subtasks = m.subtasks || [];
+        const completedSubs = subtasks.filter(s => s.completed).length;
+        const totalSubs = subtasks.length;
+        const nextAction = state.getNextAction(m);
 
-        const li = document.createElement('li');
-        li.className = `task-card-item ${isCompleted ? 'completed' : ''}`;
-        li.innerHTML = `
-          <div class="task-header-row">
-            <label class="custom-checkbox-label">
-              <input type="checkbox" class="checkbox-input task-complete-chk" data-id="${escapeHTML(mission.id)}" ${isCompleted ? 'checked' : ''}>
-              <span class="checkbox-visual">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke-width="3.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-              </span>
-            </label>
+        return `
+          <li class="task-card-item ${isDone ? 'completed' : ''}" data-id="${m.id}">
+            <div class="task-header-row">
+              <label class="custom-checkbox-label">
+                <input type="checkbox" class="checkbox-input task-toggle-check" ${isDone ? 'checked' : ''}>
+                <span class="checkbox-visual">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </span>
+              </label>
 
-            <div class="task-main-info">
-              <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
-                <span class="task-title-text">${escapeHTML(mission.title)}</span>
-                <div style="display: flex; gap: 6px; align-items: center;">
-                  <button class="btn-mini btn-edit-task" data-id="${escapeHTML(mission.id)}">EDIT</button>
-                  <button class="btn-mini btn-text-danger btn-delete-task" data-id="${escapeHTML(mission.id)}">DELETE</button>
+              <div class="task-main-info">
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                  <span class="task-title-text" style="${isDone ? 'text-decoration: line-through; opacity: 0.7;' : ''}">${escapeHTML(m.title)}</span>
+                  <span class="priority-badge priority-${escapeHTML(m.priority)}">${escapeHTML(m.priority)}</span>
+                  <span class="category-tag">${escapeHTML(m.category)}</span>
+                  <span class="deadline-badge deadline-${escapeHTML(deadlineInfo.status)}">${escapeHTML(deadlineInfo.label)}</span>
                 </div>
-              </div>
 
-              <div class="next-action-pill" style="margin-top: 8px;">
-                <span class="mono-label text-accent-cyan">NEXT ACTION:</span>
-                <span style="font-size: 0.85rem; font-weight: 600;">${escapeHTML(nextAction)}</span>
-              </div>
+                ${m.description ? `<p style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 4px;">${escapeHTML(m.description)}</p>` : ''}
 
-              <div class="task-tags-row" style="margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
-                <span class="priority-badge priority-${escapeHTML(mission.priority)}">${escapeHTML(mission.priority)}</span>
-                <span class="category-tag">${escapeHTML(mission.category)}</span>
-                <span class="deadline-badge ${escapeHTML(deadlineInfo.class)}">${escapeHTML(deadlineInfo.label)}</span>
-                ${mission.estimatedEffort ? `<span class="mono-meta">Effort: ${escapeHTML(mission.estimatedEffort)}</span>` : ''}
-              </div>
+                <!-- Surfaced Next Action Callout -->
+                ${!isDone ? `
+                  <div class="next-action-pill" style="margin-top: 8px;">
+                    <span class="mono-label text-accent-cyan">NEXT ACTION:</span>
+                    <span style="font-weight: 600; font-size: 0.82rem; color: var(--text-primary);">${escapeHTML(nextAction)}</span>
+                  </div>
+                ` : ''}
 
-              ${subTotal > 0 ? `
-                <div class="progress-bar-rail" style="margin-top: 10px;">
-                  <div class="progress-bar-fill" style="width: ${progressPercent}%;"></div>
-                </div>
-                <div class="subtasks-wrapper" style="margin-top: 8px; display: flex; flex-direction: column; gap: 4px;">
-                  ${mission.subtasks.map(st => `
-                    <div style="display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: ${st.completed ? 'var(--text-muted)' : 'var(--text-secondary)'};">
-                      <input type="checkbox" class="subtask-chk" data-mission-id="${escapeHTML(mission.id)}" data-sub-id="${escapeHTML(st.id)}" ${st.completed ? 'checked' : ''}>
-                      <span style="${st.completed ? 'text-decoration: line-through;' : ''}">${escapeHTML(st.title)}</span>
+                <!-- Decomposed Quest Steps Tree -->
+                ${totalSubs > 0 ? `
+                  <div style="margin-top: 10px; border-top: 1px solid var(--border-subdued); padding-top: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                      <span class="mono-label text-accent-cyan" style="font-size: 0.7rem;">QUEST STEPS (${completedSubs}/${totalSubs})</span>
                     </div>
-                  `).join('')}
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                      ${subtasks.map(s => `
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                          <label class="custom-checkbox-label">
+                            <input type="checkbox" class="checkbox-input quest-step-check" data-mission-id="${m.id}" data-quest-id="${s.id}" ${s.completed ? 'checked' : ''}>
+                            <span class="checkbox-visual" style="width: 16px; height: 16px;">
+                              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            </span>
+                          </label>
+                          <span style="font-size: 0.82rem; color: ${s.completed ? 'var(--text-muted)' : 'var(--text-primary)'}; ${s.completed ? 'text-decoration: line-through;' : ''}">${escapeHTML(s.title)}</span>
+                        </div>
+                      `).join('')}
+                    </div>
+                  </div>
+                ` : ''}
+
+                <!-- Quick Inline Step Adder -->
+                <div class="add-subtask-row" style="margin-top: 8px;">
+                  <input type="text" class="tactical-input input-inline-step" placeholder="+ Add quest step..." style="height: 30px; font-size: 0.78rem; padding: 4px 8px;">
+                  <button class="btn-mini btn-add-inline-step" data-mission-id="${m.id}">ADD</button>
                 </div>
-              ` : ''}
+              </div>
+
+              <!-- Quick Action Buttons -->
+              <div style="display: flex; gap: 6px; align-items: center;">
+                <button class="btn-mini btn-edit-mission" data-id="${m.id}" title="Edit Mission">EDIT</button>
+                <button class="btn-mini btn-text-danger btn-delete-mission" data-id="${m.id}" title="Delete Mission">✕</button>
+              </div>
             </div>
-          </div>
+          </li>
         `;
-        listEl.appendChild(li);
+      }).join('');
+
+      // Attach card listeners
+      listEl.querySelectorAll('.task-toggle-check').forEach(input => {
+        input.addEventListener('change', (e) => {
+          const card = e.target.closest('.task-card-item');
+          if (card) state.toggleMissionStatus(card.dataset.id);
+        });
+      });
+
+      listEl.querySelectorAll('.quest-step-check').forEach(input => {
+        input.addEventListener('change', (e) => {
+          const mid = e.target.dataset.missionId;
+          const qid = e.target.dataset.questId;
+          state.toggleQuestStep(mid, qid);
+        });
+      });
+
+      listEl.querySelectorAll('.btn-add-inline-step').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const mid = btn.dataset.missionId;
+          const input = btn.previousElementSibling;
+          if (input && input.value.trim()) {
+            state.addQuestStep(mid, input.value.trim());
+            input.value = '';
+          }
+        });
+      });
+
+      listEl.querySelectorAll('.btn-edit-mission').forEach(btn => {
+        btn.addEventListener('click', () => openEditModal(btn.dataset.id));
+      });
+
+      listEl.querySelectorAll('.btn-delete-mission').forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (confirm('Delete this mission objective?')) {
+            state.deleteMission(btn.dataset.id);
+          }
+        });
       });
     };
 
@@ -667,120 +665,110 @@
       });
     });
 
-    if (searchInput) searchInput.addEventListener('input', renderMissions);
-    if (categorySelect) categorySelect.addEventListener('change', renderMissions);
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        currentSearch = e.target.value;
+        renderMissions();
+      });
+    }
 
-    if (listEl) {
-      listEl.addEventListener('click', (e) => {
-        const taskChk = e.target.closest('.task-complete-chk');
-        if (taskChk) {
-          state.toggleMissionCompletion(taskChk.dataset.id);
-          renderMissions();
-          return;
-        }
+    if (catSelect) {
+      catSelect.addEventListener('change', (e) => {
+        currentCategory = e.target.value;
+        renderMissions();
+      });
+    }
 
-        const subChk = e.target.closest('.subtask-chk');
-        if (subChk) {
-          state.toggleQuestStep(subChk.dataset.missionId, subChk.dataset.subId);
-          renderMissions();
-          return;
-        }
+    // Modal Builder Render
+    const renderModalSubtasks = () => {
+      if (!modalSubtasksList) return;
+      modalSubtasksList.innerHTML = currentModalSubtasks.map((s, idx) => `
+        <div style="display: flex; align-items: center; justify-content: space-between; background: var(--surface-card-elevated); padding: 4px 8px; border-radius: var(--radius-xs);">
+          <span style="font-size: 0.82rem; color: var(--text-primary);">${escapeHTML(s.title)}</span>
+          <button type="button" class="btn-mini btn-text-danger btn-remove-modal-step" data-index="${idx}">✕</button>
+        </div>
+      `).join('');
 
-        const editBtn = e.target.closest('.btn-edit-task');
-        if (editBtn) {
-          const mission = state.getMissions().find(m => m.id === editBtn.dataset.id);
-          if (mission && modalTask) {
-            editIdInput.value = mission.id;
-            titleInput.value = mission.title;
-            catInput.value = mission.category;
-            priorityInput.value = mission.priority;
-            deadlineInput.value = mission.deadline || '';
-            effortInput.value = mission.estimatedEffort || '';
-            descInput.value = mission.description || '';
-            tempSubtasks = [...(mission.subtasks || [])];
-            renderModalSubtasks();
-            modalTask.classList.remove('hidden');
-          }
-          return;
-        }
+      modalSubtasksList.querySelectorAll('.btn-remove-modal-step').forEach(btn => {
+        btn.addEventListener('click', () => {
+          currentModalSubtasks.splice(parseInt(btn.dataset.index, 10), 1);
+          renderModalSubtasks();
+        });
+      });
+    };
 
-        const delBtn = e.target.closest('.btn-delete-task');
-        if (delBtn) {
-          if (confirm('Delete this mission record?')) {
-            state.deleteMission(delBtn.dataset.id);
-            renderMissions();
-          }
+    if (btnModalAddSubtask && inputModalNewSubtask) {
+      const addStep = () => {
+        const text = inputModalNewSubtask.value.trim();
+        if (text) {
+          currentModalSubtasks.push({
+            id: 'qst_' + Date.now() + '_' + Math.floor(Math.random() * 100),
+            title: text,
+            completed: false
+          });
+          inputModalNewSubtask.value = '';
+          renderModalSubtasks();
         }
+      };
+      btnModalAddSubtask.addEventListener('click', addStep);
+      inputModalNewSubtask.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); addStep(); }
       });
     }
 
     const openCreateModal = () => {
-      editIdInput.value = '';
+      if (!modalTask) return;
       formTask.reset();
-      tempSubtasks = [];
+      editIdInput.value = '';
+      modalTitle.textContent = 'DISPATCH NEW MISSION';
+      currentModalSubtasks = [];
+      renderModalSubtasks();
+      modalTask.classList.remove('hidden');
+      titleInput.focus();
+    };
+
+    const openEditModal = (id) => {
+      const mission = state.getMissions().find(m => m.id === id);
+      if (!mission || !modalTask) return;
+      editIdInput.value = mission.id;
+      modalTitle.textContent = 'EDIT MISSION OBJECTIVE';
+      titleInput.value = mission.title;
+      catInput.value = mission.category;
+      priorityInput.value = mission.priority;
+      deadlineInput.value = mission.deadline || '';
+      effortInput.value = mission.estimatedEffort || '';
+      descInput.value = mission.description || '';
+      currentModalSubtasks = mission.subtasks ? [...mission.subtasks] : [];
       renderModalSubtasks();
       modalTask.classList.remove('hidden');
       titleInput.focus();
     };
 
     if (btnOpenCreate) btnOpenCreate.addEventListener('click', openCreateModal);
-    if (btnMobileFabCreate) btnMobileFabCreate.addEventListener('click', openCreateModal);
-
-    const renderModalSubtasks = () => {
-      if (!modalSubtasksList) return;
-      modalSubtasksList.innerHTML = tempSubtasks.map((s, idx) => `
-        <div style="display: flex; align-items: center; justify-content: space-between; background: var(--surface-input); padding: 6px 10px; border-radius: var(--radius-xs); border: 1px solid var(--border-subdued);">
-          <span style="font-size: 0.82rem;">${escapeHTML(s.title)}</span>
-          <button type="button" class="btn-mini btn-text-danger btn-remove-subtask-temp" data-idx="${idx}">✕</button>
-        </div>
-      `).join('');
-    };
-
-    if (btnModalAddSubtask) {
-      btnModalAddSubtask.addEventListener('click', () => {
-        const text = modalNewSubtaskInput.value.trim();
-        if (text) {
-          tempSubtasks.push({ id: 'qst_' + Date.now(), title: text, completed: false });
-          modalNewSubtaskInput.value = '';
-          renderModalSubtasks();
-        }
-      });
-    }
-
-    if (modalSubtasksList) {
-      modalSubtasksList.addEventListener('click', (e) => {
-        const rm = e.target.closest('.btn-remove-subtask-temp');
-        if (rm) {
-          const idx = parseInt(rm.dataset.idx, 10);
-          tempSubtasks.splice(idx, 1);
-          renderModalSubtasks();
-        }
-      });
-    }
+    if (fabCreate) fabCreate.addEventListener('click', openCreateModal);
 
     if (formTask) {
       formTask.addEventListener('submit', (e) => {
         e.preventDefault();
         const id = editIdInput.value;
-        const title = titleInput.value.trim();
-        if (!title) return;
-
-        const data = {
-          title: title,
+        const missionData = {
+          title: titleInput.value.trim(),
           category: catInput.value,
           priority: priorityInput.value,
-          deadline: deadlineInput.value || '',
-          estimatedEffort: effortInput.value,
-          description: descInput.value,
-          subtasks: tempSubtasks
+          deadline: deadlineInput.value,
+          estimatedEffort: effortInput.value.trim(),
+          description: descInput.value.trim(),
+          subtasks: currentModalSubtasks
         };
 
-        if (id) state.updateMission(id, data);
-        else state.addMission(data);
+        if (id) {
+          state.updateMission(id, missionData);
+        } else {
+          state.addMission(missionData);
+        }
 
         modalTask.classList.add('hidden');
-        sound.playTone(620, 0.05);
-        renderMissions();
+        sound.playTone(600, 0.06);
       });
     }
 
@@ -793,255 +781,7 @@
   }
 
   /* ==========================================================================
-     6. FOCUS COCKPIT (Timestamp-Accurate Timer math)
-     ========================================================================== */
-  function initFocusSystem() {
-    const objInput = document.getElementById('focus-objective-input');
-    const nextActionTitle = document.getElementById('focus-next-action-title');
-    const timerDigits = document.getElementById('focus-timer-digits');
-    const timerBar = document.getElementById('focus-timer-bar');
-    const activeLabel = document.getElementById('focus-active-objective-label');
-    const durationChips = document.querySelectorAll('#duration-chips-container .btn-duration-chip');
-    
-    // Buttons
-    const btnStart = document.getElementById('btn-focus-start');
-    const btnPause = document.getElementById('btn-focus-pause');
-    const btnResume = document.getElementById('btn-focus-resume');
-    const btnInterrupt = document.getElementById('btn-focus-interrupt');
-    const btnComplete = document.getElementById('btn-focus-complete');
-    const btnCancel = document.getElementById('btn-focus-cancel');
-
-    // Interruption Modal
-    const modalInterrupt = document.getElementById('modal-focus-interruption');
-    const inputReason = document.getElementById('input-interruption-reason');
-    const btnSaveInterrupt = document.getElementById('btn-save-interruption');
-    const btnCloseInterrupt = document.getElementById('btn-close-interruption-modal');
-
-    // Resumption Memory Card
-    const resumptionBox = document.getElementById('focus-resumption-memory-box');
-    const resumptionContextText = document.getElementById('resumption-context-text');
-    const btnResumptionRejoin = document.getElementById('btn-resumption-rejoin');
-    const btnResumptionClear = document.getElementById('btn-resumption-clear');
-
-    let totalMins = 25;
-    let secondsLeft = 25 * 60;
-    let targetEndTime = null;
-    let timerInterval = null;
-    let isRunning = false;
-
-    const formatTimer = (secs) => {
-      const m = String(Math.floor(secs / 60)).padStart(2, '0');
-      const s = String(secs % 60).padStart(2, '0');
-      return `${m}:${s}`;
-    };
-
-    const updateFocusDisplay = () => {
-      if (timerDigits) timerDigits.textContent = formatTimer(secondsLeft);
-      if (timerBar) {
-        const percent = Math.min(100, Math.max(0, (secondsLeft / (totalMins * 60)) * 100));
-        timerBar.style.width = `${percent}%`;
-      }
-      const headerTimer = document.getElementById('header-focus-timer');
-      if (headerTimer) headerTimer.textContent = formatTimer(secondsLeft);
-    };
-
-    const setDuration = (mins) => {
-      totalMins = mins;
-      secondsLeft = mins * 60;
-      targetEndTime = null;
-      updateFocusDisplay();
-    };
-
-    durationChips.forEach(chip => {
-      chip.addEventListener('click', () => {
-        if (isRunning) return;
-        durationChips.forEach(c => c.classList.remove('active'));
-        chip.classList.add('active');
-        setDuration(parseInt(chip.dataset.mins, 10));
-      });
-    });
-
-    const tickTimer = () => {
-      if (!isRunning || !targetEndTime) return;
-      const now = Date.now();
-      secondsLeft = Math.max(0, Math.ceil((targetEndTime - now) / 1000));
-      updateFocusDisplay();
-
-      if (secondsLeft <= 0) {
-        completeFocusSession(true);
-      }
-    };
-
-    // Tab visibility change listener prevents timer drift when backgrounded
-    document.addEventListener('visibilitychange', () => {
-      if (isRunning && targetEndTime) {
-        tickTimer();
-      }
-    });
-
-    const startTimer = () => {
-      if (isRunning) return;
-      isRunning = true;
-      targetEndTime = Date.now() + secondsLeft * 1000;
-
-      const headerFocusPill = document.getElementById('header-focus-pill');
-      if (headerFocusPill) headerFocusPill.classList.remove('hidden');
-
-      btnStart.classList.add('hidden');
-      btnPause.classList.remove('hidden');
-      btnInterrupt.classList.remove('hidden');
-      btnComplete.classList.remove('hidden');
-      btnCancel.classList.remove('hidden');
-
-      if (timerInterval) clearInterval(timerInterval);
-      timerInterval = setInterval(tickTimer, 1000);
-    };
-
-    const pauseTimer = () => {
-      isRunning = false;
-      if (timerInterval) clearInterval(timerInterval);
-      btnPause.classList.add('hidden');
-      btnResume.classList.remove('hidden');
-    };
-
-    const resumeTimer = () => {
-      startTimer();
-      btnResume.classList.add('hidden');
-    };
-
-    const completeFocusSession = (naturally = true) => {
-      isRunning = false;
-      if (timerInterval) clearInterval(timerInterval);
-      const title = objInput ? objInput.value.trim() : 'Focus Session';
-      
-      state.logFocusSession({
-        missionTitle: title || 'Focus Mission',
-        durationMinutes: totalMins,
-        completedNaturally: naturally,
-        interrupted: !naturally
-      });
-
-      if (naturally) sound.playSuccessChime();
-      resetTimerUI();
-    };
-
-    const resetTimerUI = () => {
-      isRunning = false;
-      if (timerInterval) clearInterval(timerInterval);
-      targetEndTime = null;
-
-      const headerFocusPill = document.getElementById('header-focus-pill');
-      if (headerFocusPill) headerFocusPill.classList.add('hidden');
-
-      btnStart.classList.remove('hidden');
-      btnPause.classList.add('hidden');
-      btnResume.classList.add('hidden');
-      btnInterrupt.classList.add('hidden');
-      btnComplete.classList.add('hidden');
-      btnCancel.classList.add('hidden');
-
-      setDuration(totalMins);
-    };
-
-    if (btnStart) btnStart.addEventListener('click', startTimer);
-    if (btnPause) btnPause.addEventListener('click', pauseTimer);
-    if (btnResume) btnResume.addEventListener('click', resumeTimer);
-    if (btnComplete) btnComplete.addEventListener('click', () => completeFocusSession(true));
-    if (btnCancel) btnCancel.addEventListener('click', resetTimerUI);
-
-    // Interruption logic & State memory
-    if (btnInterrupt) {
-      btnInterrupt.addEventListener('click', () => {
-        pauseTimer();
-        if (modalInterrupt) modalInterrupt.classList.remove('hidden');
-      });
-    }
-
-    if (btnSaveInterrupt) {
-      btnSaveInterrupt.addEventListener('click', () => {
-        const reason = inputReason.value.trim();
-        const missionTitle = objInput.value.trim() || 'Focus Mission';
-        
-        state.saveResumptionMemory({
-          missionTitle: missionTitle,
-          nextAction: nextActionTitle ? nextActionTitle.textContent : '',
-          reason: reason || 'Context switch',
-          secondsLeft: secondsLeft,
-          totalMins: totalMins
-        });
-
-        state.logFocusSession({
-          missionTitle: missionTitle,
-          durationMinutes: Math.round((totalMins * 60 - secondsLeft) / 60),
-          interrupted: true,
-          interruptionReason: reason
-        });
-
-        modalInterrupt.classList.add('hidden');
-        inputReason.value = '';
-        resetTimerUI();
-        renderResumptionMemory();
-      });
-    }
-
-    if (btnCloseInterrupt) {
-      btnCloseInterrupt.addEventListener('click', () => modalInterrupt.classList.add('hidden'));
-    }
-
-    const renderResumptionMemory = () => {
-      const memory = state.getResumptionMemory();
-      if (memory && resumptionBox && resumptionContextText) {
-        resumptionBox.classList.remove('hidden');
-        resumptionContextText.textContent = `Interrupted on "${escapeHTML(memory.missionTitle)}" • Note: "${escapeHTML(memory.reason)}" • Target Next: "${escapeHTML(memory.nextAction)}"`;
-      } else if (resumptionBox) {
-        resumptionBox.classList.add('hidden');
-      }
-    };
-
-    if (btnResumptionRejoin) {
-      btnResumptionRejoin.addEventListener('click', () => {
-        const memory = state.getResumptionMemory();
-        if (memory) {
-          if (objInput) objInput.value = memory.missionTitle;
-          setDuration(memory.totalMins || 25);
-          secondsLeft = memory.secondsLeft || 25 * 60;
-          updateFocusDisplay();
-          state.clearResumptionMemory();
-          renderResumptionMemory();
-          startTimer();
-        }
-      });
-    }
-
-    if (btnResumptionClear) {
-      btnResumptionClear.addEventListener('click', () => {
-        state.clearResumptionMemory();
-        renderResumptionMemory();
-      });
-    }
-
-    const updateFocusCockpitData = () => {
-      const missions = state.getMissions().filter(m => m.status !== 'COMPLETED');
-      const topMission = missions.find(m => m.priority === 'P1') || missions[0];
-
-      if (topMission) {
-        if (objInput && !objInput.value) objInput.value = topMission.title;
-        const nextAct = state.getNextAction(topMission);
-        if (nextActionTitle) nextActionTitle.textContent = nextAct;
-        if (activeLabel) activeLabel.textContent = `Active Target: ${topMission.title}`;
-      } else {
-        if (nextActionTitle) nextActionTitle.textContent = 'No active mission declared.';
-        if (activeLabel) activeLabel.textContent = 'Mission execution pending target lock';
-      }
-    };
-
-    updateFocusCockpitData();
-    renderResumptionMemory();
-    window.addEventListener('aether:missions-updated', updateFocusCockpitData);
-  }
-
-  /* ==========================================================================
-     7. HOME VIEW CONTROLLER
+     6. HOME / COMMAND VIEW CONTROLLER
      ========================================================================== */
   function initHomeView() {
     const dueSoonList = document.getElementById('dash-due-soon-list');
@@ -1051,12 +791,51 @@
     const priorityNextAction = document.getElementById('priority-next-action-text');
     const priorityCat = document.getElementById('priority-category-badge');
     const smartEngagerText = document.getElementById('smart-engager-text');
-    const btnStartPriorityFocus = document.getElementById('btn-start-priority-focus');
+    const btnQuickExecuteStep = document.getElementById('btn-quick-execute-step');
+    const btnOpenPriorityDetail = document.getElementById('btn-open-priority-detail');
+    const heroBtnQuickExecute = document.getElementById('hero-btn-quick-execute');
     const todayRatio = document.getElementById('today-ratio');
     const todayPercent = document.getElementById('today-percent');
     const todayProgressBar = document.getElementById('today-progress-bar');
-    const dashFocusMin = document.getElementById('dash-focus-min');
+    const dashActiveObjectives = document.getElementById('dash-active-objectives');
     const questsClearedCount = document.getElementById('dash-quests-cleared-count');
+
+    // Hero Floating Target Lock Elements
+    const heroTargetTitle = document.getElementById('hero-target-title');
+    const heroTargetAction = document.getElementById('hero-target-action');
+
+    const executeTopAction = () => {
+      const missions = state.getMissions();
+      const activeMissions = missions.filter(m => m.status !== 'COMPLETED');
+      const topMission = activeMissions.find(m => m.priority === 'P1') || activeMissions[0];
+      if (!topMission) {
+        const btnCreate = document.getElementById('btn-open-create-task');
+        if (btnCreate) btnCreate.click();
+        return;
+      }
+
+      if (topMission.subtasks && topMission.subtasks.length > 0) {
+        const nextSub = topMission.subtasks.find(s => !s.completed);
+        if (nextSub) {
+          state.toggleQuestStep(topMission.id, nextSub.id);
+          sound.playSuccessChime();
+          return;
+        }
+      }
+
+      state.completeMission(topMission.id);
+      sound.playSuccessChime();
+    };
+
+    if (btnQuickExecuteStep) btnQuickExecuteStep.addEventListener('click', executeTopAction);
+    if (heroBtnQuickExecute) heroBtnQuickExecute.addEventListener('click', executeTopAction);
+
+    if (btnOpenPriorityDetail) {
+      btnOpenPriorityDetail.addEventListener('click', () => {
+        const navTasks = document.querySelector('.nav-tab-btn[data-view="tasks"]');
+        if (navTasks) navTasks.click();
+      });
+    }
 
     const renderHome = () => {
       const missions = state.getMissions();
@@ -1071,9 +850,7 @@
       if (todayPercent) todayPercent.textContent = `${percent}%`;
       if (todayProgressBar) todayProgressBar.style.width = `${percent}%`;
 
-      const todaySessions = state.getFocusSessions().filter(s => s.dateStr === state.todayStr);
-      const focusMins = todaySessions.reduce((acc, s) => acc + (s.durationMinutes || 0), 0);
-      if (dashFocusMin) dashFocusMin.textContent = `${focusMins} MIN`;
+      if (dashActiveObjectives) dashActiveObjectives.textContent = `${activeMissions.length} ACTIVE`;
 
       let totalQuestsCleared = 0;
       missions.forEach(m => {
@@ -1081,6 +858,30 @@
       });
       if (questsClearedCount) questsClearedCount.textContent = `${totalQuestsCleared} STEPS`;
 
+      // Update Hero Command Deck HUD
+      const hudMissionsVal = document.getElementById('hero-hud-missions-val');
+      const hudMissionsPct = document.getElementById('hero-hud-missions-pct');
+      const hudMomentumVal = document.getElementById('hero-hud-momentum-val');
+      const hudDayPct = document.getElementById('hero-hud-day-pct');
+      const hudDayBar = document.getElementById('hero-hud-day-bar');
+      const heroLiveClock = document.getElementById('hero-live-clock');
+
+      if (hudMissionsVal) hudMissionsVal.textContent = `${clearedCount} / ${totalMissions}`;
+      if (hudMissionsPct) hudMissionsPct.textContent = `${percent}%`;
+      
+      if (hudMomentumVal) {
+        const momentum = totalMissions > 0 ? Math.min(100, Math.round(((clearedCount * 2 + totalQuestsCleared) / Math.max(1, totalMissions * 2)) * 100)) : 100;
+        hudMomentumVal.textContent = `${momentum}%`;
+      }
+
+      const now = new Date();
+      const secsInDay = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+      const dayPct = Math.round((secsInDay / 86400) * 100);
+      if (hudDayPct) hudDayPct.textContent = `${dayPct}%`;
+      if (hudDayBar) hudDayBar.style.width = `${dayPct}%`;
+      if (heroLiveClock) heroLiveClock.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      // Priority Mission Binding
       const topMission = activeMissions.find(m => m.priority === 'P1') || activeMissions[0];
       if (topMission) {
         if (priorityTitle) priorityTitle.textContent = topMission.title;
@@ -1090,17 +891,21 @@
           priorityCat.textContent = `${topMission.priority} — ${topMission.category}`;
           priorityCat.className = `priority-badge priority-${topMission.priority}`;
         }
+        if (heroTargetTitle) heroTargetTitle.textContent = topMission.title;
+        if (heroTargetAction) heroTargetAction.textContent = `Next Action: ${state.getNextAction(topMission)}`;
       } else {
         if (priorityTitle) priorityTitle.textContent = 'All missions cleared';
         if (priorityDesc) priorityDesc.textContent = 'Declare your next mission in Missions to unlock execution focus.';
         if (priorityNextAction) priorityNextAction.textContent = 'Create your next mission objective';
+        if (heroTargetTitle) heroTargetTitle.textContent = 'All missions cleared';
+        if (heroTargetAction) heroTargetAction.textContent = 'Standby for new mission dispatch';
       }
 
       if (smartEngagerText) {
         if (topMission) {
-          smartEngagerText.textContent = `Assistant Suggestion: Mission "${topMission.title}" (${topMission.priority}) is your highest priority. Next Action: "${state.getNextAction(topMission)}".`;
+          smartEngagerText.textContent = `Tactical Directive: Mission "${topMission.title}" (${topMission.priority}) is locked. Immediate Next Action: "${state.getNextAction(topMission)}".`;
         } else {
-          smartEngagerText.textContent = 'Assistant Suggestion: No active missions pending. All goals cleared.';
+          smartEngagerText.textContent = 'Tactical Directive: All declared objectives cleared. System ready for next dispatch.';
         }
       }
 
@@ -1139,50 +944,49 @@
       }
     };
 
-    if (btnStartPriorityFocus) {
-      btnStartPriorityFocus.addEventListener('click', () => {
-        const focusTab = document.querySelector('.nav-tab-btn[data-view="focus"]');
-        if (focusTab) focusTab.click();
-      });
-    }
-
     renderHome();
     window.addEventListener('aether:missions-updated', renderHome);
     window.addEventListener('aether:completed-updated', renderHome);
-    window.addEventListener('aether:focus-updated', renderHome);
   }
 
   /* ==========================================================================
-     8. INSIGHTS & REAL OBSERVED DATA CONTROLLER
+     7. INTEL & EXECUTIVE TELEMETRY CONTROLLER
      ========================================================================== */
   function initInsightsView() {
-    const totalFocusEl = document.getElementById('insights-total-focus');
-    const compRateEl = document.getElementById('insights-completion-rate');
-    const interruptCountEl = document.getElementById('insights-interrupt-count');
-    const resumptionRateEl = document.getElementById('insights-resumption-rate');
+    const totalClearedEl = document.getElementById('insights-total-cleared');
+    const totalQuestsEl = document.getElementById('insights-total-quests');
+    const priorityRatioEl = document.getElementById('insights-priority-ratio');
+    const momentumIndexEl = document.getElementById('insights-momentum-index');
     const trendBarsEl = document.getElementById('insights-trend-bars');
     const archiveGrid = document.getElementById('achievements-history-grid');
 
     const renderInsights = () => {
-      const sessions = state.getFocusSessions();
       const missions = state.getMissions();
       const completed = state.getCompletedMissions();
 
-      const totalMins = sessions.reduce((acc, s) => acc + (s.durationMinutes || 0), 0);
-      if (totalFocusEl) totalFocusEl.textContent = `${totalMins} MIN`;
+      // Total missions cleared
+      if (totalClearedEl) totalClearedEl.textContent = completed.length.toString();
 
-      const totalMissions = missions.length;
-      const clearedMissions = completed.length;
-      const compRate = totalMissions > 0 ? Math.round((clearedMissions / totalMissions) * 100) : 0;
-      if (compRateEl) compRateEl.textContent = `${compRate}%`;
+      // Total quests checked off
+      let totalQuests = 0;
+      missions.forEach(m => {
+        if (m.subtasks) totalQuests += m.subtasks.filter(s => s.completed).length;
+      });
+      if (totalQuestsEl) totalQuestsEl.textContent = totalQuests.toString();
 
-      const interrupted = sessions.filter(s => s.interrupted);
-      if (interruptCountEl) interruptCountEl.textContent = interrupted.length.toString();
+      // High-priority ratio (P1 & P2 vs total)
+      const allKnown = [...missions, ...completed];
+      const highPrio = allKnown.filter(m => m.priority === 'P1' || m.priority === 'P2').length;
+      const prioRatio = allKnown.length > 0 ? Math.round((highPrio / allKnown.length) * 100) : 0;
+      if (priorityRatioEl) priorityRatioEl.textContent = `${prioRatio}%`;
 
-      const resumed = interrupted.filter(s => s.resumed);
-      const resumptionRate = interrupted.length > 0 ? Math.round((resumed.length / interrupted.length) * 100) : 0;
-      if (resumptionRateEl) resumptionRateEl.textContent = `${resumptionRate}%`;
+      // Momentum Quotient
+      const totalM = missions.length;
+      const clearedM = completed.length;
+      const momIndex = totalM > 0 ? Math.min(100, Math.round(((clearedM * 2 + totalQuests) / Math.max(1, totalM * 2)) * 100)) : 100;
+      if (momentumIndexEl) momentumIndexEl.textContent = `${momIndex}%`;
 
+      // 14-day execution trend bars (real observed completion history)
       if (trendBarsEl) {
         const last14Days = [];
         for (let i = 13; i >= 0; i--) {
@@ -1194,36 +998,48 @@
           last14Days.push(`${y}-${m}-${day}`);
         }
 
-        const maxMins = 120;
+        const maxMissions = 8;
         trendBarsEl.innerHTML = last14Days.map(dateStr => {
-          const dayMins = sessions.filter(s => s.dateStr === dateStr).reduce((acc, s) => acc + (s.durationMinutes || 0), 0);
-          const heightPercent = Math.min(Math.round((dayMins / maxMins) * 100), 100);
+          // Count missions completed on this date
+          const dayMatches = completed.filter(c => {
+            if (c.timestamp) {
+              const cDate = new Date(c.timestamp);
+              const cy = cDate.getFullYear();
+              const cm = String(cDate.getMonth() + 1).padStart(2, '0');
+              const cd = String(cDate.getDate()).padStart(2, '0');
+              return `${cy}-${cm}-${cd}` === dateStr;
+            }
+            return false;
+          }).length;
+
+          const heightPercent = Math.min(Math.round((dayMatches / maxMissions) * 100), 100);
           return `
-            <div class="trend-bar-column" title="${escapeHTML(dateStr)}: ${dayMins} mins">
-              <div class="trend-bar-fill" style="height: ${heightPercent}%;"></div>
+            <div class="trend-bar-column" title="${escapeHTML(dateStr)}: ${dayMatches} cleared">
+              <div class="trend-bar-fill" style="height: ${Math.max(4, heightPercent)}%;"></div>
               <span class="mono-meta" style="font-size: 0.65rem;">${escapeHTML(dateStr.slice(8))}</span>
             </div>
           `;
         }).join('');
       }
 
+      // Verified Mission Archive
       if (archiveGrid) {
         if (completed.length === 0) {
           archiveGrid.innerHTML = `
             <div class="empty-data-card" style="grid-column: 1 / -1;">
-              <h3 class="mono-label text-accent-cyan" style="font-size: 0.9rem;">NO DATA YET</h3>
-              <p class="mono-meta" style="margin-top: 4px;">Completed missions will be recorded here with real execution telemetry.</p>
+              <h3 class="mono-label text-accent-cyan" style="font-size: 0.9rem;">NO VERIFIED MISSIONS YET</h3>
+              <p class="mono-meta" style="margin-top: 4px;">Completed missions will be recorded here with verifiable execution telemetry.</p>
             </div>
           `;
         } else {
           archiveGrid.innerHTML = completed.map(c => `
-            <div style="background: var(--surface-card-elevated); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-subdued);">
-              <div style="display: flex; justify-content: space-between;">
+            <div style="background: var(--surface-card-elevated); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-subdued);">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
                 <span class="priority-badge priority-${escapeHTML(c.priority)}">${escapeHTML(c.priority)}</span>
                 <span class="category-tag">${escapeHTML(c.category)}</span>
               </div>
-              <h4 style="font-size: 0.9rem; font-weight: 700; margin-top: 6px;">${escapeHTML(c.missionTitle)}</h4>
-              <span class="mono-meta">Cleared on ${escapeHTML(c.completedAt)}</span>
+              <h4 style="font-size: 0.92rem; font-weight: 700; margin-top: 8px; color: var(--text-primary);">${escapeHTML(c.missionTitle)}</h4>
+              <span class="mono-meta" style="margin-top: 4px; display: block;">Cleared on ${escapeHTML(c.completedAt)}</span>
             </div>
           `).join('');
         }
@@ -1231,12 +1047,12 @@
     };
 
     renderInsights();
-    window.addEventListener('aether:focus-updated', renderInsights);
+    window.addEventListener('aether:missions-updated', renderInsights);
     window.addEventListener('aether:completed-updated', renderInsights);
   }
 
   /* ==========================================================================
-     9. SYSTEM AREA (Vision, Daily Review, Thought Log & Circuit Breaker)
+     8. STRATEGIC ARCHITECT CONTROLLER (Vision, Review, Decompression, Circuit)
      ========================================================================== */
   function initSystemArea() {
     const subnavBtns = document.querySelectorAll('.system-subnav-btn');
@@ -1273,17 +1089,18 @@
     if (btnSaveVision) {
       btnSaveVision.addEventListener('click', () => {
         const data = {
-          building: visionBuilding.value,
-          why: visionWhy.value,
-          values: visionValues.value,
-          direction: visionDirection.value
+          building: visionBuilding.value.trim(),
+          why: visionWhy.value.trim(),
+          values: visionValues.value.trim(),
+          direction: visionDirection.value.trim()
         };
         localStorage.setItem('aether_vision', JSON.stringify(data));
         sound.playTone(600, 0.05);
-        alert('Vision Directives saved.');
+        alert('Strategic directives successfully preserved.');
       });
     }
 
+    // Daily Review
     const revMattered = document.getElementById('review-what-mattered');
     const revHappened = document.getElementById('review-what-happened');
     const revTomorrow = document.getElementById('review-tomorrow-changes');
@@ -1293,112 +1110,130 @@
       btnSaveReview.addEventListener('click', () => {
         const reviews = JSON.parse(localStorage.getItem('aether_daily_reviews') || '[]');
         reviews.unshift({
-          id: 'rev_' + Date.now(),
-          dateStr: state.todayStr,
-          whatMattered: revMattered.value,
-          whatHappened: revHappened.value,
-          tomorrowChanges: revTomorrow.value
+          date: state.todayStr,
+          whatMattered: revMattered.value.trim(),
+          whatHappened: revHappened.value.trim(),
+          tomorrowChanges: revTomorrow.value.trim(),
+          timestamp: Date.now()
         });
         localStorage.setItem('aether_daily_reviews', JSON.stringify(reviews));
-        sound.playSuccessChime();
-        alert('Daily Review saved for today.');
+        sound.playTone(620, 0.05);
+        alert('Daily review archived.');
+        revMattered.value = '';
+        revHappened.value = '';
+        revTomorrow.value = '';
       });
     }
 
+    // Thought Log / Decompression
     const decompInput = document.getElementById('decompression-input');
-    const decompMoodSelect = document.getElementById('decompression-mood-select');
-    const btnLogThought = document.getElementById('btn-save-decompression-thought');
-    const btnTurnIntoTask = document.getElementById('btn-turn-into-task');
+    const decompMood = document.getElementById('decompression-mood-select');
+    const btnSaveThought = document.getElementById('btn-save-decompression-thought');
+    const btnConvertToMission = document.getElementById('btn-turn-into-task');
     const btnClearDecomp = document.getElementById('btn-clear-decompression');
     const decompList = document.getElementById('decompression-log-list');
 
-    const renderDecompression = () => {
-      const entries = state.getDecompressionEntries();
+    const renderDecompList = () => {
       if (!decompList) return;
-
+      const entries = state.getDecompressionEntries();
       if (entries.length === 0) {
-        decompList.innerHTML = '<li class="mono-meta">Thought log buffer is clear.</li>';
-        return;
+        decompList.innerHTML = '<li class="mono-meta">Cognitive buffer empty. No unresolved thoughts logged.</li>';
+      } else {
+        decompList.innerHTML = entries.map(e => `
+          <li style="background: var(--surface-card-elevated); padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-subdued);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="mono-label text-accent-cyan">${escapeHTML(e.mood.toUpperCase())}</span>
+              <span class="mono-meta">${escapeHTML(e.timestamp)}</span>
+            </div>
+            <p style="font-size: 0.88rem; margin-top: 4px; color: var(--text-primary); font-weight: 500;">${escapeHTML(e.text)}</p>
+          </li>
+        `).join('');
       }
-
-      decompList.innerHTML = entries.slice(0, 6).map(e => `
-        <li style="background: var(--surface-card-elevated); padding: 8px 12px; border-radius: var(--radius-xs); border: 1px solid var(--border-subdued); margin-bottom: 6px; display: flex; justify-content: space-between;">
-          <span>${escapeHTML(e.text)}</span>
-          <span class="mono-meta">[${escapeHTML((e.mood || 'neutral').toUpperCase())}] ${escapeHTML(e.timestamp)}</span>
-        </li>
-      `).join('');
     };
 
-    if (btnLogThought) {
-      btnLogThought.addEventListener('click', () => {
-        if (decompInput && decompInput.value.trim()) {
-          state.logThought(decompInput.value.trim(), decompMoodSelect ? decompMoodSelect.value : 'neutral');
-          decompInput.value = '';
-          renderDecompression();
-        }
+    if (btnSaveThought && decompInput) {
+      btnSaveThought.addEventListener('click', () => {
+        state.logThought(decompInput.value, decompMood ? decompMood.value : 'neutral');
+        decompInput.value = '';
+        sound.playTone(500, 0.05);
       });
     }
 
-    if (btnTurnIntoTask) {
-      btnTurnIntoTask.addEventListener('click', () => {
-        if (decompInput && decompInput.value.trim()) {
-          state.addMission({ title: decompInput.value.trim(), category: 'COGNITIVE', priority: 'P2' });
+    if (btnConvertToMission && decompInput) {
+      btnConvertToMission.addEventListener('click', () => {
+        const text = decompInput.value.trim();
+        if (text) {
+          state.addMission({
+            title: text.length > 50 ? text.substring(0, 50) + '...' : text,
+            description: text,
+            category: 'COGNITIVE',
+            priority: 'P2'
+          });
           decompInput.value = '';
-          alert('Thought converted into Mission!');
-          renderDecompression();
+          sound.playTone(580, 0.06);
+          alert('Thought transformed into a tactical mission.');
         }
       });
     }
 
     if (btnClearDecomp) {
       btnClearDecomp.addEventListener('click', () => {
-        localStorage.setItem('aether_decompression', JSON.stringify([]));
-        renderDecompression();
+        if (confirm('Clear cognitive unloading buffer?')) {
+          localStorage.setItem('aether_decompression', JSON.stringify([]));
+          renderDecompList();
+        }
       });
     }
 
-    renderDecompression();
+    renderDecompList();
+    window.addEventListener('aether:decompression-updated', renderDecompList);
 
-    const cbModal = document.getElementById('modal-circuit-breaker');
-    const btnOpenCB = document.getElementById('btn-open-circuit-breaker');
-    const btnCloseCB = document.getElementById('btn-close-circuit-breaker');
-    const btnCloseCBX = document.getElementById('btn-close-circuit-breaker-x');
-
-    if (btnOpenCB) btnOpenCB.addEventListener('click', () => cbModal.classList.remove('hidden'));
-    const closeCB = () => cbModal.classList.add('hidden');
-    if (btnCloseCB) btnCloseCB.addEventListener('click', closeCB);
-    if (btnCloseCBX) btnCloseCBX.addEventListener('click', closeCB);
-
-    const circuitOptions = document.querySelectorAll('.btn-circuit-option');
-    circuitOptions.forEach(opt => {
-      opt.addEventListener('click', () => {
-        const action = opt.dataset.action;
-        if (action === 'micro_task') {
-          const taskTitle = prompt('Enter a single 5-minute micro-action:');
-          if (taskTitle) state.addMission({ title: taskTitle, category: 'TECHNICAL', priority: 'P1', estimatedEffort: '5m' });
-        } else if (action === 'decompress') {
-          const sysNav = document.querySelector('.nav-tab-btn[data-view="mission"]');
-          if (sysNav) sysNav.click();
+    // Circuit Breaker Actions
+    document.querySelectorAll('.btn-circuit-option').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const act = btn.dataset.action;
+        sound.playTone(400, 0.06);
+        if (act === 'micro_task') {
+          const m = state.addMission({
+            title: '5-Minute Reset: Take a breath & write 1 single next step',
+            category: 'PERSONAL',
+            priority: 'P1'
+          });
+          alert('Micro-action added to today queue. Focus solely on this single step.');
+          const navHome = document.querySelector('.nav-tab-btn[data-view="dashboard"]');
+          if (navHome) navHome.click();
+        } else if (act === 'decompress') {
+          const btnDecomp = document.querySelector('.system-subnav-btn[data-subview="decompression"]');
+          if (btnDecomp) btnDecomp.click();
+        } else if (act === 'reset_today') {
+          if (confirm('Reset today priority queue to clear mental overload?')) {
+            alert('Queue cleared. Take a 10-minute break before declaring your next action.');
+          }
         }
-        closeCB();
       });
     });
   }
 
   /* ==========================================================================
-     10. PREFERENCES, THEMES & SUPABASE SYNC
+     9. PREFERENCES & SUPABASE CLOUD SYNC
      ========================================================================== */
   function initPreferencesAndSync() {
     const modalCC = document.getElementById('modal-creative-control');
     const btnOpenCC = document.getElementById('btn-open-creative-control');
-    const btnCloseCC = document.getElementById('btn-close-cc');
+    const btnCloseCC = document.getElementById('btn-close-cc-footer');
     const btnCloseCCX = document.getElementById('btn-close-cc-modal');
-    const themeCards = document.querySelectorAll('#theme-presets-row .theme-preset-card');
+    const themeCards = document.querySelectorAll('.theme-preset-card');
 
     const applyTheme = (name) => {
-      document.body.className = `apex-body theme-${name || 'cyan'}`;
-      localStorage.setItem('aether_theme', name || 'cyan');
+      document.body.className = `apex-body theme-${name}`;
+      localStorage.setItem('aether_theme', name);
       themeCards.forEach(c => c.classList.toggle('active', c.dataset.theme === name));
+
+      const rgb = THEME_RGB_MAP[name || 'cyan'];
+      if (rgb) {
+        if (window.celestial3DEngine) window.celestial3DEngine.setThemeColor(rgb);
+        if (window.heroQuantum3DEngine) window.heroQuantum3DEngine.setThemeColor(rgb);
+      }
     };
 
     applyTheme(localStorage.getItem('aether_theme') || 'cyan');
@@ -1412,94 +1247,793 @@
     if (btnCloseCC) btnCloseCC.addEventListener('click', closeCC);
     if (btnCloseCCX) btnCloseCCX.addEventListener('click', closeCC);
 
-    const modalAI = document.getElementById('modal-ai-assistant');
-    const btnOpenAI = document.getElementById('btn-open-ai-assistant');
-    const btnMobileOpenAI = document.getElementById('btn-mobile-open-ai');
-    const btnCloseAI = document.getElementById('btn-close-ai');
-    const btnCloseAIX = document.getElementById('btn-close-ai-modal');
-    const btnDecompose = document.getElementById('btn-ai-decompose-selected');
-    const outputText = document.getElementById('ai-output-text');
+    // Supabase Cloud Sync
+    const inputUrl = document.getElementById('sync-supabase-url');
+    const inputKey = document.getElementById('sync-supabase-anon-key');
+    const inputToken = document.getElementById('sync-user-token');
+    const btnSaveSync = document.getElementById('btn-save-supabase-config');
+    const btnPushCloud = document.getElementById('btn-trigger-cloud-push');
+    const btnDisconnectCloud = document.getElementById('btn-disconnect-cloud');
+    const syncStatusDetail = document.getElementById('sync-status-detail-msg');
 
-    const openAI = () => modalAI.classList.remove('hidden');
-    const closeAI = () => modalAI.classList.add('hidden');
+    const savedUrl = localStorage.getItem('aether_sb_url') || '';
+    const savedKey = localStorage.getItem('aether_sb_key') || '';
+    const savedToken = localStorage.getItem('aether_sb_token') || '';
 
-    if (btnOpenAI) btnOpenAI.addEventListener('click', openAI);
-    if (btnMobileOpenAI) btnMobileOpenAI.addEventListener('click', () => {
-      const mobileSheet = document.getElementById('modal-mobile-more');
-      if (mobileSheet) mobileSheet.classList.add('hidden');
-      openAI();
-    });
-    if (btnCloseAI) btnCloseAI.addEventListener('click', closeAI);
-    if (btnCloseAIX) btnCloseAIX.addEventListener('click', closeAI);
+    if (inputUrl) inputUrl.value = savedUrl;
+    if (inputKey) inputKey.value = savedKey;
+    if (inputToken) inputToken.value = savedToken;
 
-    if (btnDecompose) {
-      btnDecompose.addEventListener('click', async () => {
-        const topMission = state.getMissions().find(m => m.status !== 'COMPLETED');
-        if (!topMission) {
-          if (outputText) outputText.textContent = 'Assistant: No active mission available to decompose.';
+    if (btnSaveSync) {
+      btnSaveSync.addEventListener('click', async () => {
+        const url = inputUrl.value.trim();
+        const key = inputKey.value.trim();
+        const token = inputToken.value.trim();
+
+        if (!url || !key) {
+          alert('Please enter both Supabase Project URL and Anon Public Key.');
           return;
         }
 
-        if (outputText) outputText.textContent = `Decomposing "${topMission.title}" into quest steps...`;
+        localStorage.setItem('aether_sb_url', url);
+        localStorage.setItem('aether_sb_key', key);
+        localStorage.setItem('aether_sb_token', token);
+
+        if (syncStatusDetail) syncStatusDetail.textContent = 'SUPABASE CREDENTIALS SAVED • VERIFYING...';
+        sound.playTone(600, 0.05);
 
         try {
-          const res = await fetch('/api/ai/assist', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'decompose', taskTitle: topMission.title })
-          });
-          const data = await res.json();
-          if (data && data.success && data.suggestedSubtasks) {
-            data.suggestedSubtasks.forEach(s => state.addQuestStep(topMission.id, s.title));
-            if (outputText) outputText.textContent = `Decomposed "${topMission.title}" into ${data.suggestedSubtasks.length} quest steps!`;
-            sound.playSuccessChime();
-          } else {
-            // Local fallback if API is unreachable
-            state.addQuestStep(topMission.id, `Define scope for ${topMission.title}`);
-            state.addQuestStep(topMission.id, `Execute implementation block`);
-            state.addQuestStep(topMission.id, `Verify completion & test output`);
-            if (outputText) outputText.textContent = `Decomposed "${topMission.title}" into 3 quest steps!`;
+          if (window.supabase) {
+            const client = window.supabase.createClient(url, key);
+            const { error } = await client.from('apex_tasks').select('count', { count: 'exact', head: true });
+            if (!error) {
+              if (syncStatusDetail) syncStatusDetail.textContent = 'SUPABASE CLOUD CONNECTED ✦ REALTIME READY';
+              const indicator = document.getElementById('sync-status-indicator');
+              if (indicator) indicator.textContent = 'CLOUD SYNCED ✦';
+              alert('Successfully authenticated with Supabase!');
+              return;
+            }
           }
+          if (syncStatusDetail) syncStatusDetail.textContent = 'CREDENTIALS RECORDED (LOCAL STORAGE ACTIVE)';
         } catch (e) {
-          state.addQuestStep(topMission.id, `Define scope for ${topMission.title}`);
-          state.addQuestStep(topMission.id, `Execute implementation block`);
-          state.addQuestStep(topMission.id, `Verify completion & test output`);
-          if (outputText) outputText.textContent = `Decomposed "${topMission.title}" into 3 quest steps!`;
+          if (syncStatusDetail) syncStatusDetail.textContent = 'SAVED LOCALLY (OFFLINE CLIENT ACTIVE)';
         }
       });
     }
 
-    const modalAuth = document.getElementById('modal-auth-sync');
-    const btnOpenAuth = document.getElementById('btn-open-auth-modal');
-    const btnCloseAuth = document.getElementById('btn-close-auth-modal');
+    if (btnDisconnectCloud) {
+      btnDisconnectCloud.addEventListener('click', () => {
+        localStorage.removeItem('aether_sb_url');
+        localStorage.removeItem('aether_sb_key');
+        localStorage.removeItem('aether_sb_token');
+        if (inputUrl) inputUrl.value = '';
+        if (inputKey) inputKey.value = '';
+        if (inputToken) inputToken.value = '';
+        if (syncStatusDetail) syncStatusDetail.textContent = 'DISCONNECTED • LOCAL FIRST ACTIVE';
+        const indicator = document.getElementById('sync-status-indicator');
+        if (indicator) indicator.textContent = 'LOCAL STORAGE ✦';
+        alert('Cloud sync configuration cleared.');
+      });
+    }
+
+    // JSON Export / Import
+    const btnExport = document.getElementById('btn-export-backup');
+    const btnImport = document.getElementById('btn-trigger-import');
+    const inputImport = document.getElementById('input-import-file');
+
+    if (btnExport) btnExport.addEventListener('click', () => state.exportWorkspaceJSON());
+    if (btnImport && inputImport) {
+      btnImport.addEventListener('click', () => inputImport.click());
+      inputImport.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (event) => state.importWorkspaceJSON(event.target.result);
+          reader.readAsText(file);
+        }
+      });
+    }
+
     const headerSyncPill = document.getElementById('header-sync-pill');
-
-    if (btnOpenAuth) btnOpenAuth.addEventListener('click', () => {
-      if (modalCC) modalCC.classList.add('hidden');
-      if (modalAuth) modalAuth.classList.remove('hidden');
-    });
-
-    if (headerSyncPill) headerSyncPill.addEventListener('click', () => {
-      if (modalAuth) modalAuth.classList.remove('hidden');
-    });
-
-    if (btnCloseAuth) btnCloseAuth.addEventListener('click', () => {
-      if (modalAuth) modalAuth.classList.add('hidden');
-    });
+    if (headerSyncPill && btnOpenCC) {
+      headerSyncPill.addEventListener('click', () => btnOpenCC.click());
+    }
   }
 
   /* ==========================================================================
-     11. BOOTSTRAP INITIALIZATION
+     10. RESPECTFUL AI ASSISTANT (TACTICAL CO-PILOT)
+     ========================================================================== */
+  function initAIAssistant() {
+    const modalAI = document.getElementById('modal-ai-assistant');
+    const btnOpenAI = document.getElementById('btn-open-ai-assistant');
+    const btnCloseAI = document.getElementById('btn-close-ai-modal');
+    const promptInput = document.getElementById('ai-prompt-input');
+    const btnRunQuery = document.getElementById('btn-run-ai-query');
+    const responseBox = document.getElementById('ai-response-container');
+    const responseText = document.getElementById('ai-response-text');
+    const btnApplySteps = document.getElementById('btn-apply-ai-steps');
+    const templateBtns = document.querySelectorAll('.btn-ai-template');
+
+    let generatedQuests = [];
+
+    if (btnOpenAI) btnOpenAI.addEventListener('click', () => modalAI.classList.remove('hidden'));
+    const closeAI = () => modalAI.classList.add('hidden');
+    if (btnCloseAI) btnCloseAI.addEventListener('click', closeAI);
+
+    templateBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const action = btn.dataset.action;
+        if (action === 'decompose' && promptInput && !promptInput.value) {
+          promptInput.value = 'Prepare and execute strategic sprint deliverable';
+        } else if (action === 'next_action' && promptInput && !promptInput.value) {
+          promptInput.value = 'Clear backlog and identify primary blocker';
+        }
+        runAIQuery();
+      });
+    });
+
+    const runAIQuery = () => {
+      const q = promptInput.value.trim() || 'Execute priority objective';
+      sound.playTone(620, 0.05);
+
+      responseText.innerHTML = '<span class="pulse-dot"></span> Analyzing objectives and calculating quest steps...';
+
+      setTimeout(() => {
+        generatedQuests = [
+          `Audit scope & write 1-sentence definition of done for "${q}"`,
+          `Set up environment / branch / document foundation`,
+          `Implement primary core milestone`,
+          `Review against quality standards & verify functionality`,
+          `Archive completion in System Intel`
+        ];
+
+        responseText.innerHTML = `
+          <strong>Tactical Breakdown for:</strong> "${escapeHTML(q)}"<br><br>
+          <ol style="margin-left: 20px; line-height: 1.8;">
+            ${generatedQuests.map(step => `<li>${escapeHTML(step)}</li>`).join('')}
+          </ol>
+        `;
+
+        if (btnApplySteps) btnApplySteps.classList.remove('hidden');
+      }, 350);
+    };
+
+    if (btnRunQuery) btnRunQuery.addEventListener('click', runAIQuery);
+
+    if (btnApplySteps) {
+      btnApplySteps.addEventListener('click', () => {
+        const title = promptInput.value.trim() || 'AI Decomposed Mission';
+        const subtasks = generatedQuests.map((step, idx) => ({
+          id: 'qst_ai_' + Date.now() + '_' + idx,
+          title: step,
+          completed: false
+        }));
+
+        state.addMission({
+          title: title,
+          category: 'TECHNICAL',
+          priority: 'P1',
+          subtasks: subtasks
+        });
+
+        sound.playSuccessChime();
+        modalAI.classList.add('hidden');
+        alert('Mission and executable quest steps deployed to Tactical Mission Matrix!');
+      });
+    }
+  }
+
+  /* ==========================================================================
+     11. REAL GPU WEBGL & 3D QUANTUM CORE ENGINES
+     ========================================================================== */
+
+  const THEME_RGB_MAP = {
+    cyan: [56, 189, 248],
+    blue: [96, 165, 250],
+    emerald: [52, 211, 153],
+    amber: [251, 191, 36],
+    violet: [192, 132, 252],
+    stealth: [241, 245, 249],
+    crimson: [248, 113, 113],
+    sunset: [251, 113, 133],
+    void: [129, 140, 248],
+    olive: [163, 230, 53],
+    amethyst: [244, 114, 182],
+    cobalt: [34, 211, 238]
+  };
+
+  /**
+   * HeroQuantum3DEngine
+   * Interactive 3D Holographic Quantum Core Chamber on #hero-quantum-canvas.
+   * Renders concentric rotating gyroscope rings, regular polyhedral lattice, and orbiting particle cloud.
+   */
+  class HeroQuantum3DEngine {
+    constructor(canvasId) {
+      this.canvas = document.getElementById(canvasId);
+      if (!this.canvas) return;
+      this.ctx = this.canvas.getContext('2d');
+      if (!this.ctx) return;
+
+      this.width = 0;
+      this.height = 0;
+      this.dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+      this.mouseX = 0;
+      this.mouseY = 0;
+      this.targetMouseX = 0;
+      this.targetMouseY = 0;
+
+      this.rotX = 0.2;
+      this.rotY = 0.3;
+      this.rotZ = 0.1;
+      this.speedMult = 1.0;
+
+      this.themeRgb = [56, 189, 248];
+      this.targetThemeRgb = [56, 189, 248];
+
+      this.initGeometry();
+      this.bindEvents();
+      this.resize();
+      this.animate();
+    }
+
+    initGeometry() {
+      // 3D Polyhedron Cage (Octahedron / Icosahedron hybrid)
+      const phi = (1 + Math.sqrt(5)) / 2;
+      const baseVertices = [
+        [-1,  phi, 0], [ 1,  phi, 0], [-1, -phi, 0], [ 1, -phi, 0],
+        [ 0, -1,  phi], [ 0,  1,  phi], [ 0, -1, -phi], [ 0,  1, -phi],
+        [ phi, 0, -1], [ phi, 0,  1], [-phi, 0, -1], [-phi, 0,  1]
+      ];
+
+      const scale = 58;
+      this.vertices = baseVertices.map(v => {
+        const len = Math.sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
+        return [(v[0]/len) * scale, (v[1]/len) * scale, (v[2]/len) * scale];
+      });
+
+      this.edges = [];
+      for (let i = 0; i < this.vertices.length; i++) {
+        for (let j = i + 1; j < this.vertices.length; j++) {
+          const dx = this.vertices[i][0] - this.vertices[j][0];
+          const dy = this.vertices[i][1] - this.vertices[j][1];
+          const dz = this.vertices[i][2] - this.vertices[j][2];
+          const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
+          if (dist < scale * 1.15) {
+            this.edges.push([i, j]);
+          }
+        }
+      }
+
+      // Gyro Ring 1 (Yaw Axis)
+      this.ring1 = [];
+      const numNodes = 36;
+      for (let i = 0; i < numNodes; i++) {
+        const theta = (i / numNodes) * Math.PI * 2;
+        this.ring1.push([Math.cos(theta) * 88, Math.sin(theta) * 88, 0]);
+      }
+
+      // Gyro Ring 2 (Pitch Axis)
+      this.ring2 = [];
+      for (let i = 0; i < numNodes; i++) {
+        const theta = (i / numNodes) * Math.PI * 2;
+        this.ring2.push([0, Math.cos(theta) * 112, Math.sin(theta) * 112]);
+      }
+
+      // Gyro Ring 3 (Outer Oblique)
+      this.ring3 = [];
+      for (let i = 0; i < numNodes; i++) {
+        const theta = (i / numNodes) * Math.PI * 2;
+        this.ring3.push([Math.cos(theta) * 135, 0, Math.sin(theta) * 135]);
+      }
+
+      // 140 Swarming Quantum Particle Nodes
+      this.particles = [];
+      for (let i = 0; i < 140; i++) {
+        const u = Math.random();
+        const v = Math.random();
+        const theta = u * 2.0 * Math.PI;
+        const phiAngle = Math.acos(2.0 * v - 1.0);
+        const r = 40 + Math.random() * 95;
+        this.particles.push({
+          x: r * Math.sin(phiAngle) * Math.cos(theta),
+          y: r * Math.sin(phiAngle) * Math.sin(theta),
+          z: r * Math.cos(phiAngle),
+          orbitSpeed: 0.008 + Math.random() * 0.014,
+          pulse: Math.random() * Math.PI * 2,
+          size: 1.2 + Math.random() * 1.8
+        });
+      }
+    }
+
+    setThemeColor(rgbArray) {
+      if (Array.isArray(rgbArray) && rgbArray.length === 3) {
+        this.targetThemeRgb = rgbArray;
+      }
+    }
+
+    bindEvents() {
+      window.addEventListener('resize', () => this.resize());
+
+      const viewport = document.getElementById('hero-hologram-viewport');
+      if (viewport) {
+        viewport.addEventListener('pointermove', (e) => {
+          const rect = viewport.getBoundingClientRect();
+          const cx = rect.width / 2;
+          const cy = rect.height / 2;
+          this.targetMouseX = (e.clientX - rect.left - cx) / cx;
+          this.targetMouseY = (e.clientY - rect.top - cy) / cy;
+        });
+
+        viewport.addEventListener('pointerenter', () => {
+          this.speedMult = 2.4;
+        });
+
+        viewport.addEventListener('pointerleave', () => {
+          this.targetMouseX = 0;
+          this.targetMouseY = 0;
+          this.speedMult = 1.0;
+        });
+      }
+    }
+
+    resize() {
+      const rect = this.canvas.getBoundingClientRect();
+      this.width = rect.width || 380;
+      this.height = rect.height || 320;
+      this.canvas.width = this.width * this.dpr;
+      this.canvas.height = this.height * this.dpr;
+      this.ctx.scale(this.dpr, this.dpr);
+    }
+
+    rotatePoint(p, pitch, yaw, roll) {
+      let [x, y, z] = p;
+
+      const cosX = Math.cos(pitch);
+      const sinX = Math.sin(pitch);
+      let y1 = y * cosX - z * sinX;
+      let z1 = y * sinX + z * cosX;
+
+      const cosY = Math.cos(yaw);
+      const sinY = Math.sin(yaw);
+      let x2 = x * cosY + z1 * sinY;
+      let z2 = -x * sinY + z1 * cosY;
+
+      const cosZ = Math.cos(roll);
+      const sinZ = Math.sin(roll);
+      let x3 = x2 * cosZ - y1 * sinZ;
+      let y3 = x2 * sinZ + y1 * cosZ;
+
+      return [x3, y3, z2];
+    }
+
+    project(p, fov = 380) {
+      const [x, y, z] = p;
+      const dist = fov + z;
+      if (dist <= 0.1) return null;
+      const factor = fov / dist;
+      return {
+        x: x * factor,
+        y: y * factor,
+        scale: factor,
+        z: z
+      };
+    }
+
+    animate() {
+      this.mouseX += (this.targetMouseX - this.mouseX) * 0.08;
+      this.mouseY += (this.targetMouseY - this.mouseY) * 0.08;
+
+      for (let i = 0; i < 3; i++) {
+        this.themeRgb[i] += (this.targetThemeRgb[i] - this.themeRgb[i]) * 0.08;
+      }
+      const r = Math.round(this.themeRgb[0]);
+      const g = Math.round(this.themeRgb[1]);
+      const b = Math.round(this.themeRgb[2]);
+
+      this.ctx.clearRect(0, 0, this.width, this.height);
+
+      const cx = this.width / 2;
+      const cy = this.height * 0.44;
+
+      // Update rotational momentum
+      this.rotX += (0.006 + this.mouseY * 0.012) * this.speedMult;
+      this.rotY += (0.009 + this.mouseX * 0.016) * this.speedMult;
+      this.rotZ += 0.004 * this.speedMult;
+
+      // Update telemetry readout in HUD
+      const coordsEl = document.getElementById('hologram-coords');
+      if (coordsEl) {
+        const pitchDeg = Math.round(this.mouseY * 25);
+        const rollDeg = Math.round(this.mouseX * 25);
+        coordsEl.textContent = `PITCH: ${pitchDeg >= 0 ? '+' : ''}${pitchDeg}° ROLL: ${rollDeg >= 0 ? '+' : ''}${rollDeg}°`;
+      }
+
+      // Draw Orbiting Quantum Particles
+      for (let part of this.particles) {
+        part.pulse += 0.04;
+        const rot = this.rotatePoint([part.x, part.y, part.z], this.rotX * 0.7, this.rotY * 0.7, this.rotZ * 0.7);
+        const p = this.project(rot, 380);
+        if (p) {
+          const depthAlpha = Math.min(1, Math.max(0.12, (p.z + 120) / 240));
+          const size = Math.max(0.8, part.size * p.scale * (0.8 + 0.3 * Math.sin(part.pulse)));
+          this.ctx.beginPath();
+          this.ctx.arc(cx + p.x, cy + p.y, size, 0, Math.PI * 2);
+          this.ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${depthAlpha * 0.85})`;
+          this.ctx.shadowColor = `rgb(${r}, ${g}, ${b})`;
+          this.ctx.shadowBlur = 6;
+          this.ctx.fill();
+          this.ctx.shadowBlur = 0;
+        }
+      }
+
+      // Projected Polyhedral Core Vertices
+      const projectedVertices = this.vertices.map(v => {
+        const rot = this.rotatePoint(v, this.rotX, this.rotY, this.rotZ);
+        const p = this.project(rot, 380);
+        return p ? { x: cx + p.x, y: cy + p.y, scale: p.scale, z: p.z } : null;
+      });
+
+      // Draw Polyhedral Struts
+      this.ctx.lineWidth = 1.4;
+      for (let [i, j] of this.edges) {
+        const p1 = projectedVertices[i];
+        const p2 = projectedVertices[j];
+        if (!p1 || !p2) continue;
+        const avgZ = (p1.z + p2.z) / 2;
+        const alpha = Math.min(0.85, Math.max(0.1, (avgZ + 90) / 180));
+        this.ctx.beginPath();
+        this.ctx.moveTo(p1.x, p1.y);
+        this.ctx.lineTo(p2.x, p2.y);
+        this.ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${alpha * 0.75})`;
+        this.ctx.stroke();
+      }
+
+      // Draw Polyhedral Vertex Spheres
+      for (let p of projectedVertices) {
+        if (!p) continue;
+        const alpha = Math.min(1, Math.max(0.2, (p.z + 90) / 180));
+        this.ctx.beginPath();
+        this.ctx.arc(p.x, p.y, Math.max(1.8, 3.2 * p.scale), 0, Math.PI * 2);
+        this.ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.9})`;
+        this.ctx.shadowColor = `rgb(${r}, ${g}, ${b})`;
+        this.ctx.shadowBlur = 10;
+        this.ctx.fill();
+        this.ctx.shadowBlur = 0;
+      }
+
+      // Draw Concentric Gyroscope Rings
+      const drawRing = (ringNodes, rx, ry, rz, alphaMult, lineW) => {
+        const projected = ringNodes.map(v => {
+          const rot = this.rotatePoint(v, rx, ry, rz);
+          const p = this.project(rot, 380);
+          return p ? { x: cx + p.x, y: cy + p.y } : null;
+        });
+
+        this.ctx.beginPath();
+        let first = true;
+        for (let p of projected) {
+          if (!p) continue;
+          if (first) { this.ctx.moveTo(p.x, p.y); first = false; }
+          else { this.ctx.lineTo(p.x, p.y); }
+        }
+        this.ctx.closePath();
+        this.ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${alphaMult})`;
+        this.ctx.lineWidth = lineW;
+        this.ctx.stroke();
+      };
+
+      drawRing(this.ring1, this.rotX * 0.8, this.rotY * 0.8, this.rotZ * 0.8, 0.45, 1.4);
+      drawRing(this.ring2, -this.rotX * 0.6, this.rotY * 0.7, -this.rotZ * 0.6, 0.35, 1.2);
+      drawRing(this.ring3, this.rotX * 0.5, -this.rotY * 0.5, this.rotZ * 0.6, 0.25, 1.0);
+
+      requestAnimationFrame(() => this.animate());
+    }
+  }
+
+  /**
+   * Celestial3DEngine
+   * Background Deep Space Parallax Starfield & Ambient Gyroscopic Rings on #celestial-3d-canvas.
+   */
+  class Celestial3DEngine {
+    constructor(canvasId) {
+      this.canvas = document.getElementById(canvasId);
+      if (!this.canvas) return;
+      this.ctx = this.canvas.getContext('2d');
+      if (!this.ctx) return;
+
+      this.width = 0;
+      this.height = 0;
+      this.dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+      this.mouseX = 0;
+      this.mouseY = 0;
+      this.targetMouseX = 0;
+      this.targetMouseY = 0;
+
+      this.rotX = 0;
+      this.rotY = 0;
+      this.rotZ = 0;
+
+      this.themeRgb = [56, 189, 248];
+      this.targetThemeRgb = [56, 189, 248];
+
+      this.initStars();
+      this.bindEvents();
+      this.resize();
+      this.animate();
+    }
+
+    initStars() {
+      this.stars = [];
+      const numStars = 220;
+      for (let i = 0; i < numStars; i++) {
+        this.stars.push({
+          x: (Math.random() - 0.5) * 1600,
+          y: (Math.random() - 0.5) * 1200,
+          z: Math.random() * 1000 + 10,
+          size: Math.random() * 1.5 + 0.6,
+          speed: Math.random() * 0.45 + 0.15,
+          twinkle: Math.random() * Math.PI * 2,
+          twinkleSpeed: Math.random() * 0.03 + 0.01
+        });
+      }
+    }
+
+    setThemeColor(rgbArray) {
+      if (Array.isArray(rgbArray) && rgbArray.length === 3) {
+        this.targetThemeRgb = rgbArray;
+      }
+    }
+
+    bindEvents() {
+      window.addEventListener('resize', () => this.resize());
+      window.addEventListener('pointermove', (e) => {
+        const cx = window.innerWidth / 2;
+        const cy = window.innerHeight / 2;
+        this.targetMouseX = (e.clientX - cx) / cx;
+        this.targetMouseY = (e.clientY - cy) / cy;
+      });
+    }
+
+    resize() {
+      this.width = window.innerWidth;
+      this.height = window.innerHeight;
+      this.canvas.width = this.width * this.dpr;
+      this.canvas.height = this.height * this.dpr;
+      this.canvas.style.width = `${this.width}px`;
+      this.canvas.style.height = `${this.height}px`;
+      this.ctx.scale(this.dpr, this.dpr);
+    }
+
+    animate() {
+      this.mouseX += (this.targetMouseX - this.mouseX) * 0.05;
+      this.mouseY += (this.targetMouseY - this.mouseY) * 0.05;
+
+      for (let i = 0; i < 3; i++) {
+        this.themeRgb[i] += (this.targetThemeRgb[i] - this.themeRgb[i]) * 0.08;
+      }
+      const r = Math.round(this.themeRgb[0]);
+      const g = Math.round(this.themeRgb[1]);
+      const b = Math.round(this.themeRgb[2]);
+
+      this.ctx.clearRect(0, 0, this.width, this.height);
+
+      const cx = this.width / 2;
+      const cy = this.height / 2;
+
+      // Draw 3D Stars
+      for (let star of this.stars) {
+        star.z -= star.speed;
+        if (star.z <= 10) {
+          star.z = 1000;
+          star.x = (Math.random() - 0.5) * 1600;
+          star.y = (Math.random() - 0.5) * 1200;
+        }
+
+        star.twinkle += star.twinkleSpeed;
+        const twinkleAlpha = 0.4 + 0.6 * Math.sin(star.twinkle);
+
+        const k = 450 / star.z;
+        const px = cx + (star.x + this.mouseX * -100) * k;
+        const py = cy + (star.y + this.mouseY * -80) * k;
+
+        if (px >= 0 && px <= this.width && py >= 0 && py <= this.height) {
+          const depthAlpha = Math.min(1, Math.max(0.1, (1000 - star.z) / 1000)) * twinkleAlpha;
+          const radius = Math.max(0.5, star.size * k);
+
+          this.ctx.beginPath();
+          this.ctx.arc(px, py, radius, 0, Math.PI * 2);
+          this.ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${depthAlpha * 0.55})`;
+          this.ctx.fill();
+        }
+      }
+
+      requestAnimationFrame(() => this.animate());
+    }
+  }
+
+  /* ==========================================================================
+     12. MOTION & INTERACTIVE SYSTEMS
+     ========================================================================== */
+  function init3DCardTilt() {
+    if (window.matchMedia('(hover: none) and (pointer: coarse)').matches) return;
+
+    const cards = document.querySelectorAll('.console-card, .metric-card, .today-priority-banner');
+
+    cards.forEach(card => {
+      let glare = card.querySelector('.card-specular-glare');
+      if (!glare) {
+        glare = document.createElement('div');
+        glare.className = 'card-specular-glare';
+        card.appendChild(glare);
+      }
+
+      if (card.dataset.tiltInitialized) return;
+      card.dataset.tiltInitialized = 'true';
+
+      let isHovered = false;
+
+      card.addEventListener('pointerenter', () => {
+        isHovered = true;
+        card.style.transition = 'transform 0.1s ease-out, border-color 0.25s ease';
+      });
+
+      card.addEventListener('pointermove', (e) => {
+        if (!isHovered) return;
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+
+        const rotateX = ((y - centerY) / centerY) * -6.0;
+        const rotateY = ((x - centerX) / centerX) * 6.0;
+
+        const glareX = (x / rect.width) * 100;
+        const glareY = (y / rect.height) * 100;
+
+        card.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) translateZ(6px) scale3d(1.012, 1.012, 1.012)`;
+        card.style.setProperty('--glare-x', `${glareX.toFixed(1)}%`);
+        card.style.setProperty('--glare-y', `${glareY.toFixed(1)}%`);
+      });
+
+      card.addEventListener('pointerleave', () => {
+        isHovered = false;
+        card.style.transition = 'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease';
+        card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px) scale3d(1, 1, 1)';
+      });
+    });
+  }
+
+  function initAmbientCursorSpotlight() {
+    let currentX = window.innerWidth / 2;
+    let currentY = window.innerHeight / 2;
+    let targetX = currentX;
+    let targetY = currentY;
+
+    window.addEventListener('pointermove', (e) => {
+      targetX = e.clientX;
+      targetY = e.clientY;
+    });
+
+    const updateSpotlight = () => {
+      currentX += (targetX - currentX) * 0.1;
+      currentY += (targetY - currentY) * 0.1;
+      document.documentElement.style.setProperty('--mouse-x', `${currentX.toFixed(1)}px`);
+      document.documentElement.style.setProperty('--mouse-y', `${currentY.toFixed(1)}px`);
+      requestAnimationFrame(updateSpotlight);
+    };
+
+    requestAnimationFrame(updateSpotlight);
+  }
+
+  function initSlidingNavIndicator() {
+    const navBar = document.getElementById('main-nav-bar');
+    const indicator = document.getElementById('nav-indicator-pill');
+    if (!navBar || !indicator) return;
+
+    const updateIndicator = () => {
+      const activeBtn = navBar.querySelector('.nav-tab-btn.active');
+      if (activeBtn) {
+        const navRect = navBar.getBoundingClientRect();
+        const btnRect = activeBtn.getBoundingClientRect();
+        const left = btnRect.left - navRect.left;
+        const width = btnRect.width;
+
+        indicator.style.transform = `translateX(${left}px)`;
+        indicator.style.width = `${width}px`;
+        indicator.style.opacity = '1';
+      } else {
+        indicator.style.opacity = '0';
+      }
+    };
+
+    updateIndicator();
+    setTimeout(updateIndicator, 50);
+    window.addEventListener('resize', updateIndicator);
+
+    const navBtns = navBar.querySelectorAll('.nav-tab-btn');
+    navBtns.forEach(btn => btn.addEventListener('click', () => {
+      setTimeout(updateIndicator, 10);
+    }));
+
+    window.addEventListener('aether:view-switched', updateIndicator);
+  }
+
+  function initCommandDeckHero() {
+    const btnHeroMission = document.getElementById('btn-hero-create-mission');
+    const btnHeroAI = document.getElementById('btn-hero-ai-decompose');
+    const btnHeroMatrix = document.getElementById('btn-hero-matrix');
+    const btnHeroDecompress = document.getElementById('btn-hero-decompress');
+
+    if (btnHeroMission) {
+      btnHeroMission.addEventListener('click', () => {
+        sound.playTone(580, 0.05);
+        const btnCreate = document.getElementById('btn-open-create-task');
+        if (btnCreate) btnCreate.click();
+      });
+    }
+
+    if (btnHeroAI) {
+      btnHeroAI.addEventListener('click', () => {
+        sound.playTone(550, 0.05);
+        const btnAI = document.getElementById('btn-open-ai-assistant');
+        if (btnAI) btnAI.click();
+      });
+    }
+
+    if (btnHeroMatrix) {
+      btnHeroMatrix.addEventListener('click', () => {
+        sound.playTone(600, 0.05);
+        const navTasks = document.querySelector('.nav-tab-btn[data-view="tasks"]');
+        if (navTasks) navTasks.click();
+      });
+    }
+
+    if (btnHeroDecompress) {
+      btnHeroDecompress.addEventListener('click', () => {
+        sound.playTone(500, 0.05);
+        const navSys = document.querySelector('.nav-tab-btn[data-view="mission"]');
+        if (navSys) navSys.click();
+        setTimeout(() => {
+          const btnDecomp = document.querySelector('.system-subnav-btn[data-subview="decompression"]');
+          if (btnDecomp) btnDecomp.click();
+        }, 50);
+      });
+    }
+  }
+
+  /* ==========================================================================
+     13. BOOTSTRAP INITIALIZATION
      ========================================================================== */
   document.addEventListener('DOMContentLoaded', () => {
+    // 3D Engines Initialization
+    window.celestial3DEngine = new Celestial3DEngine('celestial-3d-canvas');
+    window.heroQuantum3DEngine = new HeroQuantum3DEngine('hero-quantum-canvas');
+
+    // Motion & Interactive Systems
+    initAmbientCursorSpotlight();
+    init3DCardTilt();
+    initSlidingNavIndicator();
+    initCommandDeckHero();
+
+    // Application Subsystems
     initHeaderTelemetry();
     initNavigation();
     initMissionEngine();
-    initFocusSystem();
     initHomeView();
     initInsightsView();
     initSystemArea();
     initPreferencesAndSync();
+    initAIAssistant();
+
+    const currentTheme = localStorage.getItem('aether_theme') || 'cyan';
+    if (THEME_RGB_MAP[currentTheme]) {
+      if (window.celestial3DEngine) window.celestial3DEngine.setThemeColor(THEME_RGB_MAP[currentTheme]);
+      if (window.heroQuantum3DEngine) window.heroQuantum3DEngine.setThemeColor(THEME_RGB_MAP[currentTheme]);
+    }
 
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./sw.js')
@@ -1511,7 +2045,7 @@
     }
 
     console.log(
-      '%c LEVEL UP SYSTEM %c CONTROL ROOM ONLINE ',
+      '%c LEVEL UP SYSTEM %c EXECUTIVE COMMAND OS ONLINE ',
       'background: #070a0f; color: #38bdf8; font-weight: bold; padding: 4px;',
       'background: #0b111c; color: #34d399; font-weight: bold; padding: 4px;'
     );

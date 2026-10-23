@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="description" content="Level Up System — A calm, intelligent control room engineered to turn personal intentions into consistent action.">
+  <meta name="description" content="Level Up System — A calm, intelligent command architecture engineered to eliminate cognitive friction and convert intentions into verified daily momentum.">
   <meta name="theme-color" content="#070a0f">
-  <title>Level Up System</title>
+  <title>Level Up System // Executive Command OS</title>
   
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'><path d='M12 3L4 11H8V20H16V11H20L12 3Z' fill='%2338bdf8' fill-opacity='0.25' stroke='%2338bdf8' stroke-width='2' stroke-linejoin='round'/><path d='M12 7L7 12H10V18H14V12H17L12 7Z' fill='%23f8fafc'/></svg>">
   <link rel="manifest" href="manifest.json">
 
-  <!-- Inter & JetBrains Mono Typography -->
+  <!-- Inter, Outfit & JetBrains Mono Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   
   <!-- Supabase Client SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -27,11 +27,15 @@
     <span class="mono-meta" style="color: var(--accent-warning); font-weight: 700;">OFFLINE MODE • LOCAL STORAGE ACTIVE</span>
   </div>
 
+  <!-- 3D WebGL Background Canvas & Ambient Cursor Spotlight -->
+  <canvas id="celestial-3d-canvas" class="celestial-3d-canvas" aria-hidden="true"></canvas>
+  <div id="ambient-cursor-spotlight" class="ambient-cursor-spotlight" aria-hidden="true"></div>
+
   <!-- Ambient Glow & Subtle Background Grid -->
   <div class="background-grid" aria-hidden="true"></div>
   <div class="background-glow" aria-hidden="true"></div>
 
-  <!-- MAIN WRAPPER -->
+  <!-- MAIN APPLICATION CONTAINER -->
   <div class="apex-app-container">
 
     <!-- =========================================================================
@@ -64,18 +68,11 @@
 
         <!-- Header Actions -->
         <div class="header-actions">
-          <!-- Active Focus Timer Pill -->
-          <div id="header-focus-pill" class="header-completion-chip hidden" role="status">
-            <span class="pulse-dot"></span>
-            <span class="mono-label">FOCUS SESSION:</span>
-            <span id="header-focus-timer" class="mono-value">25:00</span>
-          </div>
-
-          <!-- Execution Summary Pill -->
-          <div class="header-completion-chip" id="header-rank-pill" title="Execution Metrics">
-            <span class="mono-label text-accent-cyan" id="header-rank-name">FOCUS TODAY</span>
+          <!-- Execution Velocity Summary Pill -->
+          <div class="header-completion-chip" id="header-rank-pill" title="Execution Velocity">
+            <span class="mono-label text-accent-cyan" id="header-rank-name">CLEARED TODAY</span>
             <span class="telemetry-separator">|</span>
-            <span id="header-xp-val" class="mono-value">0 MIN</span>
+            <span id="header-xp-val" class="mono-value">0 / 0</span>
           </div>
 
           <!-- Cloud Sync Status Pill -->
@@ -110,11 +107,12 @@
       </div>
     </header>
 
-    <!-- SYSTEM NAVIGATION TABS BAR (5 PRIMARY AREAS) -->
-    <nav class="main-nav-bar" aria-label="Primary Navigation">
+    <!-- SYSTEM NAVIGATION TABS BAR (4 PRIMARY EXECUTIVE PILLARS) -->
+    <nav class="main-nav-bar" id="main-nav-bar" aria-label="Primary Navigation">
+      <div class="nav-indicator-pill" id="nav-indicator-pill" aria-hidden="true"></div>
       <button class="nav-tab-btn active" data-view="dashboard">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-        <span>HOME</span>
+        <span>COMMAND</span>
       </button>
 
       <button class="nav-tab-btn" data-view="tasks">
@@ -122,30 +120,140 @@
         <span>MISSIONS</span>
       </button>
 
-      <button class="nav-tab-btn" data-view="focus">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-        <span>FOCUS</span>
-      </button>
-
       <button class="nav-tab-btn" data-view="achievements">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
-        <span>INSIGHTS</span>
+        <span>INTEL</span>
       </button>
 
       <button class="nav-tab-btn" data-view="mission">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
-        <span>SYSTEM & RECOVERY</span>
+        <span>ARCHITECT</span>
       </button>
     </nav>
 
     <!-- =========================================================================
-         AREA 1: HOME ("What matters right now?")
+         AREA 1: COMMAND // EXECUTIVE CONTROL ROOM
          ========================================================================= -->
     <main id="view-dashboard" class="app-view-container">
-      <!-- MAIN QUESTION CARD -->
+      <!-- MONUMENTAL ASYMMETRIC HERO DECK: 3D HOLOGRAPHIC QUANTUM CHAMBER -->
+      <section class="console-card hero-command-card" id="hero-command-card">
+        <div class="hero-command-header">
+          <div class="hero-tag-cluster">
+            <span class="pulse-dot"></span>
+            <span class="mono-label hero-protocol-tag">✦ LEVEL UP PROTOCOL // QUANTUM OS v3.0</span>
+          </div>
+          <div class="hero-telemetry-badge">
+            <span class="mono-meta text-accent-cyan">STATION: ONLINE</span>
+            <span class="telemetry-separator">|</span>
+            <span class="mono-meta" id="hero-live-clock">SYNCED</span>
+          </div>
+        </div>
+
+        <!-- Asymmetric Dual-Deck Grid -->
+        <div class="hero-grid-deck">
+          <!-- Left Column: Editorial Manifest -->
+          <div class="hero-manifest-column">
+            <div class="hero-manifest-deck">
+              <span class="hero-kicker mono-meta text-accent-cyan">EXECUTIVE COMMAND CONSOLE</span>
+              <h1 class="hero-monumental-title">
+                UNCOMPROMISED FOCUS.<br>
+                <span class="hero-gradient-text">RELENTLESS EXECUTION.</span>
+              </h1>
+              <p class="hero-editorial-lead">
+                An obsidian-grade personal operating system engineered to eliminate cognitive friction, decompose ambitious targets into crisp quests, and convert intentions into verified daily momentum.
+              </p>
+            </div>
+
+            <!-- Hero Quick Command Actions Strip -->
+            <div class="hero-quick-actions">
+              <button id="btn-hero-create-mission" class="btn-tactical btn-hero-primary" title="Declare New Mission">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                <span>NEW MISSION DISPATCH</span>
+              </button>
+              <button id="btn-hero-ai-decompose" class="btn-tactical btn-hero-secondary" title="Decompose via AI">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2a10 10 0 0 1 10 10c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2z"></path><path d="M12 8v8M8 12h8"></path></svg>
+                <span>AI DECOMPOSE</span>
+              </button>
+              <button id="btn-hero-matrix" class="btn-tactical btn-hero-secondary" title="Open Tactical Mission Matrix">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                <span>MISSION MATRIX</span>
+              </button>
+              <button id="btn-hero-decompress" class="btn-tactical btn-hero-ghost" title="Cognitive Decompression">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                <span>COGNITIVE UNLOAD</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Right Column: Dedicated 3D Holographic Quantum Core Chamber -->
+          <div class="hero-quantum-column">
+            <div class="hero-hologram-viewport" id="hero-hologram-viewport">
+              <!-- Corner Brackets -->
+              <div class="hologram-corner corner-tl"></div>
+              <div class="hologram-corner corner-tr"></div>
+              <div class="hologram-corner corner-bl"></div>
+              <div class="hologram-corner corner-br"></div>
+              
+              <!-- Crosshair Grid Overlay -->
+              <div class="hologram-crosshair-center"></div>
+              <div class="hologram-telemetry-strip">
+                <span class="mono-meta text-accent-cyan">CORE STATUS: RESONANT</span>
+                <span class="mono-meta" id="hologram-coords">PITCH: +0° ROLL: -0°</span>
+              </div>
+
+              <!-- Dedicated 3D Quantum Viewport Canvas -->
+              <canvas id="hero-quantum-canvas" class="hero-quantum-canvas"></canvas>
+
+              <!-- Floating Active Target HUD Overlay -->
+              <div class="hero-floating-target-hud">
+                <div class="target-hud-tag">
+                  <span class="pulse-dot"></span>
+                  <span class="mono-label text-accent-cyan">ACTIVE TARGET LOCK</span>
+                </div>
+                <div id="hero-target-title" class="target-hud-title">Select or declare a mission</div>
+                <div id="hero-target-action" class="target-hud-action">Next Action: Standby for dispatch</div>
+                <button id="hero-btn-quick-execute" class="btn-tactical btn-cyan-action" style="min-height: 36px; padding: 0 14px; font-size: 0.78rem;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <span>EXECUTE NEXT ACTION</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hero Live Telemetry HUD Grid -->
+        <div class="hero-hud-grid">
+          <div class="hero-hud-card" id="hud-card-cleared">
+            <span class="mono-label text-accent-cyan">MISSION RATIO</span>
+            <div class="hero-hud-val-row">
+              <span id="hero-hud-missions-val" class="hero-hud-val">0 / 0</span>
+              <span id="hero-hud-missions-pct" class="hero-hud-badge">0%</span>
+            </div>
+            <span class="mono-meta">Daily Objectives Cleared</span>
+          </div>
+          <div class="hero-hud-card" id="hud-card-momentum">
+            <span class="mono-label text-accent-cyan">EXECUTION MOMENTUM</span>
+            <div class="hero-hud-val-row">
+              <span id="hero-hud-momentum-val" class="hero-hud-val">100%</span>
+              <span class="hero-hud-badge pulse-accent">OPTIMAL</span>
+            </div>
+            <span class="mono-meta">Active Quest Velocity</span>
+          </div>
+          <div class="hero-hud-card" id="hud-card-day">
+            <span class="mono-label text-accent-cyan">DAY HORIZON</span>
+            <div class="hero-hud-val-row">
+              <span id="hero-hud-day-pct" class="hero-hud-val">--%</span>
+              <span class="hero-hud-badge">HORIZON</span>
+            </div>
+            <div class="progress-bar-rail" style="margin-top: 6px;"><div id="hero-hud-day-bar" class="progress-bar-fill" style="width: 50%;"></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PRIMARY DIRECTIVE BANNER -->
       <section class="console-card home-question-banner">
         <div class="question-header-row">
-          <span class="mono-label text-accent-cyan">PRIMARY QUESTION</span>
+          <span class="mono-label text-accent-cyan">PRIMARY DIRECTIVE</span>
           <span id="today-completion-badge" class="card-header-badge">0% MISSIONS CLEARED</span>
         </div>
         <h2 class="home-main-question">What matters right now?</h2>
@@ -161,12 +269,12 @@
               <div class="priority-banner-header">
                 <div class="priority-tag">
                   <span class="priority-beacon-dot"></span>
-                  <span class="mono-label">PRIMARY FOCUS MISSION</span>
+                  <span class="mono-label">PRIMARY OBJECTIVE</span>
                 </div>
                 <span id="priority-category-badge" class="priority-badge priority-P2">P2 HIGH</span>
               </div>
               <div class="priority-content-row">
-                <div>
+                <div style="flex: 1;">
                   <h3 id="priority-title" class="priority-title">No active mission</h3>
                   <p id="priority-desc" class="priority-desc">Declare a mission in Missions to unlock execution focus.</p>
                   <div id="priority-next-action-pill" class="next-action-pill style-highlight" style="margin-top: 10px;">
@@ -174,10 +282,15 @@
                     <span id="priority-next-action-text" style="font-weight: 600; font-size: 0.88rem;">Create your first mission objective</span>
                   </div>
                 </div>
-                <button id="btn-start-priority-focus" class="btn-tactical btn-cyan-action" style="min-height: 48px; padding: 0 20px;">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                  <span>START FOCUS</span>
-                </button>
+                <div style="display: flex; flex-direction: column; gap: 8px; justify-content: center;">
+                  <button id="btn-quick-execute-step" class="btn-tactical btn-cyan-action" style="min-height: 44px; padding: 0 18px;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <span>COMPLETE NEXT ACTION</span>
+                  </button>
+                  <button id="btn-open-priority-detail" class="btn-tactical btn-terminal-blue" style="min-height: 38px; padding: 0 14px; font-size: 0.78rem;">
+                    <span>VIEW IN MATRIX</span>
+                  </button>
+                </div>
               </div>
             </div>
           </section>
@@ -191,7 +304,7 @@
                 </div>
                 <div>
                   <h2 class="card-title">EXECUTION METRICS <span class="card-title-tag">// TODAY</span></h2>
-                  <p class="card-subtitle">Real observed activity from your focus sessions and completed steps.</p>
+                  <p class="card-subtitle">Real observed activity from your completed objectives and quest steps.</p>
                 </div>
               </div>
             </div>
@@ -207,11 +320,11 @@
               </div>
 
               <div class="metric-card">
-                <span class="stat-label">FOCUS TIME</span>
+                <span class="stat-label">ACTIVE OBJECTIVES</span>
                 <div class="metric-value-row">
-                  <span id="dash-focus-min" class="stat-value text-accent-blue">0 MIN</span>
+                  <span id="dash-active-objectives" class="stat-value text-accent-blue">0 ACTIVE</span>
                 </div>
-                <span id="dash-xp-progress" class="mono-meta">Active Focus Sessions</span>
+                <span id="dash-xp-progress" class="mono-meta">In-Flight Missions</span>
               </div>
 
               <div class="metric-card">
@@ -233,7 +346,7 @@
                 </div>
                 <div>
                   <h2 class="card-title">TIME CONSTRAINTS <span class="card-title-tag">// URGENCY QUEUE</span></h2>
-                  <p class="card-subtitle">Clear visibility of active deadlines without shaming.</p>
+                  <p class="card-subtitle">Clear visibility of active deadlines without cognitive overload.</p>
                 </div>
               </div>
             </div>
@@ -254,7 +367,7 @@
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2"><path d="M12 2a10 10 0 0 1 10 10c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2z"></path></svg>
                 </div>
                 <div>
-                  <h2 class="card-title">EXECUTION ASSISTANT <span class="card-title-tag">// SUGGESTION</span></h2>
+                  <h2 class="card-title">TACTICAL ENGAGER <span class="card-title-tag">// AI PROTOCOL</span></h2>
                   <p class="card-subtitle">Transparent guidance while you maintain complete authority.</p>
                 </div>
               </div>
@@ -288,7 +401,7 @@
     </main>
 
     <!-- =========================================================================
-         AREA 2: MISSIONS (Mission Engine & Quest Steps)
+         AREA 2: MISSIONS (Tactical Mission Matrix & Quest Decomposition)
          ========================================================================= -->
     <main id="view-tasks" class="app-view-container hidden">
       <section class="console-card">
@@ -298,14 +411,14 @@
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
             </div>
             <div>
-              <h2 class="card-title">MISSION ENGINE <span class="card-title-tag">// DECOMPOSITION & QUESTS</span></h2>
-              <p class="card-subtitle">Break down your goals into executable quest steps and crisp next actions.</p>
+              <h2 class="card-title">TACTICAL MISSION MATRIX <span class="card-title-tag">// QUEST TREE</span></h2>
+              <p class="card-subtitle">Decompose ambitious goals into surgical quest steps and clear next actions.</p>
             </div>
           </div>
 
           <button id="btn-open-create-task" class="btn-tactical btn-primary" style="min-height: 44px;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-            <span>CREATE MISSION</span>
+            <span>DISPATCH MISSION</span>
           </button>
         </div>
 
@@ -343,83 +456,7 @@
     </main>
 
     <!-- =========================================================================
-         AREA 3: FOCUS (Execution Cockpit & Interruption Recovery)
-         ========================================================================= -->
-    <main id="view-focus" class="app-view-container hidden">
-      <section class="console-card">
-        <div class="card-header">
-          <div class="card-title-group">
-            <div class="title-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-blue)" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-            </div>
-            <div>
-              <h2 class="card-title">FOCUS COCKPIT <span class="card-title-tag">// SINGLE-TASK EXECUTION</span></h2>
-              <p class="card-subtitle">Distraction-free environment for deep focus, quest execution, and context recovery.</p>
-            </div>
-          </div>
-          <div id="focus-state-badge" class="card-header-badge">READY TO EXECUTE</div>
-        </div>
-
-        <div class="focus-body">
-          <div class="focus-objective-block">
-            <label for="focus-objective-input" class="stat-label">ACTIVE MISSION:</label>
-            <input type="text" id="focus-objective-input" class="tactical-input" placeholder="Select or type your active focus mission..." autocomplete="off">
-          </div>
-
-          <!-- SURFACED NEXT ACTION -->
-          <div id="focus-next-action-box" class="next-action-banner" style="margin-top: 12px;">
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <span class="pulse-dot"></span>
-              <span class="mono-label text-accent-cyan">CURRENT QUEST / NEXT ACTION:</span>
-            </div>
-            <h3 id="focus-next-action-title" style="font-size: 1.05rem; font-weight: 700; margin-top: 4px; color: var(--text-primary);">
-              No next action locked. Declare or select a quest step.
-            </h3>
-          </div>
-
-          <div class="duration-presets-row" style="margin-top: 14px; display: flex; align-items: center; gap: 10px;">
-            <span class="mono-label">DURATION:</span>
-            <div class="duration-chips" id="duration-chips-container">
-              <button type="button" class="btn-duration-chip" data-mins="15">15M</button>
-              <button type="button" class="btn-duration-chip active" data-mins="25">25M</button>
-              <button type="button" class="btn-duration-chip" data-mins="45">45M</button>
-              <button type="button" class="btn-duration-chip" data-mins="60">60M</button>
-            </div>
-          </div>
-
-          <div class="timer-display-card" style="margin-top: 16px;">
-            <span id="focus-timer-digits" class="timer-large-digits">25:00</span>
-            <span id="focus-active-objective-label" class="focus-sub-objective">Mission execution pending</span>
-            <div class="progress-bar-rail" style="margin-top: 14px; width: 100%;"><div id="focus-timer-bar" class="progress-bar-fill" style="width: 100%;"></div></div>
-          </div>
-
-          <div class="timer-controls-row" style="display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap;">
-            <button id="btn-focus-start" class="btn-tactical btn-cyan-action" style="min-height: 48px;">START FOCUS SESSION</button>
-            <button id="btn-focus-pause" class="btn-tactical btn-terminal-blue hidden" style="min-height: 48px;">PAUSE</button>
-            <button id="btn-focus-resume" class="btn-tactical btn-cyan-action hidden" style="min-height: 48px;">RESUME</button>
-            <button id="btn-focus-interrupt" class="btn-tactical btn-warning hidden" style="min-height: 48px;">INTERRUPT / LOG CONTEXT</button>
-            <button id="btn-focus-complete" class="btn-tactical btn-success hidden" style="min-height: 48px;">COMPLETE MISSION</button>
-            <button id="btn-focus-cancel" class="btn-tactical btn-text-danger hidden" style="min-height: 48px;">CANCEL</button>
-          </div>
-
-          <!-- RESUMPTION MEMORY BANNER -->
-          <div id="focus-resumption-memory-box" class="resumption-memory-card hidden" style="margin-top: 18px;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span class="mono-label text-accent-warning">RESUMPTION STATE MEMORY</span>
-              <span id="resumption-timestamp" class="mono-meta">Interrupted 10m ago</span>
-            </div>
-            <p id="resumption-context-text" style="font-size: 0.9rem; margin-top: 6px; color: var(--text-primary); font-weight: 500;"></p>
-            <div style="display: flex; gap: 8px; margin-top: 10px;">
-              <button id="btn-resumption-rejoin" class="btn-tactical btn-cyan-action">RESUME EXECUTION NOW</button>
-              <button id="btn-resumption-clear" class="btn-tactical btn-terminal-blue">DISMISS</button>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <!-- =========================================================================
-         AREA 4: INSIGHTS & ANALYTICS (Real Observed Data Only)
+         AREA 3: INTEL (Executive Telemetry & Verified Archive)
          ========================================================================= -->
     <main id="view-achievements" class="app-view-container hidden">
       <section class="console-card">
@@ -429,48 +466,48 @@
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
             </div>
             <div>
-              <h2 class="card-title">INSIGHTS & ANALYTICS <span class="card-title-tag">// OBSERVED DATA</span></h2>
-              <p class="card-subtitle">Real behavioral observations. Zero fabricated metrics or fake statistics.</p>
+              <h2 class="card-title">EXECUTIVE INTEL & TELEMETRY <span class="card-title-tag">// OBSERVED DATA</span></h2>
+              <p class="card-subtitle">Real behavioral telemetry. Zero fabricated metrics or fake statistics.</p>
             </div>
           </div>
         </div>
 
         <div class="today-metrics-grid" style="margin-top: 12px;">
           <div class="metric-card">
-            <span class="stat-label">TOTAL FOCUS TIME</span>
+            <span class="stat-label">TOTAL MISSIONS CLEARED</span>
             <div class="metric-value-row">
-              <span id="insights-total-focus" class="stat-value text-accent-blue">0 MIN</span>
+              <span id="insights-total-cleared" class="stat-value text-accent-cyan">0</span>
             </div>
-            <span class="mono-meta">Observed focus blocks</span>
+            <span class="mono-meta">Verified completed missions</span>
           </div>
 
           <div class="metric-card">
-            <span class="stat-label">COMPLETION RATE</span>
+            <span class="stat-label">QUEST STEPS EXECUTED</span>
             <div class="metric-value-row">
-              <span id="insights-completion-rate" class="stat-value text-accent-success">0%</span>
+              <span id="insights-total-quests" class="stat-value text-accent-success">0</span>
             </div>
-            <span class="mono-meta">Missions cleared vs declared</span>
+            <span class="mono-meta">Decomposed steps checked off</span>
           </div>
 
           <div class="metric-card">
-            <span class="stat-label">INTERRUPTIONS LOGGED</span>
+            <span class="stat-label">HIGH-PRIORITY RATIO</span>
             <div class="metric-value-row">
-              <span id="insights-interrupt-count" class="stat-value text-accent-warning">0</span>
+              <span id="insights-priority-ratio" class="stat-value text-accent-warning">0%</span>
             </div>
-            <span class="mono-meta">Context switches recorded</span>
+            <span class="mono-meta">P1 & P2 focus allocation</span>
           </div>
 
           <div class="metric-card">
-            <span class="stat-label">RESUMPTION RATE</span>
+            <span class="stat-label">MOMENTUM INDEX</span>
             <div class="metric-value-row">
-              <span id="insights-resumption-rate" class="stat-value text-accent-cyan">0%</span>
+              <span id="insights-momentum-index" class="stat-value text-accent-blue">100%</span>
             </div>
-            <span class="mono-meta">Interrupted sessions resumed</span>
+            <span class="mono-meta">Execution velocity quotient</span>
           </div>
         </div>
 
-        <div style="margin-top: 18px;">
-          <h3 class="mono-label text-accent-cyan">14-DAY EXECUTION TREND</h3>
+        <div style="margin-top: 24px;">
+          <h3 class="mono-label text-accent-cyan">14-DAY VELOCITY TREND</h3>
           <div id="insights-trend-bars" class="trend-bars-container" style="margin-top: 10px;">
             <!-- Populated dynamically -->
           </div>
@@ -498,7 +535,7 @@
     </main>
 
     <!-- =========================================================================
-         AREA 5: SYSTEM & RECOVERY (Vision, Review, Decompression & System)
+         AREA 4: ARCHITECT (Vision, Review, Decompression & System)
          ========================================================================= -->
     <main id="view-mission" class="app-view-container hidden">
       <div class="system-sub-tabs" style="display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap;">
@@ -513,11 +550,11 @@
         <div class="card-header">
           <div class="card-title-group">
             <div class="title-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-blue)" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
             </div>
             <div>
               <h2 class="card-title">VISION & DIRECTIVES <span class="card-title-tag">// DIRECTION</span></h2>
-              <p class="card-subtitle">Define long-term direction, personal principles, and major goals.</p>
+              <p class="card-subtitle">Define long-term direction, personal principles, and major milestones.</p>
             </div>
           </div>
           <button id="btn-save-mission" class="btn-tactical btn-cyan-action">SAVE DIRECTIVES</button>
@@ -712,254 +749,131 @@
   </div>
 
   <!-- =========================================================================
-       MODAL: INTERRUPTION & CONTEXT LOGGING
-       ========================================================================= -->
-  <div id="modal-focus-interruption" class="modal-backdrop hidden" role="dialog" aria-modal="true">
-    <div class="modal-glass-container" style="max-width: 480px;">
-      <div class="modal-header">
-        <h3 class="modal-title">LOG FOCUS INTERRUPTION</h3>
-        <button id="btn-close-interruption-modal" class="btn-mini btn-icon-only">✕</button>
-      </div>
-      <p class="modal-subtitle">Preserve your state so you can resume immediately when you return.</p>
-      
-      <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
-        <label for="input-interruption-reason" class="stat-label">WHAT INTERRUPTED EXECUTION / WHERE DID YOU STOP?</label>
-        <textarea id="input-interruption-reason" class="tactical-textarea" rows="3" placeholder="e.g. Urgent client call, stopped at API token setup..."></textarea>
-        
-        <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px;">
-          <button id="btn-save-interruption" class="btn-tactical btn-cyan-action">SAVE STATE & PAUSE</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- =========================================================================
        MODAL: PREFERENCES (Themes & Cloud Sync)
        ========================================================================= -->
   <div id="modal-creative-control" class="modal-backdrop hidden" role="dialog" aria-modal="true">
     <div class="modal-glass-container">
       <div class="modal-header">
-        <h2 class="modal-title">PREFERENCES <span class="text-accent-blue">// ACCENT THEMES</span></h2>
+        <h2 class="modal-title">PREFERENCES <span class="text-accent-cyan">// SYSTEM CONFIG</span></h2>
         <button id="btn-close-cc-modal" class="btn-mini btn-icon-only">✕</button>
       </div>
 
       <div class="cc-preference-group">
         <span class="stat-label text-accent-cyan">COLOR PALETTE PRESET:</span>
-        <div class="theme-preset-grid" id="theme-presets-row" style="margin-top: 6px;">
-          <button type="button" class="theme-preset-card active" data-theme="cyan"><span class="theme-swatch swatch-cyan"></span><strong>Aether Cyan</strong></button>
-          <button type="button" class="theme-preset-card" data-theme="blue"><span class="theme-swatch swatch-blue"></span><strong>Astral Blue</strong></button>
-          <button type="button" class="theme-preset-card" data-theme="emerald"><span class="theme-swatch swatch-emerald"></span><strong>Emerald</strong></button>
-          <button type="button" class="theme-preset-card" data-theme="amber"><span class="theme-swatch swatch-amber"></span><strong>Solar Gold</strong></button>
-          <button type="button" class="theme-preset-card" data-theme="violet"><span class="theme-swatch swatch-violet"></span><strong>Starlight Violet</strong></button>
-          <button type="button" class="theme-preset-card" data-theme="stealth"><span class="theme-swatch swatch-stealth"></span><strong>Void Stealth</strong></button>
-          <button type="button" class="theme-preset-card" data-theme="crimson"><span class="theme-swatch swatch-crimson"></span><strong>Crimson</strong></button>
-          <button type="button" class="theme-preset-card" data-theme="sunset"><span class="theme-swatch swatch-sunset"></span><strong>Sunset Glow</strong></button>
-          <button type="button" class="theme-preset-card" data-theme="void"><span class="theme-swatch swatch-void"></span><strong>Deep Void</strong></button>
-          <button type="button" class="theme-preset-card" data-theme="olive"><span class="theme-swatch swatch-olive"></span><strong>Olive</strong></button>
-          <button type="button" class="theme-preset-card" data-theme="amethyst"><span class="theme-swatch swatch-amethyst"></span><strong>Amethyst</strong></button>
-          <button type="button" class="theme-preset-card" data-theme="cobalt"><span class="theme-swatch swatch-cobalt"></span><strong>Cobalt Frost</strong></button>
+        <div class="theme-preset-grid" style="margin-top: 8px;">
+          <button type="button" class="theme-preset-card active" data-theme="cyan"><span class="theme-swatch swatch-cyan"></span> Celestial Cyan</button>
+          <button type="button" class="theme-preset-card" data-theme="blue"><span class="theme-swatch swatch-blue"></span> Astral Blue</button>
+          <button type="button" class="theme-preset-card" data-theme="emerald"><span class="theme-swatch swatch-emerald"></span> Nebula Emerald</button>
+          <button type="button" class="theme-preset-card" data-theme="amber"><span class="theme-swatch swatch-amber"></span> Solar Gold</button>
+          <button type="button" class="theme-preset-card" data-theme="violet"><span class="theme-swatch swatch-violet"></span> Starlight Violet</button>
+          <button type="button" class="theme-preset-card" data-theme="stealth"><span class="theme-swatch swatch-stealth"></span> Stealth Noir</button>
+          <button type="button" class="theme-preset-card" data-theme="crimson"><span class="theme-swatch swatch-crimson"></span> Cyber Crimson</button>
+          <button type="button" class="theme-preset-card" data-theme="sunset"><span class="theme-swatch swatch-sunset"></span> Solar Flare</button>
+          <button type="button" class="theme-preset-card" data-theme="void"><span class="theme-swatch swatch-void"></span> Deep Space</button>
+          <button type="button" class="theme-preset-card" data-theme="olive"><span class="theme-swatch swatch-olive"></span> Tactical Olive</button>
+          <button type="button" class="theme-preset-card" data-theme="amethyst"><span class="theme-swatch swatch-amethyst"></span> Amethyst</button>
+          <button type="button" class="theme-preset-card" data-theme="cobalt"><span class="theme-swatch swatch-cobalt"></span> Cobalt Frost</button>
         </div>
       </div>
 
-      <div class="cc-preference-group" style="margin-top: 14px; border-top: 1px solid var(--border-subdued); padding-top: 12px;">
-        <span class="stat-label text-accent-cyan">CLOUD SYNC & SUPABASE INTEGRATION:</span>
-        <div id="cloud-sync-card" style="background: var(--surface-card-elevated); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border-subdued); margin-top: 6px; display: flex; flex-direction: column; gap: 8px;">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span id="pref-sync-user-status" class="mono-meta">Account: Local-Only Storage</span>
-            <button type="button" id="btn-open-auth-modal" class="btn-tactical btn-cyan-action">SIGN IN / REGISTER</button>
+      <div class="cc-preference-group" style="margin-top: 20px;">
+        <span class="stat-label text-accent-cyan">SUPABASE CLOUD SYNC CONFIGURATION:</span>
+        <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+          <div>
+            <label for="sync-supabase-url" class="mono-meta">SUPABASE PROJECT URL:</label>
+            <input type="url" id="sync-supabase-url" class="tactical-input" placeholder="https://your-project.supabase.co" autocomplete="off">
           </div>
-
-          <details style="margin-top: 6px;">
-            <summary class="mono-label" style="cursor: pointer; color: var(--text-secondary);">[ CONFIGURE SUPABASE CREDENTIALS ]</summary>
-            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
-              <div>
-                <label for="input-supabase-url" class="mono-meta">Supabase Project URL:</label>
-                <input type="text" id="input-supabase-url" class="tactical-input" placeholder="https://xyz.supabase.co" autocomplete="off">
-              </div>
-              <div>
-                <label for="input-supabase-key" class="mono-meta">Supabase Anon Public Key:</label>
-                <input type="password" id="input-supabase-key" class="tactical-input" placeholder="eyJhbGciOiJIUzI1..." autocomplete="off">
-              </div>
-              <button type="button" id="btn-save-supabase-config" class="btn-tactical btn-terminal-blue">CONNECT SUPABASE</button>
-            </div>
-          </details>
+          <div>
+            <label for="sync-supabase-anon-key" class="mono-meta">SUPABASE ANON PUBLIC KEY:</label>
+            <input type="password" id="sync-supabase-anon-key" class="tactical-input" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6..." autocomplete="off">
+          </div>
+          <div>
+            <label for="sync-user-token" class="mono-meta">ENCRYPTED USER SYNC IDENTIFIER:</label>
+            <input type="text" id="sync-user-token" class="tactical-input" placeholder="e.g. user_alpha_prime" autocomplete="off">
+          </div>
+          <div style="display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap;">
+            <button id="btn-save-supabase-config" class="btn-tactical btn-cyan-action">TEST & CONNECT SUPABASE</button>
+            <button id="btn-trigger-cloud-push" class="btn-tactical btn-terminal-blue">FORCE CLOUD SYNC</button>
+            <button id="btn-disconnect-cloud" class="btn-tactical btn-text-danger">DISCONNECT</button>
+          </div>
+          <span id="sync-status-detail-msg" class="mono-meta" style="color: var(--accent-cyan); margin-top: 4px;">LOCAL FIRST ENGINE ACTIVE</span>
         </div>
       </div>
 
-      <div class="cc-preference-group" style="margin-top: 14px;">
-        <span class="stat-label text-accent-warning">PRIVACY & BACKUP:</span>
-        <div style="display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap;">
-          <button type="button" id="btn-export-data" class="btn-tactical btn-terminal-blue">EXPORT BACKUP (JSON)</button>
-          <label class="btn-tactical btn-primary" style="cursor: pointer;">
-            RESTORE BACKUP
-            <input type="file" id="input-import-data" accept=".json" style="display: none;">
-          </label>
+      <div class="cc-preference-group" style="margin-top: 20px; border-top: 1px solid var(--border-subdued); padding-top: 14px;">
+        <span class="stat-label text-accent-cyan">DATA BACKUP & RESTORATION:</span>
+        <div style="display: flex; gap: 8px; margin-top: 8px;">
+          <button id="btn-export-backup" class="btn-tactical btn-terminal-blue">EXPORT JSON BACKUP</button>
+          <button id="btn-trigger-import" class="btn-tactical btn-terminal-blue">RESTORE BACKUP</button>
+          <input type="file" id="input-import-file" accept=".json" class="hidden">
         </div>
       </div>
 
-      <div class="modal-footer" style="margin-top: 14px;">
-        <button id="btn-close-cc" class="btn-tactical btn-cyan-action">DONE</button>
+      <div style="margin-top: 20px; text-align: right;">
+        <button id="btn-close-cc-footer" class="btn-tactical btn-terminal-blue" style="min-height: 40px;">CLOSE PREFERENCES</button>
       </div>
     </div>
   </div>
 
   <!-- =========================================================================
-       MODAL: CLOUD AUTHENTICATION
-       ========================================================================= -->
-  <div id="modal-auth-sync" class="modal-backdrop hidden" role="dialog" aria-modal="true">
-    <div class="modal-glass-container" style="max-width: 480px;">
-      <div class="modal-header">
-        <h2 id="auth-modal-title" class="modal-title">CLOUD AUTHENTICATION</h2>
-        <button id="btn-close-auth-modal" class="btn-mini btn-icon-only">✕</button>
-      </div>
-
-      <form id="form-auth" style="display: flex; flex-direction: column; gap: 12px; margin-top: 10px;">
-        <div>
-          <label for="auth-email-input" class="stat-label">EMAIL ADDRESS:</label>
-          <input type="email" id="auth-email-input" class="tactical-input" required placeholder="user@aether.os" autocomplete="email">
-        </div>
-        <div>
-          <label for="auth-password-input" class="stat-label">PASSWORD:</label>
-          <input type="password" id="auth-password-input" class="tactical-input" required placeholder="••••••••••••" autocomplete="current-password">
-        </div>
-        <div style="display: flex; gap: 8px; justify-content: flex-end;">
-          <button type="submit" id="btn-auth-signin" class="btn-tactical btn-primary">SIGN IN</button>
-          <button type="button" id="btn-auth-signup" class="btn-tactical btn-terminal-blue">REGISTER</button>
-        </div>
-      </form>
-
-      <div id="auth-migration-consent" class="hidden" style="margin-top: 14px; border-top: 1px solid var(--border-subdued); padding-top: 12px;">
-        <h3 class="mono-label text-accent-cyan" style="font-size: 0.85rem;">IMPORT DEVICE DATA CONSENT</h3>
-        <p class="mono-meta" style="margin-top: 4px;">Local data found on this device. Would you like to import it to your cloud account?</p>
-        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;">
-          <button type="button" id="btn-consent-import" class="btn-tactical btn-cyan-action">IMPORT TO CLOUD</button>
-          <button type="button" id="btn-consent-skip" class="btn-tactical btn-terminal-blue">SKIP FOR NOW</button>
-          <button type="button" id="btn-consent-export" class="btn-tactical btn-text-danger">EXPORT BACKUP</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- =========================================================================
-       MODAL: RECALIBRATION CIRCUIT BREAKER
-       ========================================================================= -->
-  <div id="modal-circuit-breaker" class="modal-backdrop hidden" role="dialog" aria-modal="true">
-    <div class="modal-glass-container">
-      <div class="modal-header">
-        <h2 class="modal-title">CIRCUIT BREAKER <span class="text-accent-cyan">// RESET</span></h2>
-        <button id="btn-close-circuit-breaker-x" class="btn-mini btn-icon-only">✕</button>
-      </div>
-      <p class="modal-subtitle">Execution collapsed? Stop, reset friction, and pick a single 5-minute action.</p>
-      <div style="display: flex; justify-content: flex-end; margin-top: 14px;">
-        <button id="btn-close-circuit-breaker" class="btn-tactical btn-cyan-action">RESUME</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- =========================================================================
-       MODAL: AI EXECUTION ASSISTANT
+       MODAL: RESPECTFUL AI ASSISTANT (MISSION DECOMPOSITION)
        ========================================================================= -->
   <div id="modal-ai-assistant" class="modal-backdrop hidden" role="dialog" aria-modal="true">
-    <div class="modal-glass-container">
+    <div class="modal-glass-container" style="max-width: 600px;">
       <div class="modal-header">
-        <h2 class="modal-title">AI ASSISTANT <span class="text-accent-cyan">// EXECUTION</span></h2>
+        <h2 class="modal-title">AI ASSISTANT <span class="text-accent-cyan">// TACTICAL CO-PILOT</span></h2>
         <button id="btn-close-ai-modal" class="btn-mini btn-icon-only">✕</button>
       </div>
-      <p class="modal-subtitle">Decompose missions into quest steps and discover immediate next actions.</p>
+      <p class="modal-subtitle">Generate quest breakdowns, sharpen ambiguous targets, or identify your immediate next step.</p>
 
-      <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
-        <button id="btn-ai-decompose-selected" class="btn-tactical btn-cyan-action">DECOMPOSE ACTIVE MISSION INTO QUEST STEPS</button>
-        <div id="ai-output-box" style="background: var(--surface-card-elevated); padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--border-subdued); min-height: 80px;">
-          <span id="ai-output-text" class="mono-meta">Click above to assist execution decomposition...</span>
+      <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 14px;">
+        <div>
+          <label for="ai-prompt-input" class="stat-label">WHAT MISSION OR OBJECTIVE DO YOU WANT TO DECOMPOSE?</label>
+          <input type="text" id="ai-prompt-input" class="tactical-input" placeholder="e.g. Refactor API routing, Write technical documentation, Launch MVP...">
         </div>
-      </div>
 
-      <div style="display: flex; justify-content: flex-end; margin-top: 14px;">
-        <button id="btn-close-ai" class="btn-tactical btn-terminal-blue">CLOSE</button>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button type="button" class="btn-mini btn-ai-template" data-action="decompose">Break into 3-5 Quests</button>
+          <button type="button" class="btn-mini btn-ai-template" data-action="next_action">Extract 2-Min Next Action</button>
+          <button type="button" class="btn-mini btn-ai-template" data-action="simplify">Sharpen Ambiguity</button>
+        </div>
+
+        <div id="ai-response-container" class="next-action-banner" style="min-height: 120px; max-height: 240px; overflow-y: auto;">
+          <p id="ai-response-text" class="mono-meta" style="color: var(--text-secondary); line-height: 1.6;">
+            Select an action or describe a goal above. The AI Co-Pilot generates structured, concrete steps.
+          </p>
+        </div>
+
+        <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px;">
+          <button id="btn-apply-ai-steps" class="btn-tactical btn-cyan-action hidden">CONVERT TO NEW MISSION</button>
+          <button id="btn-run-ai-query" class="btn-tactical btn-primary">GENERATE BREAKDOWN</button>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- MOBILE FLOATING ACTION BUTTON -->
-  <button id="btn-mobile-fab-create" class="mobile-fab-create" title="Create New Mission" aria-label="Create Mission">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+  <!-- FIXED FLOATING ACTION BUTTON (MOBILE) -->
+  <button id="mobile-fab-create" class="mobile-fab-create" title="Create New Mission">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
   </button>
 
-  <!-- MODAL: MOBILE MORE SHEET -->
-  <div id="modal-mobile-more" class="modal-backdrop hidden" role="dialog" aria-modal="true">
-    <div class="modal-glass-container mobile-more-sheet">
-      <div class="modal-header">
-        <h2 class="modal-title">LEVEL UP SYSTEM <span class="text-accent-cyan">// MENU</span></h2>
-        <button id="btn-close-mobile-more" class="btn-mini btn-icon-only">✕</button>
-      </div>
-
-      <div class="mobile-more-grid">
-        <button class="mobile-more-item" data-view="mission">
-          <div class="more-item-icon text-accent-blue">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
-          </div>
-          <div class="more-item-text">
-            <strong>System & Recovery</strong>
-            <span>Vision, Review, Thought Log</span>
-          </div>
-        </button>
-
-        <button id="btn-mobile-open-preferences" class="mobile-more-item">
-          <div class="more-item-icon text-accent-cyan">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-          </div>
-          <div class="more-item-text">
-            <strong>Preferences & Themes</strong>
-            <span>12 Accent Themes & Sync</span>
-          </div>
-        </button>
-
-        <button id="btn-mobile-open-ai" class="mobile-more-item">
-          <div class="more-item-icon text-accent-cyan">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 0 1 10 10c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2z"></path></svg>
-          </div>
-          <div class="more-item-text">
-            <strong>AI Assistant</strong>
-            <span>Quest Step Decomposition</span>
-          </div>
-        </button>
-      </div>
-
-      <div class="mobile-more-footer" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border-subdued); display: flex; flex-direction: column; gap: 8px;">
-        <button id="btn-mobile-install-pwa" class="btn-tactical btn-cyan-action hidden" style="width: 100%; min-height: 44px; justify-content: center;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-          <span>INSTALL LEVEL UP SYSTEM APP</span>
-        </button>
-
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <span class="mono-meta">LEVEL UP SYSTEM PWA</span>
-          <button id="btn-close-more-sheet" class="btn-tactical btn-terminal-blue" style="min-height: 40px;">CLOSE</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- FIXED MOBILE BOTTOM NAVIGATION BAR (5 DESTINATIONS) -->
+  <!-- FIXED MOBILE BOTTOM NAVIGATION BAR (4 EXECUTIVE DESTINATIONS) -->
   <nav class="mobile-bottom-nav">
-    <button class="mobile-bottom-nav-item active" data-view="dashboard" title="Home">
+    <button class="mobile-bottom-nav-item active" data-view="dashboard" title="Command">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-      <span>Home</span>
+      <span>Command</span>
     </button>
     <button class="mobile-bottom-nav-item" data-view="tasks" title="Missions">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
       <span>Missions</span>
     </button>
-    <button class="mobile-bottom-nav-item" data-view="focus" title="Focus">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-      <span>Focus</span>
-    </button>
-    <button class="mobile-bottom-nav-item" data-view="achievements" title="Insights">
+    <button class="mobile-bottom-nav-item" data-view="achievements" title="Intel">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
-      <span>Insights</span>
+      <span>Intel</span>
     </button>
-    <button class="mobile-bottom-nav-item" data-view="mission" title="System">
+    <button class="mobile-bottom-nav-item" data-view="mission" title="Architect">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
-      <span>System</span>
+      <span>Architect</span>
     </button>
   </nav>
 

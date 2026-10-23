@@ -1,5 +1,5 @@
 -- ============================================================================
--- AETHER // PERSONAL EXECUTION OPERATING SYSTEM — SUPABASE SCHEMA & RLS POLICIES
+-- // PERSONAL EXECUTION OPERATING SYSTEM — SUPABASE SCHEMA & RLS POLICIES
 -- Execute this SQL script in your Supabase SQL Editor (Dashboard > SQL Editor)
 -- ============================================================================
 

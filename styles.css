@@ -1,6 +1,6 @@
 /* ==========================================================================
-   LEVEL UP SYSTEM — DESIGN SYSTEM & THEME ENGINE
-   Full Tile & Template Color Adaptability
+   LEVEL UP SYSTEM — EXECUTIVE COMMAND OS DESIGN SYSTEM
+   Theme Engine & Full Tile Architecture
    ========================================================================== */
 
 /* --- 1. CSS CUSTOM PROPERTIES & DEFAULT TOKENS --- */
@@ -27,24 +27,24 @@
   
   /* Primary Theme Accent & Glow (Default Cyan) */
   --accent-cyan: #38bdf8;
-  --accent-cyan-glow: rgba(56, 189, 248, 0.18);
-  --accent-cyan-border: rgba(56, 189, 248, 0.38);
+  --accent-cyan-glow: rgba(56, 189, 248, 0.22);
+  --accent-cyan-border: rgba(56, 189, 248, 0.42);
 
   --accent-blue: #818cf8;
-  --accent-blue-glow: rgba(129, 140, 248, 0.15);
-  --accent-blue-border: rgba(129, 140, 248, 0.35);
+  --accent-blue-glow: rgba(129, 140, 248, 0.18);
+  --accent-blue-border: rgba(129, 140, 248, 0.38);
 
   --accent-success: #34d399;
   --accent-success-bg: rgba(52, 211, 153, 0.12);
-  --accent-success-border: rgba(52, 211, 153, 0.35);
+  --accent-success-border: rgba(52, 211, 153, 0.38);
 
   --accent-warning: #fbbf24;
   --accent-warning-bg: rgba(251, 191, 36, 0.12);
-  --accent-warning-border: rgba(251, 191, 36, 0.35);
+  --accent-warning-border: rgba(251, 191, 36, 0.38);
 
   --accent-danger: #f87171;
   --accent-danger-bg: rgba(248, 113, 113, 0.12);
-  --accent-danger-border: rgba(248, 113, 113, 0.35);
+  --accent-danger-border: rgba(248, 113, 113, 0.38);
 
   /* Priorities */
   --p1-color: #f87171;
@@ -53,30 +53,31 @@
   --p4-color: #64748b;
 
   /* Typography Stack */
-  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --font-display: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
   /* Touch & Layout Constants */
   --touch-target-min: 44px;
-  --max-width-app: 1360px;
+  --max-width-app: 1380px;
   --radius-xs: 6px;
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 18px;
+  --radius-sm: 9px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
   --radius-full: 9999px;
 
   /* Transitions */
-  --transition-fast: 150ms cubic-bezier(0.16, 1, 0.3, 1);
-  --transition-standard: 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-fast: 160ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-standard: 260ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* --- 2. 12 FULL-TEMPLATE COLOR THEMES (ALL TILES ADOPT PREFERRED COLOR) --- */
+/* --- 2. 12 FULL-TEMPLATE COLOR THEMES --- */
 
 /* 1. Celestial Cyan (Default) */
 body.theme-cyan {
   --accent-cyan: #38bdf8;
-  --accent-cyan-glow: rgba(56, 189, 248, 0.18);
-  --accent-cyan-border: rgba(56, 189, 248, 0.38);
+  --accent-cyan-glow: rgba(56, 189, 248, 0.22);
+  --accent-cyan-border: rgba(56, 189, 248, 0.42);
   --surface-card: rgba(14, 23, 38, 0.88);
   --surface-card-elevated: rgba(18, 30, 48, 0.92);
   --surface-input: #09111e;
@@ -86,8 +87,8 @@ body.theme-cyan {
 /* 2. Astral Blue */
 body.theme-blue {
   --accent-cyan: #60a5fa;
-  --accent-cyan-glow: rgba(96, 165, 250, 0.18);
-  --accent-cyan-border: rgba(96, 165, 250, 0.38);
+  --accent-cyan-glow: rgba(96, 165, 250, 0.22);
+  --accent-cyan-border: rgba(96, 165, 250, 0.42);
   --surface-card: rgba(15, 22, 40, 0.88);
   --surface-card-elevated: rgba(20, 30, 52, 0.92);
   --surface-input: #091022;
@@ -97,8 +98,8 @@ body.theme-blue {
 /* 3. Nebula Emerald */
 body.theme-emerald {
   --accent-cyan: #34d399;
-  --accent-cyan-glow: rgba(52, 211, 153, 0.18);
-  --accent-cyan-border: rgba(52, 211, 153, 0.38);
+  --accent-cyan-glow: rgba(52, 211, 153, 0.22);
+  --accent-cyan-border: rgba(52, 211, 153, 0.42);
   --surface-card: rgba(12, 26, 22, 0.88);
   --surface-card-elevated: rgba(16, 36, 30, 0.92);
   --surface-input: #081612;
@@ -108,8 +109,8 @@ body.theme-emerald {
 /* 4. Solar Gold / Amber */
 body.theme-amber {
   --accent-cyan: #fbbf24;
-  --accent-cyan-glow: rgba(251, 191, 36, 0.18);
-  --accent-cyan-border: rgba(251, 191, 36, 0.38);
+  --accent-cyan-glow: rgba(251, 191, 36, 0.22);
+  --accent-cyan-border: rgba(251, 191, 36, 0.42);
   --surface-card: rgba(26, 23, 14, 0.88);
   --surface-card-elevated: rgba(36, 31, 18, 0.92);
   --surface-input: #141209;
@@ -119,52 +120,52 @@ body.theme-amber {
 /* 5. Starlight Violet */
 body.theme-violet {
   --accent-cyan: #c084fc;
-  --accent-cyan-glow: rgba(192, 132, 252, 0.18);
-  --accent-cyan-border: rgba(192, 132, 252, 0.38);
-  --surface-card: rgba(23, 17, 36, 0.88);
-  --surface-card-elevated: rgba(31, 22, 48, 0.92);
-  --surface-input: #120b1f;
+  --accent-cyan-glow: rgba(192, 132, 252, 0.22);
+  --accent-cyan-border: rgba(192, 132, 252, 0.42);
+  --surface-card: rgba(24, 18, 38, 0.88);
+  --surface-card-elevated: rgba(32, 24, 50, 0.92);
+  --surface-input: #130a21;
   --border-highlight: rgba(192, 132, 252, 0.28);
 }
 
-/* 6. Void Stealth */
+/* 6. Stealth Noir (Monochrome Titanium) */
 body.theme-stealth {
   --accent-cyan: #f1f5f9;
-  --accent-cyan-glow: rgba(241, 245, 249, 0.14);
+  --accent-cyan-glow: rgba(241, 245, 249, 0.16);
   --accent-cyan-border: rgba(241, 245, 249, 0.35);
-  --surface-card: rgba(20, 24, 33, 0.88);
-  --surface-card-elevated: rgba(28, 33, 44, 0.92);
-  --surface-input: #0f121a;
-  --border-highlight: rgba(241, 245, 249, 0.25);
+  --surface-card: rgba(18, 20, 24, 0.92);
+  --surface-card-elevated: rgba(26, 29, 35, 0.94);
+  --surface-input: #0d0f12;
+  --border-highlight: rgba(241, 245, 249, 0.22);
 }
 
-/* 7. Crimson Flare */
+/* 7. Cyber Crimson */
 body.theme-crimson {
   --accent-cyan: #f87171;
-  --accent-cyan-glow: rgba(248, 113, 113, 0.18);
-  --accent-cyan-border: rgba(248, 113, 113, 0.38);
-  --surface-card: rgba(28, 16, 18, 0.88);
-  --surface-card-elevated: rgba(38, 20, 24, 0.92);
-  --surface-input: #160a0d;
+  --accent-cyan-glow: rgba(248, 113, 113, 0.22);
+  --accent-cyan-border: rgba(248, 113, 113, 0.42);
+  --surface-card: rgba(28, 15, 17, 0.88);
+  --surface-card-elevated: rgba(38, 19, 23, 0.92);
+  --surface-input: #17090b;
   --border-highlight: rgba(248, 113, 113, 0.28);
 }
 
-/* 8. Neon Sunset */
+/* 8. Solar Flare / Rose */
 body.theme-sunset {
   --accent-cyan: #fb7185;
-  --accent-cyan-glow: rgba(251, 113, 133, 0.18);
-  --accent-cyan-border: rgba(251, 113, 133, 0.38);
-  --surface-card: rgba(28, 15, 20, 0.88);
-  --surface-card-elevated: rgba(38, 20, 28, 0.92);
-  --surface-input: #160910;
+  --accent-cyan-glow: rgba(251, 113, 133, 0.22);
+  --accent-cyan-border: rgba(251, 113, 133, 0.42);
+  --surface-card: rgba(28, 16, 21, 0.88);
+  --surface-card-elevated: rgba(38, 21, 28, 0.92);
+  --surface-input: #160a11;
   --border-highlight: rgba(251, 113, 133, 0.28);
 }
 
-/* 9. Deep Void */
+/* 9. Deep Space / Neon Indigo */
 body.theme-void {
   --accent-cyan: #818cf8;
-  --accent-cyan-glow: rgba(129, 140, 248, 0.18);
-  --accent-cyan-border: rgba(129, 140, 248, 0.38);
+  --accent-cyan-glow: rgba(129, 140, 248, 0.22);
+  --accent-cyan-border: rgba(129, 140, 248, 0.42);
   --surface-card: rgba(18, 18, 36, 0.88);
   --surface-card-elevated: rgba(24, 24, 48, 0.92);
   --surface-input: #0d0d21;
@@ -174,8 +175,8 @@ body.theme-void {
 /* 10. Tactical Olive */
 body.theme-olive {
   --accent-cyan: #a3e635;
-  --accent-cyan-glow: rgba(163, 230, 53, 0.18);
-  --accent-cyan-border: rgba(163, 230, 53, 0.38);
+  --accent-cyan-glow: rgba(163, 230, 53, 0.22);
+  --accent-cyan-border: rgba(163, 230, 53, 0.42);
   --surface-card: rgba(19, 26, 14, 0.88);
   --surface-card-elevated: rgba(26, 36, 18, 0.92);
   --surface-input: #0e1408;
@@ -185,8 +186,8 @@ body.theme-olive {
 /* 11. Amethyst */
 body.theme-amethyst {
   --accent-cyan: #f472b6;
-  --accent-cyan-glow: rgba(244, 114, 182, 0.18);
-  --accent-cyan-border: rgba(244, 114, 182, 0.38);
+  --accent-cyan-glow: rgba(244, 114, 182, 0.22);
+  --accent-cyan-border: rgba(244, 114, 182, 0.42);
   --surface-card: rgba(27, 16, 26, 0.88);
   --surface-card-elevated: rgba(37, 20, 36, 0.92);
   --surface-input: #150a14;
@@ -196,8 +197,8 @@ body.theme-amethyst {
 /* 12. Cobalt Frost */
 body.theme-cobalt {
   --accent-cyan: #22d3ee;
-  --accent-cyan-glow: rgba(34, 211, 238, 0.18);
-  --accent-cyan-border: rgba(34, 211, 238, 0.38);
+  --accent-cyan-glow: rgba(34, 211, 238, 0.22);
+  --accent-cyan-border: rgba(34, 211, 238, 0.42);
   --surface-card: rgba(12, 25, 34, 0.88);
   --surface-card-elevated: rgba(16, 34, 46, 0.92);
   --surface-input: #08131b;
@@ -245,7 +246,7 @@ body.apex-body {
 
 .mono-meta {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.74rem;
   color: var(--text-muted);
   letter-spacing: 0.03em;
 }
@@ -294,14 +295,36 @@ body.apex-body {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
 }
 
+/* 3D Background Canvas & Ambient Cursor Spotlight */
+.celestial-3d-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.95;
+}
+
+.ambient-cursor-spotlight {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(750px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), var(--accent-cyan-glow) 0%, transparent 65%);
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+  mix-blend-mode: screen;
+}
+
 /* Background Grids & Ambient Preferred Color Glow */
 .background-grid {
   position: fixed;
   inset: 0;
   background-image: 
-    radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 0),
-    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 0),
+    linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
   background-size: 32px 32px, 64px 64px, 64px 64px;
   pointer-events: none;
   z-index: 0;
@@ -309,15 +332,15 @@ body.apex-body {
 
 .background-glow {
   position: fixed;
-  top: -200px;
+  top: -240px;
   left: 50%;
   transform: translateX(-50%);
-  width: 900px;
-  height: 550px;
+  width: 1100px;
+  height: 650px;
   background: radial-gradient(circle, var(--accent-cyan-glow) 0%, transparent 70%);
   pointer-events: none;
   z-index: 0;
-  opacity: 0.8;
+  opacity: 0.9;
   transition: background var(--transition-standard);
 }
 
@@ -327,19 +350,19 @@ body.apex-body {
   z-index: 1;
   max-width: var(--max-width-app);
   margin: 0 auto;
-  padding: 16px 20px 40px 20px;
+  padding: 18px 22px 48px 22px;
 }
 
 /* --- 4. HEADER BAR --- */
 .command-header {
   background: var(--surface-card);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--border-highlight);
   border-radius: var(--radius-md);
-  padding: 12px 18px;
-  margin-bottom: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  padding: 12px 20px;
+  margin-bottom: 18px;
+  box-shadow: 0 10px 36px rgba(0, 0, 0, 0.45);
   transition: all var(--transition-standard);
 }
 
@@ -358,19 +381,21 @@ body.apex-body {
 }
 
 .brand-emblem {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border-radius: var(--radius-sm);
   background: var(--surface-card-elevated);
   border: 1px solid var(--accent-cyan-border);
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 0 16px var(--accent-cyan-glow);
   transition: border-color var(--transition-fast);
 }
 
 .brand-title {
-  font-size: 1.15rem;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
   font-weight: 800;
   letter-spacing: -0.02em;
   color: var(--text-primary);
@@ -440,7 +465,7 @@ body.apex-body {
   font-family: var(--font-sans);
   font-size: 0.82rem;
   font-weight: 600;
-  padding: 8px 14px;
+  padding: 8px 15px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border-highlight);
   background: var(--surface-card-elevated);
@@ -450,7 +475,7 @@ body.apex-body {
   align-items: center;
   gap: 8px;
   transition: all var(--transition-fast);
-  min-height: 38px;
+  min-height: 40px;
 }
 
 .btn-tactical:hover {
@@ -470,14 +495,15 @@ body.apex-body {
 }
 
 .btn-terminal-blue {
-  background: var(--accent-cyan-glow);
-  border-color: var(--accent-cyan-border);
-  color: var(--accent-cyan);
+  background: var(--surface-card-elevated);
+  border-color: var(--border-highlight);
+  color: var(--text-secondary);
 }
 
 .btn-terminal-blue:hover {
-  background: var(--accent-cyan);
-  color: var(--surface-dark);
+  background: var(--accent-cyan-glow);
+  border-color: var(--accent-cyan-border);
+  color: var(--accent-cyan);
 }
 
 .btn-success {
@@ -514,8 +540,8 @@ body.apex-body {
 }
 
 .btn-icon-only {
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   padding: 0;
   justify-content: center;
 }
@@ -556,27 +582,46 @@ body.apex-body {
   box-shadow: 0 0 12px var(--accent-cyan-glow);
 }
 
-/* --- 6. NAVIGATION TABS BAR --- */
+/* --- 6. NAVIGATION TABS BAR (4 EXECUTIVE AREAS) --- */
 .main-nav-bar {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 8px;
   background: var(--surface-card);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid var(--border-highlight);
   border-radius: var(--radius-md);
   padding: 6px;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
   overflow-x: auto;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
   transition: all var(--transition-standard);
 }
 
+.nav-indicator-pill {
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: 0;
+  border-radius: var(--radius-sm);
+  background: var(--surface-card-elevated);
+  border: 1px solid var(--accent-cyan-border);
+  box-shadow: 0 0 20px var(--accent-cyan-glow), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  pointer-events: none;
+  z-index: 1;
+  transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), width 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+  opacity: 0;
+}
+
 .nav-tab-btn {
+  position: relative;
+  z-index: 2;
   font-family: var(--font-sans);
-  font-size: 0.82rem;
+  font-size: 0.84rem;
   font-weight: 600;
-  padding: 10px 16px;
+  padding: 10px 22px;
   border-radius: var(--radius-sm);
   border: 1px solid transparent;
   background: transparent;
@@ -586,40 +631,428 @@ body.apex-body {
   align-items: center;
   gap: 8px;
   white-space: nowrap;
-  transition: all var(--transition-fast);
+  letter-spacing: 0.02em;
+  transition: color var(--transition-fast), transform var(--transition-fast);
 }
 
 .nav-tab-btn svg {
   stroke: var(--text-muted);
-  transition: stroke var(--transition-fast);
+  transition: stroke var(--transition-fast), transform var(--transition-fast);
 }
 
 .nav-tab-btn:hover {
-  color: var(--text-secondary);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+}
+
+.nav-tab-btn:hover svg {
+  stroke: var(--text-secondary);
 }
 
 .nav-tab-btn.active {
-  background: var(--surface-card-elevated);
-  border-color: var(--accent-cyan-border);
   color: var(--accent-cyan);
-  box-shadow: 0 0 16px var(--accent-cyan-glow);
 }
 
 .nav-tab-btn.active svg {
   stroke: var(--accent-cyan);
+  filter: drop-shadow(0 0 6px var(--accent-cyan));
 }
 
-/* --- 7. CONSOLE CARDS & FULL TILE TEMPLATE --- */
+/* --- 7. CONSOLE CARDS & FULL TILE TEMPLATE WITH 3D PERSPECTIVE --- */
 .console-card {
+  position: relative;
   background: var(--surface-card);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid var(--border-highlight);
   border-radius: var(--radius-md);
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  transition: background var(--transition-standard), border-color var(--transition-standard);
+  padding: 24px;
+  margin-bottom: 22px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  will-change: transform;
+  overflow: hidden;
+  transition: background var(--transition-standard), border-color var(--transition-standard), box-shadow var(--transition-standard);
+}
+
+.console-card:hover {
+  border-color: var(--border-highlight);
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.5), 0 0 20px var(--accent-cyan-glow);
+}
+
+/* Dynamic Specular 3D Glare Reflection Layer */
+.card-specular-glare {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 4;
+  opacity: 0;
+  background: radial-gradient(circle at var(--glare-x, 50%) var(--glare-y, 50%), rgba(255, 255, 255, 0.12) 0%, transparent 60%);
+  transition: opacity 0.25s ease;
+}
+
+.console-card:hover .card-specular-glare,
+.metric-card:hover .card-specular-glare,
+.today-priority-banner:hover .card-specular-glare {
+  opacity: 1;
+}
+
+/* =========================================================================
+   MONUMENTAL ASYMMETRIC HERO DECK (3D HOLOGRAPHIC QUANTUM CHAMBER)
+   ========================================================================= */
+.hero-command-card {
+  background: linear-gradient(135deg, var(--surface-card) 0%, var(--surface-card-elevated) 100%);
+  border: 1px solid var(--accent-cyan-border);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55), 0 0 32px var(--accent-cyan-glow), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  padding: 28px;
+  margin-bottom: 26px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-command-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+  opacity: 0.95;
+}
+
+.hero-command-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.hero-tag-cluster {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hero-protocol-tag {
+  font-size: 0.76rem;
+  color: var(--accent-cyan);
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+
+.hero-telemetry-badge {
+  background: var(--surface-input);
+  border: 1px solid var(--border-highlight);
+  border-radius: var(--radius-full);
+  padding: 4px 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Asymmetric Dual-Deck Grid Layout */
+.hero-grid-deck {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 30px;
+  align-items: center;
+  margin-bottom: 22px;
+}
+
+@media (max-width: 1024px) {
+  .hero-grid-deck {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
+.hero-manifest-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-kicker {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  display: inline-block;
+}
+
+.hero-monumental-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.1rem, 4.4vw, 3.4rem);
+  font-weight: 900;
+  line-height: 1.06;
+  letter-spacing: -0.035em;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+
+.hero-gradient-text {
+  background: linear-gradient(135deg, var(--accent-cyan) 0%, #ffffff 50%, var(--accent-cyan) 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: textShimmer 4s ease infinite;
+}
+
+@keyframes textShimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.hero-editorial-lead {
+  font-size: 1.02rem;
+  line-height: 1.65;
+  color: var(--text-secondary);
+  max-width: 660px;
+}
+
+.hero-quick-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 22px;
+  flex-wrap: wrap;
+}
+
+.btn-hero-primary {
+  background: var(--accent-cyan);
+  color: var(--surface-dark);
+  font-weight: 700;
+  padding: 12px 22px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--accent-cyan);
+  box-shadow: 0 4px 20px var(--accent-cyan-glow);
+  transition: all var(--transition-fast);
+  min-height: 44px;
+}
+
+.btn-hero-primary:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 30px var(--accent-cyan);
+  color: #000;
+}
+
+.btn-hero-secondary {
+  background: var(--surface-card-elevated);
+  color: var(--text-primary);
+  border: 1px solid var(--accent-cyan-border);
+  padding: 11px 18px;
+  font-weight: 600;
+  min-height: 44px;
+}
+
+.btn-hero-secondary:hover {
+  background: var(--accent-cyan-glow);
+  border-color: var(--accent-cyan);
+  transform: translateY(-2px);
+}
+
+.btn-hero-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-highlight);
+  padding: 11px 16px;
+  min-height: 44px;
+}
+
+.btn-hero-ghost:hover {
+  background: var(--surface-card-elevated);
+  color: var(--text-primary);
+  border-color: var(--border-luminous);
+}
+
+/* Dedicated 3D Holographic Viewport */
+.hero-hologram-viewport {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 12;
+  min-height: 330px;
+  max-height: 420px;
+  background: radial-gradient(circle at center, rgba(14, 23, 38, 0.95) 0%, rgba(7, 10, 15, 0.98) 100%);
+  border: 1px solid var(--accent-cyan-border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 14px 44px rgba(0, 0, 0, 0.65), 0 0 28px var(--accent-cyan-glow), inset 0 0 35px rgba(0, 0, 0, 0.7);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-quantum-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+/* Corner Brackets on 3D Chamber */
+.hologram-corner {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--accent-cyan);
+  z-index: 3;
+  pointer-events: none;
+}
+
+.corner-tl { top: 10px; left: 10px; border-right: none; border-bottom: none; }
+.corner-tr { top: 10px; right: 10px; border-left: none; border-bottom: none; }
+.corner-bl { bottom: 10px; left: 10px; border-right: none; border-top: none; }
+.corner-br { bottom: 10px; right: 10px; border-left: none; border-top: none; }
+
+.hologram-telemetry-strip {
+  position: absolute;
+  top: 10px;
+  left: 32px;
+  right: 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.hologram-crosshair-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 24px;
+  height: 24px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0.3;
+}
+
+.hologram-crosshair-center::before,
+.hologram-crosshair-center::after {
+  content: '';
+  position: absolute;
+  background: var(--accent-cyan);
+}
+
+.hologram-crosshair-center::before {
+  top: 11px; left: 0; right: 0; height: 1.5px;
+}
+
+.hologram-crosshair-center::after {
+  left: 11px; top: 0; bottom: 0; width: 1.5px;
+}
+
+/* Floating Active Target HUD Overlay */
+.hero-floating-target-hud {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  right: 12px;
+  z-index: 4;
+  background: rgba(9, 17, 30, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--accent-cyan-border);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  transition: all var(--transition-fast);
+}
+
+.target-hud-tag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.target-hud-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.target-hud-action {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: var(--accent-cyan);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 4px;
+}
+
+/* Hero HUD Grid */
+.hero-hud-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border-subdued);
+}
+
+.hero-hud-card {
+  background: var(--surface-input);
+  border: 1px solid var(--border-highlight);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  transition: all var(--transition-fast);
+  transform-style: preserve-3d;
+}
+
+.hero-hud-card:hover {
+  border-color: var(--accent-cyan-border);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+.hero-hud-val-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: 6px;
+  margin-bottom: 2px;
+}
+
+.hero-hud-val {
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.hero-hud-badge {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: var(--accent-cyan-glow);
+  color: var(--accent-cyan);
+  border: 1px solid var(--accent-cyan-border);
+}
+
+.pulse-accent {
+  animation: pulseGlow 2s infinite ease-in-out;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 1; box-shadow: 0 0 6px var(--accent-cyan-glow); }
+  50% { opacity: 0.6; box-shadow: 0 0 1px var(--accent-cyan-glow); }
 }
 
 .card-header {
@@ -801,6 +1234,14 @@ body.apex-body {
   box-shadow: 0 0 8px var(--accent-cyan);
 }
 
+.priority-content-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
 .priority-title {
   font-size: 1.15rem;
   font-weight: 700;
@@ -822,6 +1263,16 @@ body.apex-body {
   align-items: center;
   gap: 8px;
   transition: all var(--transition-fast);
+}
+
+.next-action-banner {
+  width: 100%;
+  background: var(--surface-card-elevated);
+  border: 1px solid var(--accent-cyan-border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  text-align: left;
+  transition: all var(--transition-standard);
 }
 
 /* --- 8. MISSIONS VIEW & CONTROLS --- */
@@ -974,85 +1425,7 @@ body.apex-body {
 .deadline-overdue { color: var(--accent-danger); background: var(--accent-danger-bg); border: 1px solid var(--accent-danger-border); }
 .deadline-soon { color: var(--accent-cyan); background: var(--accent-cyan-glow); border: 1px solid var(--accent-cyan-border); }
 
-/* --- 9. FOCUS COCKPIT --- */
-.focus-body {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  max-width: 640px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.focus-objective-block {
-  width: 100%;
-  text-align: left;
-}
-
-.next-action-banner {
-  width: 100%;
-  background: var(--surface-card-elevated);
-  border: 1px solid var(--accent-cyan-border);
-  border-radius: var(--radius-sm);
-  padding: 14px;
-  text-align: left;
-  transition: all var(--transition-standard);
-}
-
-.btn-duration-chip {
-  font-family: var(--font-mono);
-  font-size: 0.78rem;
-  font-weight: 700;
-  padding: 6px 12px;
-  border-radius: var(--radius-xs);
-  border: 1px solid var(--border-highlight);
-  background: var(--surface-input);
-  color: var(--text-muted);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-}
-
-.btn-duration-chip.active {
-  border-color: var(--accent-cyan-border);
-  background: var(--accent-cyan-glow);
-  color: var(--accent-cyan);
-}
-
-.timer-display-card {
-  width: 100%;
-  background: var(--surface-input);
-  border: 1px solid var(--accent-cyan-border);
-  border-radius: var(--radius-md);
-  padding: 32px 20px;
-  transition: all var(--transition-standard);
-}
-
-.timer-large-digits {
-  font-family: var(--font-mono);
-  font-size: 4rem;
-  font-weight: 800;
-  color: var(--text-primary);
-  letter-spacing: -0.04em;
-  display: block;
-}
-
-.focus-sub-objective {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  margin-top: 4px;
-  display: block;
-}
-
-.resumption-memory-card {
-  width: 100%;
-  background: var(--surface-card-elevated);
-  border: 1px solid var(--accent-warning-border);
-  border-radius: var(--radius-sm);
-  padding: 14px;
-  text-align: left;
-}
-
-/* --- 10. INSIGHTS & ANALYTICS TREND BARS --- */
+/* --- 9. INSIGHTS & ANALYTICS TREND BARS --- */
 .trend-bars-container {
   display: flex;
   align-items: flex-end;
@@ -1090,7 +1463,7 @@ body.apex-body {
   border-radius: var(--radius-sm);
 }
 
-/* --- 11. MODALS & OVERLAYS --- */
+/* --- 10. MODALS & OVERLAYS --- */
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -1182,7 +1555,7 @@ body.apex-body {
 .swatch-amethyst { background: #f472b6; }
 .swatch-cobalt { background: #22d3ee; }
 
-/* --- 12. MOBILE BOTTOM NAVIGATION & FAB --- */
+/* --- 11. MOBILE BOTTOM NAVIGATION & FAB --- */
 .mobile-fab-create {
   display: none;
   position: fixed;
@@ -1247,6 +1620,79 @@ body.apex-body {
   stroke: var(--accent-cyan);
 }
 
+/* --- 12. CINEMATIC ENTRANCE & MOTION TRANSITIONS --- */
+.app-view-container:not(.hidden) {
+  animation: viewCinematicEntrance 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes viewCinematicEntrance {
+  0% {
+    opacity: 0;
+    transform: perspective(1200px) translateY(14px) scale(0.985);
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(1200px) translateY(0) scale(1);
+  }
+}
+
+/* Staggered cards reveal inside active view */
+.app-view-container:not(.hidden) .console-card {
+  animation: cardFadeUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+.app-view-container:not(.hidden) .console-card:nth-child(1) { animation-delay: 0.04s; }
+.app-view-container:not(.hidden) .console-card:nth-child(2) { animation-delay: 0.08s; }
+.app-view-container:not(.hidden) .console-card:nth-child(3) { animation-delay: 0.12s; }
+.app-view-container:not(.hidden) .console-card:nth-child(4) { animation-delay: 0.16s; }
+
+@keyframes cardFadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Modal Entrance with 3D Pop */
+.modal-backdrop:not(.hidden) .modal-glass-container {
+  animation: modalScaleEntrance 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes modalScaleEntrance {
+  0% {
+    opacity: 0;
+    transform: perspective(800px) scale(0.94) translateY(14px);
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(800px) scale(1) translateY(0);
+  }
+}
+
+/* Subtask list styles */
+.add-subtask-row {
+  display: flex;
+  gap: 8px;
+}
+
+.attention-log-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+/* Responsive Overrides */
 @media (max-width: 768px) {
   .main-nav-bar { display: none; }
   .mobile-bottom-nav { display: flex; }
@@ -1254,4 +1700,19 @@ body.apex-body {
   .apex-app-container { padding: 12px 12px 90px 12px; }
   .header-actions .btn-tactical span { display: none; }
   .home-main-question { font-size: 1.3rem; }
+  .hero-monumental-title { font-size: 1.85rem; }
+  .hero-command-card { padding: 20px 16px; }
+  .hero-hologram-viewport { min-height: 280px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .celestial-3d-canvas,
+  .hero-quantum-canvas {
+    opacity: 0.4;
+  }
 }
